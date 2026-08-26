@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>OPULIX — Earn Online</title>
 
-<!-- Firebase SDKs (compat) -->
+<!-- ================= FIREBASE SDKs (compat, easiest for vanilla JS) ================= -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -30,7 +30,7 @@ input,select{font-family:inherit;}
 .hidden{display:none !important;}
 .container{max-width:480px; margin:0 auto; padding:16px;}
 
-/* Top bar */
+/* ---------- Top bar ---------- */
 .topbar{
   position:sticky; top:0; z-index:50; display:flex; align-items:center; justify-content:space-between;
   padding:14px 16px; background:rgba(11,15,26,.85); backdrop-filter:blur(8px);
@@ -42,7 +42,7 @@ input,select{font-family:inherit;}
 .icon-btn{position:relative; width:38px; height:38px; border-radius:50%; background:var(--card2); border:none; color:var(--text); display:flex; align-items:center; justify-content:center; font-size:16px;}
 .badge{position:absolute; top:-2px; right:-2px; background:var(--danger); color:#fff; font-size:10px; font-weight:700; border-radius:50%; min-width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0 3px;}
 
-/* Cards */
+/* ---------- Cards ---------- */
 .card{background:var(--card); border-radius:var(--radius); padding:16px; margin-bottom:14px; box-shadow:var(--shadow); border:1px solid rgba(255,255,255,.04);}
 .profile-card{display:flex; align-items:center; gap:14px;}
 .avatar{width:58px; height:58px; border-radius:50%; object-fit:cover; background:var(--card2); border:2px solid var(--accent);}
@@ -58,7 +58,7 @@ input,select{font-family:inherit;}
 .section-title{font-size:15px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
 .section-title .link{font-size:12px; color:var(--accent); font-weight:600;}
 
-/* Task cards */
+/* ---------- Task cards ---------- */
 .task-card{display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:10px;}
 .task-icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background:var(--card2); flex-shrink:0;}
 .task-info{flex:1; min-width:0;}
@@ -70,7 +70,7 @@ input,select{font-family:inherit;}
 .task-btn.pending{background:var(--warn); color:#1a1200;}
 .task-btn.done{background:var(--ok); color:#00281f;}
 
-/* Buttons / forms */
+/* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
 .btn.secondary{background:var(--card2); color:var(--text);}
 .btn.google{background:#fff; color:#333; display:flex; align-items:center; justify-content:center; gap:8px;}
@@ -86,7 +86,7 @@ input,select{font-family:inherit;}
 .form-link{text-align:center; margin-top:14px; font-size:13px; color:var(--muted);}
 .form-link a{color:var(--accent); font-weight:600;}
 
-/* Auth screen */
+/* ---------- Auth screen ---------- */
 #authScreen{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;}
 .auth-box{width:100%; max-width:400px;}
 .auth-logo{text-align:center; font-size:28px; font-weight:900; margin-bottom:6px;}
@@ -96,13 +96,13 @@ input,select{font-family:inherit;}
 .auth-tab{flex:1; text-align:center; padding:10px; border-radius:9px; font-weight:700; font-size:13px; color:var(--muted);}
 .auth-tab.active{background:var(--accent); color:#fff;}
 
-/* Bottom nav */
+/* ---------- Bottom nav ---------- */
 .bottomnav{position:fixed; bottom:0; left:0; right:0; z-index:50; background:rgba(19,26,43,.95); backdrop-filter:blur(10px); border-top:1px solid rgba(255,255,255,.06); display:flex; justify-content:space-around; padding:8px 0 calc(8px + env(safe-area-inset-bottom));}
 .nav-item{display:flex; flex-direction:column; align-items:center; gap:3px; color:var(--muted); font-size:10px; font-weight:600; background:none; border:none; padding:4px 10px;}
 .nav-item .nav-ic{font-size:19px;}
 .nav-item.active{color:var(--accent);}
 
-/* Toast */
+/* ---------- Toast ---------- */
 #toastWrap{position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:999; width:calc(100% - 32px); max-width:440px; display:flex; flex-direction:column; gap:8px;}
 .toast{padding:12px 16px; border-radius:10px; font-size:13px; font-weight:600; box-shadow:var(--shadow); animation:slideDown .25s ease;}
 .toast.success{background:var(--ok); color:#00281f;}
@@ -110,28 +110,28 @@ input,select{font-family:inherit;}
 .toast.info{background:var(--accent); color:#fff;}
 @keyframes slideDown{from{transform:translateY(-20px); opacity:0;} to{transform:translateY(0); opacity:1;}}
 
-/* Spinner / overlay */
+/* ---------- Spinner / overlay ---------- */
 #loadingOverlay{position:fixed; inset:0; background:rgba(7,10,18,.75); z-index:998; display:flex; align-items:center; justify-content:center;}
 .spinner{width:42px; height:42px; border-radius:50%; border:4px solid rgba(255,255,255,.15); border-top-color:var(--accent); animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Offline banner */
+/* ---------- Offline banner ---------- */
 #offlineBanner{position:fixed; top:0; left:0; right:0; background:var(--danger); color:#fff; text-align:center; font-size:12px; font-weight:700; padding:6px; z-index:1000;}
 
-/* Modal */
+/* ---------- Modal ---------- */
 .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:900; display:flex; align-items:flex-end; justify-content:center;}
 .modal-box{background:var(--card); width:100%; max-width:480px; border-radius:20px 20px 0 0; padding:20px; max-height:85vh; overflow-y:auto;}
 .modal-title{font-size:16px; font-weight:800; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
 .modal-close{background:var(--card2); border:none; color:var(--text); width:28px; height:28px; border-radius:50%;}
 
-/* Notification item */
+/* ---------- Notification item ---------- */
 .notif-item{display:flex; gap:10px; padding:12px; border-radius:12px; margin-bottom:8px; background:var(--card2);}
 .notif-item.unread{border-left:3px solid var(--accent);}
 .notif-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:5px; flex-shrink:0;}
 .notif-text{font-size:13px;}
 .notif-time{font-size:11px; color:var(--muted); margin-top:3px;}
 
-/* History row */
+/* ---------- History row ---------- */
 .hist-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px;}
 .hist-row:last-child{border-bottom:none;}
 .hist-amt.plus{color:var(--ok); font-weight:700;}
@@ -150,7 +150,7 @@ input,select{font-family:inherit;}
 <div id="toastWrap"></div>
 <div id="loadingOverlay" class="hidden"><div class="spinner"></div></div>
 
-<!-- AUTH SCREEN -->
+<!-- ============================================================= AUTH SCREEN ============================================================= -->
 <div id="authScreen">
   <div class="auth-box">
     <div class="auth-logo">OPUL<span>IX</span></div>
@@ -212,7 +212,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- APP SHELL -->
+<!-- ============================================================= APP SHELL (shown after login) ============================================================= -->
 <div id="appShell" class="hidden">
 
   <div class="topbar">
@@ -225,7 +225,7 @@ input,select{font-family:inherit;}
 
   <div class="container">
 
-    <!-- DASHBOARD -->
+    <!-- ---------------- DASHBOARD PAGE ---------------- -->
     <div id="page-dashboard" class="page">
       <div class="card profile-card">
         <img id="dashAvatar" class="avatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" />
@@ -239,11 +239,11 @@ input,select{font-family:inherit;}
 
       <div class="card">
         <div class="balance-grid">
-          <div class="stat-box"><div class="stat-label">Available Balance</div><div class="stat-value accent" id="statBalance">0.00</div></div>
-          <div class="stat-box"><div class="stat-label">Total Earnings</div><div class="stat-value" id="statEarnings">0.00</div></div>
-          <div class="stat-box"><div class="stat-label">Total Withdrawn</div><div class="stat-value" id="statWithdrawn">0.00</div></div>
-          <div class="stat-box"><div class="stat-label">Pending Withdraw</div><div class="stat-value" id="statPending">0.00</div></div>
-          <div class="stat-box"><div class="stat-label">Referral Earnings</div><div class="stat-value" id="statReferral">0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Available Balance</div><div class="stat-value accent" id="statBalance">৳0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Total Earnings</div><div class="stat-value" id="statEarnings">৳0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Total Withdrawn</div><div class="stat-value" id="statWithdrawn">৳0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Pending Withdraw</div><div class="stat-value" id="statPending">৳0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Referral Earnings</div><div class="stat-value" id="statReferral">৳0.00</div></div>
           <div class="stat-box"><div class="stat-label">Daily Bonus</div><div class="stat-value" id="statBonusTimer">Ready!</div></div>
         </div>
         <button class="btn" id="dailyBonusBtn" onclick="claimDailyCheckin()">Claim Daily Bonus</button>
@@ -253,7 +253,7 @@ input,select{font-family:inherit;}
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
 
-    <!-- TASKS -->
+    <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
     <div id="page-tasks" class="page hidden">
       <div class="section-title">Video Tasks</div>
       <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
@@ -268,7 +268,7 @@ input,select{font-family:inherit;}
       <div id="tasksGroup-other"></div>
     </div>
 
-    <!-- REFERRAL -->
+    <!-- ---------------- REFERRAL PAGE ---------------- -->
     <div id="page-referral" class="page hidden">
       <div class="card">
         <div class="section-title" style="margin-top:0;">Your Referral Code</div>
@@ -280,18 +280,18 @@ input,select{font-family:inherit;}
       <div class="card">
         <div class="balance-grid">
           <div class="stat-box"><div class="stat-label">Total Referrals</div><div class="stat-value" id="refCount">0</div></div>
-          <div class="stat-box"><div class="stat-label">Referral Earnings</div><div class="stat-value accent" id="refEarnings">0.00</div></div>
+          <div class="stat-box"><div class="stat-label">Referral Earnings</div><div class="stat-value accent" id="refEarnings">৳0.00</div></div>
         </div>
       </div>
       <div class="section-title">Referral History</div>
       <div class="card" id="referralHistoryList"><div class="hist-row"><span>No referrals yet</span></div></div>
     </div>
 
-    <!-- WITHDRAW -->
+    <!-- ---------------- WITHDRAW PAGE ---------------- -->
     <div id="page-withdraw" class="page hidden">
       <div class="card">
         <div class="stat-label">Available Balance</div>
-        <div class="stat-value accent" id="withdrawAvailBalance" style="font-size:26px;">0.00</div>
+        <div class="stat-value accent" id="withdrawAvailBalance" style="font-size:26px;">৳0.00</div>
       </div>
       <form class="card" onsubmit="return submitWithdraw(event)">
         <div class="section-title" style="margin-top:0;">New Withdraw Request</div>
@@ -309,8 +309,8 @@ input,select{font-family:inherit;}
           <input type="text" id="withdrawAccount" required placeholder="01XXXXXXXXX or Bank A/C" />
         </div>
         <div class="field">
-          <label>Amount</label>
-          <input type="number" id="withdrawAmount" required min="1" step="1" placeholder="Amount" />
+          <label id="withdrawMinLabel">Amount (Minimum ৳100)</label>
+          <input type="number" id="withdrawAmount" required min="100" step="1" placeholder="100" />
         </div>
         <div class="error-text" id="withdrawError"></div>
         <button class="btn" type="submit">Submit Request</button>
@@ -319,13 +319,13 @@ input,select{font-family:inherit;}
       <div class="card" id="withdrawHistoryList"><div class="hist-row"><span>No withdrawals yet</span></div></div>
     </div>
 
-    <!-- HISTORY -->
+    <!-- ---------------- HISTORY PAGE ---------------- -->
     <div id="page-history" class="page hidden">
       <div class="section-title" style="margin-top:0;">Transaction History</div>
       <div class="card" id="fullHistoryList"><div class="hist-row"><span>No transactions yet</span></div></div>
     </div>
 
-    <!-- PROFILE -->
+    <!-- ---------------- PROFILE PAGE ---------------- -->
     <div id="page-profile" class="page hidden">
       <div class="card" style="text-align:center;">
         <img id="profileAvatarBig" class="avatar" style="width:84px;height:84px;margin-bottom:10px;" src="https://api.dicebear.com/7.x/initials/svg?seed=U" />
@@ -354,7 +354,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- MODALS -->
+<!-- ---------------- MODALS ---------------- -->
 <div id="forgotModal" class="modal-overlay hidden">
   <div class="modal-box">
     <div class="modal-title">Reset Password <button class="modal-close" onclick="closeModal('forgotModal')">✕</button></div>
@@ -372,7 +372,10 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- Interstitial ad modal -->
+<!-- Interstitial ad slot — shown briefly between actions when enabled from the admin panel.
+     No real ad network is wired in by default; this renders the configured ad unit id
+     so you can confirm the admin → user pipeline works, and is the drop-in point for a
+     real interstitial SDK call (see AD_CONFIG.interstitialAdUnitId in the script). -->
 <div id="interstitialModal" class="modal-overlay hidden">
   <div class="modal-box" style="text-align:center;">
     <div class="modal-title" style="justify-content:center;">Advertisement</div>
@@ -385,7 +388,11 @@ input,select{font-family:inherit;}
 </div>
 
 <script>
-/* ============ FIREBASE CONFIG ============ */
+/* =====================================================================================
+   OPULIX — FIREBASE CONFIGURATION
+   >>> REPLACE the values below with YOUR Firebase project config <<<
+   Firebase Console → Project Settings → General → Your apps → SDK setup and configuration
+===================================================================================== */
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
@@ -396,22 +403,34 @@ const firebaseConfig = {
   appId: "1:607811760478:web:2ae82447b32fc031489fcf",
   measurementId: "G-QX6L49K050"
 };
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-/* ============ AD CONFIG (defaults, overridden by Firestore ads/config) ============ */
+/* =====================================================================================
+   AD NETWORK CONFIGURATION
+   >>> Paste your ad network IDs here (e.g. AdSense/AdMob-for-web, Monetag, Adsterra, etc.)
+   All of this is normally set from the admin panel's Ads Manager instead of edited here —
+   these are just the defaults used before that config loads, or if it's never set.
+   For rewarded/interstitial ads to show a REAL ad (not the built-in simulation/placeholder),
+   define window.OPULIX_showRewardedAd(adUnitId) and/or window.OPULIX_showInterstitialAd(adUnitId)
+   using your ad network's actual SDK — see the AD SDK INTEGRATION POINT comments below.
+===================================================================================== */
 const AD_CONFIG = {
   bannerAdUnitId: "PASTE_BANNER_AD_UNIT_ID_HERE",
   rewardedAdUnitId: "PASTE_REWARDED_AD_UNIT_ID_HERE",
   interstitialAdUnitId: "PASTE_INTERSTITIAL_AD_UNIT_ID_HERE",
+  bannerCode: "", // raw HTML/script embed snippet from your ad network, set via the admin panel
   bannerEnabled: true,
   rewardedEnabled: true,
   interstitialEnabled: true
 };
 
-/* ============ REWARD DEFAULTS ============ */
+/* =====================================================================================
+   APP CONSTANTS
+===================================================================================== */
 let REWARDS = {
   videoTask: 2.00,
   youtubeTask: 1.50,
@@ -421,55 +440,242 @@ let REWARDS = {
   referrerBonus: 5.00,
   referredBonus: 2.00
 };
-const YOUTUBE_WATCH_SECONDS = 30;
-let MIN_WITHDRAW = 100;
-let CURRENCY_SYMBOL = '৳'; // will be overridden from settings
+const CURRENCY_SYMBOLS = { BDT:'৳', USD:'$', INR:'₹' };
+let CURRENCY_SYMBOL = '৳'; // overwritten from settings/global.currency if the admin changes it
+const YOUTUBE_WATCH_SECONDS = 30;        // must watch this long before claim unlocks (per YouTube-type task)
+let MIN_WITHDRAW = 100;                  // overridden at runtime by settings/global if present
 
 let currentUser = null;
 let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
-let bonusCountdownInterval = null;
-let appInstallTimers = {};
 
-// Load settings and ads initially
+// Pull admin-configured settings/ads on page load too (not just after login), so that
+// signup-time referral bonuses already reflect the latest admin-set amounts.
 db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
 db.collection('ads').doc('config').get().then(a=>{ if(a.exists) applyRemoteAdsConfig(a.data()); }).catch(()=>{});
 
-/* ============ UI HELPERS ============ */
-function showToast(msg, type='info'){ /* ... same as before ... */ }
-function showLoading(show){ document.getElementById('loadingOverlay').classList.toggle('hidden', !show); }
+/* =====================================================================================
+   UI HELPERS: toast, spinner, offline
+===================================================================================== */
+function showToast(msg, type='info'){
+  const wrap = document.getElementById('toastWrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.remove(); }, 3200);
+}
+function showLoading(show){
+  document.getElementById('loadingOverlay').classList.toggle('hidden', !show);
+}
 function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
 function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
-function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
-function formatHM(ms){ const h = Math.floor(ms/3600000); const m = Math.floor((ms%3600000)/60000); return `${h}h ${m}m`; }
 
 window.addEventListener('online', ()=>{ document.getElementById('offlineBanner').classList.add('hidden'); showToast('Back online','success'); });
 window.addEventListener('offline', ()=>{ document.getElementById('offlineBanner').classList.remove('hidden'); showToast('You are offline','error'); });
 if(!navigator.onLine){ document.getElementById('offlineBanner').classList.remove('hidden'); }
 
-/* ============ AUTH ============ */
-function switchAuthTab(tab){ /* ... */ }
-function genReferralCode(uid){ return 'OPX' + uid.substring(0,6).toUpperCase(); }
+/* =====================================================================================
+   AUTH TAB SWITCHING
+===================================================================================== */
+function switchAuthTab(tab){
+  document.getElementById('tabLoginBtn').classList.toggle('active', tab==='login');
+  document.getElementById('tabSignupBtn').classList.toggle('active', tab==='signup');
+  document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
+  document.getElementById('signupForm').classList.toggle('hidden', tab!=='signup');
+}
 
-async function handleSignup(e){ /* ... unchanged ... */ }
-async function handleLogin(e){ /* ... unchanged ... */ }
-async function handleGoogleLogin(){ /* ... unchanged ... */ }
+/* =====================================================================================
+   AUTH: SIGNUP / LOGIN / GOOGLE / FORGOT / LOGOUT
+===================================================================================== */
+function genReferralCode(uid){
+  return 'OPX' + uid.substring(0,6).toUpperCase();
+}
+
+async function handleSignup(e){
+  e.preventDefault();
+  const errEl = document.getElementById('signupError');
+  errEl.style.display='none';
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const phone = document.getElementById('signupPhone').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const refCodeInput = document.getElementById('signupReferral').value.trim().toUpperCase();
+
+  if(name.length < 2){ errEl.textContent='Please enter your full name.'; errEl.style.display='block'; return false; }
+  if(!/^[0-9+\-\s]{6,15}$/.test(phone)){ errEl.textContent='Please enter a valid phone number.'; errEl.style.display='block'; return false; }
+  if(password.length < 6){ errEl.textContent='Password must be at least 6 characters.'; errEl.style.display='block'; return false; }
+
+  showLoading(true);
+  try{
+    const cred = await auth.createUserWithEmailAndPassword(email, password);
+    const uid = cred.user.uid;
+    const myRefCode = genReferralCode(uid);
+
+    let referredBy = null;
+    if(refCodeInput){
+      const q = await db.collection('users').where('referralCode','==', refCodeInput).limit(1).get();
+      if(!q.empty){ referredBy = q.docs[0].id; }
+    }
+
+    await db.collection('users').doc(uid).set({
+      name, email, phone,
+      photoURL: '',
+      balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
+      referralCode: myRefCode,
+      referredBy: referredBy || null,
+      lastCheckin: null,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+
+    // Credit referral bonuses (one-time, both sides) — see security note in setup guide
+    if(referredBy){
+      const referrerRef = db.collection('users').doc(referredBy);
+      const newUserRef = db.collection('users').doc(uid);
+      await db.runTransaction(async (tx)=>{
+        const referrerSnap = await tx.get(referrerRef);
+        if(!referrerSnap.exists) return;
+        tx.update(referrerRef, {
+          balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+          totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+          referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
+        });
+        tx.update(newUserRef, {
+          balance: firebase.firestore.FieldValue.increment(REWARDS.referredBonus),
+          totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referredBonus)
+        });
+      });
+      await db.collection('referrals').add({
+        referrerUid: referredBy, referredUid: uid, referredName: name,
+        referrerBonus: REWARDS.referrerBonus, referredBonus: REWARDS.referredBonus,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await addNotification(referredBy, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for referring ${name}!`);
+      await addTransaction(referredBy, 'Referral bonus', REWARDS.referrerBonus, 'credit');
+      await addTransaction(uid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
+    }
+
+    showToast('Account created successfully!','success');
+  }catch(err){
+    errEl.textContent = friendlyAuthError(err);
+    errEl.style.display='block';
+  }
+  showLoading(false);
+  return false;
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const errEl = document.getElementById('loginError');
+  errEl.style.display='none';
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  showLoading(true);
+  try{
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    await auth.signInWithEmailAndPassword(email, password);
+    showToast('Welcome back!','success');
+  }catch(err){
+    errEl.textContent = friendlyAuthError(err);
+    errEl.style.display='block';
+  }
+  showLoading(false);
+  return false;
+}
+
+async function handleGoogleLogin(){
+  showLoading(true);
+  try{
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await auth.signInWithPopup(provider);
+    const uid = result.user.uid;
+    const docRef = db.collection('users').doc(uid);
+    const snap = await docRef.get();
+    if(!snap.exists){
+      await docRef.set({
+        name: result.user.displayName || 'User',
+        email: result.user.email,
+        phone: '',
+        photoURL: result.user.photoURL || '',
+        balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
+        referralCode: genReferralCode(uid),
+        referredBy: null, lastCheckin: null,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    showToast('Logged in with Google','success');
+  }catch(err){
+    showToast(friendlyAuthError(err),'error');
+  }
+  showLoading(false);
+}
+
 function openForgotPassword(){ openModal('forgotModal'); }
-async function handleForgotPassword(e){ /* ... unchanged ... */ }
-async function handleLogout(){ detachAllListeners(); await auth.signOut(); showToast('Logged out','info'); }
-function friendlyAuthError(err){ /* ... unchanged ... */ }
+async function handleForgotPassword(e){
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+  showLoading(true);
+  try{
+    await auth.sendPasswordResetEmail(email);
+    showToast('Password reset email sent!','success');
+    closeModal('forgotModal');
+  }catch(err){
+    showToast(friendlyAuthError(err),'error');
+  }
+  showLoading(false);
+  return false;
+}
 
-/* ============ AUTH STATE ============ */
+async function handleLogout(){
+  detachAllListeners();
+  await auth.signOut();
+  showToast('Logged out','info');
+}
+
+function friendlyAuthError(err){
+  const map = {
+    'auth/email-already-in-use':'This email is already registered.',
+    'auth/invalid-email':'Please enter a valid email address.',
+    'auth/weak-password':'Password is too weak (min 6 characters).',
+    'auth/user-not-found':'No account found with this email.',
+    'auth/wrong-password':'Incorrect password.',
+    'auth/invalid-credential':'Incorrect email or password.',
+    'auth/too-many-requests':'Too many attempts. Please try again later.',
+    'auth/popup-closed-by-user':'Google sign-in was cancelled.'
+  };
+  return map[err.code] || (err.message || 'Something went wrong. Please try again.');
+}
+
+/* =====================================================================================
+   AUTH STATE — REDIRECT PROTECTION
+===================================================================================== */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
+    // Maintenance mode + ban check happen before the app shell is shown
     showLoading(true);
     try{
       const settingsSnap = await db.collection('settings').doc('global').get();
-      if(settingsSnap.exists){ applyRemoteSettings(settingsSnap.data()); if(settingsSnap.data().maintenanceMode === true){ showLoading(false); showToast('Maintenance mode. Please check back soon.','info'); await auth.signOut(); return; } }
+      if(settingsSnap.exists){
+        const s = settingsSnap.data();
+        applyRemoteSettings(s);
+        if(s.maintenanceMode === true){
+          showLoading(false);
+          showToast('OPULIX is under maintenance. Please check back soon.','info');
+          await auth.signOut();
+          return;
+        }
+      }
       const adsSnap = await db.collection('ads').doc('config').get();
       if(adsSnap.exists) applyRemoteAdsConfig(adsSnap.data());
+
       const userDocSnap = await db.collection('users').doc(user.uid).get();
-      if(userDocSnap.exists && userDocSnap.data().banned === true){ showLoading(false); showToast('Account suspended. Contact support.','error'); await auth.signOut(); return; }
-    }catch(err){ /* ignore */ }
+      if(userDocSnap.exists && userDocSnap.data().banned === true){
+        showLoading(false);
+        showToast('Your account has been suspended. Contact support for help.','error');
+        await auth.signOut();
+        return;
+      }
+    }catch(err){ /* if settings/ads docs don't exist yet, fall back to local defaults below */ }
     showLoading(false);
 
     currentUser = user;
@@ -484,7 +690,9 @@ auth.onAuthStateChanged(async (user)=>{
   } else {
     currentUser = null;
     taskCache = {};
-    ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall','tasksGroup-other'].forEach(id=>{ const el = document.getElementById(id); if(el) el.innerHTML = ''; });
+    ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall','tasksGroup-other'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.innerHTML = '';
+    });
     detachAllListeners();
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
@@ -500,89 +708,141 @@ function detachAllListeners(){
   if(unsubTasks) unsubTasks();
 }
 
-/* ============ SETTINGS & ADS APPLY ============ */
+/* =====================================================================================
+   REALTIME USER DOC → DASHBOARD / PROFILE / WITHDRAW / REFERRAL RENDER
+===================================================================================== */
+function attachUserListener(uid){
+  unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
+    if(!doc.exists) return;
+    const d = doc.data();
+    renderUserData(d);
+  }, (err)=>{ showToast('Failed to load profile data','error'); });
+}
+
 function applyRemoteSettings(s){
   if(typeof s.minWithdraw === 'number') MIN_WITHDRAW = s.minWithdraw;
   if(typeof s.dailyBonusAmount === 'number') REWARDS.dailyCheckin = s.dailyBonusAmount;
   if(typeof s.referrerBonus === 'number') REWARDS.referrerBonus = s.referrerBonus;
   if(typeof s.referredBonus === 'number') REWARDS.referredBonus = s.referredBonus;
-  if(s.currency === 'USD') CURRENCY_SYMBOL = '$';
-  else if(s.currency === 'BDT') CURRENCY_SYMBOL = '৳';
-  else CURRENCY_SYMBOL = s.currency || '৳';
-  // Update all displayed currency symbols
-  document.querySelectorAll('.stat-value, .stat-value.accent, .hist-amt, .withdrawAvailBalance, .refEarnings').forEach(el=>{
-    if(el.textContent.includes('৳')) el.textContent = el.textContent.replace(/৳/g, CURRENCY_SYMBOL);
-  });
-  // Update withdraw amount placeholder
-  document.querySelector('input[placeholder^="Amount"]').placeholder = `Amount (Min ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
+  if(typeof s.currency === 'string') CURRENCY_SYMBOL = CURRENCY_SYMBOLS[s.currency] || '৳';
+  const label = document.getElementById('withdrawMinLabel');
+  if(label) label.textContent = `Amount (Minimum ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
+  const amountInput = document.getElementById('withdrawAmount');
+  if(amountInput) amountInput.min = MIN_WITHDRAW;
+  // referralEnabled is read here for future use — hiding the referral tab entirely when
+  // disabled is a small follow-up if you want it.
 }
-
 function applyRemoteAdsConfig(a){
   if(typeof a.bannerAdUnitId === 'string') AD_CONFIG.bannerAdUnitId = a.bannerAdUnitId;
   if(typeof a.rewardedAdUnitId === 'string') AD_CONFIG.rewardedAdUnitId = a.rewardedAdUnitId;
   if(typeof a.interstitialAdUnitId === 'string') AD_CONFIG.interstitialAdUnitId = a.interstitialAdUnitId;
+  if(typeof a.bannerCode === 'string') AD_CONFIG.bannerCode = a.bannerCode;
   AD_CONFIG.bannerEnabled = a.bannerEnabled !== false;
   AD_CONFIG.rewardedEnabled = a.rewardedEnabled !== false;
   AD_CONFIG.interstitialEnabled = a.interstitialEnabled !== false;
   renderBannerSlot();
 }
 
+// Setting innerHTML does NOT execute embedded <script> tags — this recreates each script
+// node so the browser actually runs it, which real ad network embed snippets require.
+function injectHtmlWithScripts(container, html){
+  container.innerHTML = html;
+  container.querySelectorAll('script').forEach(oldScript=>{
+    const newScript = document.createElement('script');
+    Array.from(oldScript.attributes).forEach(attr=> newScript.setAttribute(attr.name, attr.value));
+    newScript.textContent = oldScript.textContent;
+    oldScript.replaceWith(newScript);
+  });
+}
+
+/* Renders the banner slot. If the admin pasted a real ad network embed snippet into
+   "Custom Banner Embed Code" in the Ads Manager (AD_CONFIG.bannerCode), that snippet is
+   injected and executed as-is — this is how an actual ad network's banner will render,
+   since every network's exact markup/script differs and can't be guessed from an ID alone.
+   With no custom code set, it falls back to showing the configured unit ID as text so you
+   can still confirm the admin → user config pipeline is working end-to-end. */
 function renderBannerSlot(){
   const slot = document.getElementById('adBannerSlot');
   if(!slot) return;
-  if(AD_CONFIG.bannerEnabled === false){ slot.classList.add('hidden'); return; }
+  if(AD_CONFIG.bannerEnabled === false){
+    slot.classList.add('hidden');
+    return;
+  }
   slot.classList.remove('hidden');
+  if(AD_CONFIG.bannerCode && AD_CONFIG.bannerCode.trim()){
+    injectHtmlWithScripts(slot, AD_CONFIG.bannerCode);
+    return;
+  }
   const id = AD_CONFIG.bannerAdUnitId;
   if(!id || id === 'PASTE_BANNER_AD_UNIT_ID_HERE'){
-    slot.textContent = 'Banner ad not configured yet';
+    slot.textContent = 'Banner ad not configured yet — set a Banner Ad Unit ID (or paste a Custom Banner Embed Code) in the admin panel.';
     slot.dataset.adUnitId = '';
   } else {
-    slot.textContent = `Banner Ad — Unit: ${id}`;
+    slot.textContent = 'Banner Ad — Unit: ' + id + ' (no embed code set — paste your ad network\'s snippet in the admin panel to show a real ad here)';
     slot.dataset.adUnitId = id;
   }
 }
-renderBannerSlot();
+renderBannerSlot(); // show sensible default state immediately, before any Firestore fetch resolves
 
-async function maybeShowInterstitial(){
+/* Shows the interstitial ad slot for a few seconds if interstitial ads are enabled.
+   Call this at natural transition points (e.g. after a task claim). Returns a Promise
+   that resolves once the interstitial has closed, so callers can await it if needed.
+   >>> AD SDK INTEGRATION POINT: if window.OPULIX_showInterstitialAd is defined (by pasting
+   your network's SDK script), it's called instead of the placeholder modal below. */
+function maybeShowInterstitial(){
+  if(typeof window.OPULIX_showInterstitialAd === 'function'){
+    if(!AD_CONFIG.interstitialEnabled) return Promise.resolve();
+    return Promise.resolve(window.OPULIX_showInterstitialAd(AD_CONFIG.interstitialAdUnitId)).catch(()=>{});
+  }
   return new Promise((resolve)=>{
     if(!AD_CONFIG.interstitialEnabled){ resolve(); return; }
     const id = AD_CONFIG.interstitialAdUnitId;
-    document.getElementById('interstitialAdUnitLabel').textContent = (!id || id === 'PASTE_INTERSTITIAL_AD_UNIT_ID_HERE') ? 'Not configured' : `Unit: ${id}`;
+    const label = (!id || id === 'PASTE_INTERSTITIAL_AD_UNIT_ID_HERE') ? 'Not configured' : ('Unit: ' + id);
+    document.getElementById('interstitialAdUnitLabel').textContent = label;
     openModal('interstitialModal');
     let secs = 3;
     document.getElementById('interstitialCountdown').textContent = secs;
     const iv = setInterval(()=>{
       secs--;
       document.getElementById('interstitialCountdown').textContent = Math.max(secs,0);
-      if(secs <= 0){ clearInterval(iv); closeModal('interstitialModal'); resolve(); }
+      if(secs <= 0){
+        clearInterval(iv);
+        closeModal('interstitialModal');
+        resolve();
+      }
     }, 1000);
   });
 }
 
-/* ============ USER DATA LISTENER ============ */
-function attachUserListener(uid){ unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{ if(doc.exists) renderUserData(doc.data()); }); }
-
 function renderUserData(d){
-  if(d.banned === true && currentUser){ showToast('Account suspended','error'); auth.signOut(); return; }
+  // Realtime ban enforcement: if an admin bans this user mid-session, sign them out immediately
+  if(d.banned === true && currentUser){
+    showToast('Your account has been suspended. Contact support for help.','error');
+    auth.signOut();
+    return;
+  }
   const avatar = d.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(d.name||'U')}`;
   document.getElementById('dashAvatar').src = avatar;
   document.getElementById('dashName').textContent = d.name || 'User';
   document.getElementById('dashEmail').textContent = d.email || '';
-  document.getElementById('statBalance').textContent = `${CURRENCY_SYMBOL}${(d.balance||0).toFixed(2)}`;
-  document.getElementById('statEarnings').textContent = `${CURRENCY_SYMBOL}${(d.totalEarnings||0).toFixed(2)}`;
-  document.getElementById('statWithdrawn').textContent = `${CURRENCY_SYMBOL}${(d.totalWithdrawn||0).toFixed(2)}`;
-  document.getElementById('statPending').textContent = `${CURRENCY_SYMBOL}${(d.pendingWithdraw||0).toFixed(2)}`;
-  document.getElementById('statReferral').textContent = `${CURRENCY_SYMBOL}${(d.referralEarnings||0).toFixed(2)}`;
-  document.getElementById('withdrawAvailBalance').textContent = `${CURRENCY_SYMBOL}${(d.balance||0).toFixed(2)}`;
+  document.getElementById('statBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
+  document.getElementById('statEarnings').textContent = CURRENCY_SYMBOL + (d.totalEarnings||0).toFixed(2);
+  document.getElementById('statWithdrawn').textContent = CURRENCY_SYMBOL + (d.totalWithdrawn||0).toFixed(2);
+  document.getElementById('statPending').textContent = CURRENCY_SYMBOL + (d.pendingWithdraw||0).toFixed(2);
+  document.getElementById('statReferral').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
+
+  document.getElementById('withdrawAvailBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
+
   document.getElementById('profileAvatarBig').src = avatar;
   document.getElementById('profileName').value = d.name || '';
   document.getElementById('profilePhone').value = d.phone || '';
   document.getElementById('profileEmailReadonly').value = d.email || '';
+
   document.getElementById('referralCodeDisplay').value = d.referralCode || '';
   document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
-  document.getElementById('refEarnings').textContent = `${CURRENCY_SYMBOL}${(d.referralEarnings||0).toFixed(2)}`;
+  document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
-  // Daily check-in button state
+  // Daily check-in state
   const now = Date.now();
   const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
   const diff = now - last;
@@ -601,29 +861,55 @@ function renderUserData(d){
   }
 }
 
+function formatHM(ms){
+  const h = Math.floor(ms/3600000);
+  const m = Math.floor((ms%3600000)/60000);
+  return `${h}h ${m}m`;
+}
+let bonusCountdownInterval = null;
 function startBonusCountdown(remainMs){
   if(bonusCountdownInterval) clearInterval(bonusCountdownInterval);
   let remain = remainMs;
   bonusCountdownInterval = setInterval(()=>{
-    remain -= 60000; // update every minute
-    if(remain <= 0){ clearInterval(bonusCountdownInterval); document.getElementById('dailyBonusBtn').disabled = false; document.getElementById('dailyBonusBtn').textContent = 'Claim Daily Bonus'; document.getElementById('statBonusTimer').textContent = 'Ready!'; return; }
+    remain -= 1000;
+    if(remain <= 0){
+      clearInterval(bonusCountdownInterval);
+      document.getElementById('dailyBonusBtn').disabled = false;
+      document.getElementById('dailyBonusBtn').textContent = 'Claim Daily Bonus';
+      document.getElementById('statBonusTimer').textContent = 'Ready!';
+      return;
+    }
     document.getElementById('statBonusTimer').textContent = formatHM(remain);
   }, 60000);
 }
 
-/* ============ NAVIGATION ============ */
+/* =====================================================================================
+   NAVIGATION
+===================================================================================== */
 function goPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById('page-'+page).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
 }
 
-/* ============ NOTIFICATIONS ============ */
+/* =====================================================================================
+   TRANSACTIONS + NOTIFICATIONS (shared helpers)
+===================================================================================== */
+async function addTransaction(uid, label, amount, type){
+  await db.collection('transactions').add({
+    uid, label, amount, type, // type: 'credit' | 'debit'
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+async function addNotification(uid, message){
+  await db.collection('notifications').add({
+    uid, message, read:false,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  });
+}
+
 function attachNotifListener(uid){
-  unsubNotif = db.collection('notifications')
-    .where('uid','in',[uid, 'ALL']) // support broadcast
-    .orderBy('createdAt','desc')
-    .limit(30)
+  unsubNotif = db.collection('notifications').where('uid','==',uid).orderBy('createdAt','desc').limit(30)
     .onSnapshot((snap)=>{
       const list = document.getElementById('notifList');
       const badge = document.getElementById('notifBadge');
@@ -636,26 +922,126 @@ function attachNotifListener(uid){
         const div = document.createElement('div');
         div.className = 'notif-item ' + (n.read?'':'unread');
         div.onclick = ()=> markNotifRead(doc.id);
-        div.innerHTML = `<div class="notif-dot" style="opacity:${n.read?0:1}"></div><div><div class="notif-text">${escapeHtml(n.message)}</div><div class="notif-time">${n.createdAt ? n.createdAt.toDate().toLocaleString() : 'just now'}</div></div>`;
+        div.innerHTML = `<div class="notif-dot" style="opacity:${n.read?0:1}"></div>
+          <div><div class="notif-text">${escapeHtml(n.message)}</div>
+          <div class="notif-time">${n.createdAt ? n.createdAt.toDate().toLocaleString() : 'just now'}</div></div>`;
         list.appendChild(div);
       });
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+    }, err=>{
+      console.error('notifications listener error:', err);
+      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications — this usually means a required Firestore index is missing. Check the browser console for a link to create it.</span></div>';
     });
 }
 async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
 function openNotifications(){ openModal('notifModal'); }
 
-/* ============ TRANSACTIONS & HISTORY ============ */
-function attachHistoryListener(uid){ /* ... same as before ... */ }
-function attachWithdrawListener(uid){ /* ... same as before ... */ }
-function attachReferralListener(uid){ /* ... same as before ... */ }
+function attachHistoryListener(uid){
+  unsubHistory = db.collection('transactions').where('uid','==',uid).orderBy('createdAt','desc').limit(50)
+    .onSnapshot((snap)=>{
+      const recentEl = document.getElementById('recentActivityList');
+      const fullEl = document.getElementById('fullHistoryList');
+      if(snap.empty){
+        recentEl.innerHTML = '<div class="hist-row"><span>No activity yet</span></div>';
+        fullEl.innerHTML = '<div class="hist-row"><span>No transactions yet</span></div>';
+        return;
+      }
+      let recentHtml = '', fullHtml = '';
+      let i = 0;
+      snap.forEach(doc=>{
+        const t = doc.data();
+        const sign = t.type==='credit' ? '+' : '-';
+        const cls = t.type==='credit' ? 'plus' : 'minus';
+        const row = `<div class="hist-row"><span>${escapeHtml(t.label)}<br><span style="color:var(--muted);font-size:11px;">${t.createdAt?t.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt ${cls}">${sign}${CURRENCY_SYMBOL}${Math.abs(t.amount).toFixed(2)}</span></div>`;
+        fullHtml += row;
+        if(i<5) recentHtml += row;
+        i++;
+      });
+      recentEl.innerHTML = recentHtml;
+      fullEl.innerHTML = fullHtml;
+    }, err=>{
+      console.error('history listener error:', err);
+      document.getElementById('recentActivityList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
+      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity — a required Firestore index may be missing. Check the browser console.</span></div>';
+    });
+}
 
-/* ============ DAILY CHECK-IN ============ */
-async function claimDailyCheckin(){ /* ... unchanged, but uses CURRENCY_SYMBOL in toast */ }
+function attachWithdrawListener(uid){
+  unsubWithdraw = db.collection('withdrawRequests').where('uid','==',uid).orderBy('createdAt','desc').limit(30)
+    .onSnapshot((snap)=>{
+      const el = document.getElementById('withdrawHistoryList');
+      if(snap.empty){ el.innerHTML = '<div class="hist-row"><span>No withdrawals yet</span></div>'; return; }
+      let html = '';
+      snap.forEach(doc=>{
+        const w = doc.data();
+        html += `<div class="hist-row"><span>${w.method} — ${escapeHtml(w.account)}<br><span style="color:var(--muted);font-size:11px;">${w.createdAt?w.createdAt.toDate().toLocaleString():''}</span></span>
+          <span style="text-align:right;">${CURRENCY_SYMBOL}${w.amount.toFixed(2)}<br><span class="status-pill ${w.status}">${w.status}</span></span></div>`;
+      });
+      el.innerHTML = html;
+    }, err=>{
+      console.error('withdraw listener error:', err);
+      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals — a required Firestore index may be missing. Check the browser console.</span></div>';
+    });
+}
 
-/* ============ TASK ENGINE (updated) ============ */
+function attachReferralListener(uid){
+  unsubReferrals = db.collection('referrals').where('referrerUid','==',uid).orderBy('createdAt','desc').limit(50)
+    .onSnapshot((snap)=>{
+      const el = document.getElementById('referralHistoryList');
+      document.getElementById('refCount').textContent = snap.size;
+      if(snap.empty){ el.innerHTML = '<div class="hist-row"><span>No referrals yet</span></div>'; return; }
+      let html = '';
+      snap.forEach(doc=>{
+        const r = doc.data();
+        html += `<div class="hist-row"><span>${escapeHtml(r.referredName||'New user')}<br><span style="color:var(--muted);font-size:11px;">${r.createdAt?r.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt plus">+${CURRENCY_SYMBOL}${r.referrerBonus.toFixed(2)}</span></div>`;
+      });
+      el.innerHTML = html;
+    }, err=>{
+      console.error('referral listener error:', err);
+      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals — a required Firestore index may be missing. Check the browser console.</span></div>';
+    });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML;
+}
+
+/* =====================================================================================
+   DAILY CHECK-IN
+===================================================================================== */
+async function claimDailyCheckin(){
+  if(!currentUser) return;
+  showLoading(true);
+  try{
+    const ref = db.collection('users').doc(currentUser.uid);
+    await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(ref);
+      const d = snap.data();
+      const now = Date.now();
+      const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
+      if(now - last < 24*60*60*1000){ throw new Error('ALREADY_CLAIMED'); }
+      tx.update(ref, {
+        balance: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        lastCheckin: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await addTransaction(currentUser.uid, 'Daily check-in bonus', REWARDS.dailyCheckin, 'credit');
+    showToast(`+${CURRENCY_SYMBOL}${REWARDS.dailyCheckin.toFixed(2)} daily bonus claimed!`,'success');
+  }catch(err){
+    if(err.message === 'ALREADY_CLAIMED'){ showToast("You already claimed today's bonus.",'error'); }
+    else { showToast('Failed to claim bonus. Try again.','error'); }
+  }
+  showLoading(false);
+}
+
+/* =====================================================================================
+   TASK ENGINE — fully driven by Firestore tasks/{id} docs (created/edited/deleted from
+   the admin panel). No task is hardcoded here; the Tasks page renders whatever the admin
+   has enabled, grouped by type, and re-renders live whenever the admin changes something.
+===================================================================================== */
 const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
-let taskCache = {};
+let taskCache = {}; // { taskId: taskData } — enabled tasks only, kept in sync via onSnapshot
 
 function attachTasksListener(){
   unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
@@ -666,11 +1052,24 @@ function attachTasksListener(){
       taskCache[doc.id] = d;
       if(d.type === 'daily-bonus') dailyBonusTask = d;
     });
-    if(dailyBonusTask && typeof dailyBonusTask.reward === 'number') REWARDS.dailyCheckin = dailyBonusTask.reward;
-    renderAllTaskGroups();
+    // A "daily-bonus" type task lets the admin drive the Dashboard's daily bonus amount
+    // through the same Task Management screen, instead of it only living in Settings.
+    if(dailyBonusTask && typeof dailyBonusTask.reward === 'number'){
+      REWARDS.dailyCheckin = dailyBonusTask.reward;
+    }
+    renderAllTaskGroups().catch(err=>{
+      console.error('task rendering error:', err);
+      showTaskLoadError();
+    });
   }, err=>{
-    console.error(err);
-    document.getElementById('tasksGroup-video').innerHTML = '<div class="empty-row">Failed to load tasks.</div>';
+    console.error('tasks listener error:', err);
+    showTaskLoadError();
+  });
+}
+function showTaskLoadError(){
+  const msg = '<div class="empty-row">Failed to load tasks — check the browser console for details (this is often a missing Firestore index or rules issue).</div>';
+  ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall'].forEach(id=>{
+    const el = document.getElementById(id); if(el) el.innerHTML = msg;
   });
 }
 
@@ -678,7 +1077,7 @@ async function renderAllTaskGroups(){
   if(!currentUser) return;
   const groups = { video:[], social:[], appinstall:[], other:[] };
   Object.entries(taskCache).forEach(([id,t])=>{
-    if(t.type === 'daily-bonus') return;
+    if(t.type === 'daily-bonus') return; // has its own dedicated UI on the Dashboard
     if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
     else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
     else if(t.type === 'app-install') groups.appinstall.push([id,t]);
@@ -706,27 +1105,8 @@ async function fetchCompletion(taskId){
   return snap.exists ? snap.data() : null;
 }
 
-// New: For app-install, we track daily check-ins in a subcollection or separate doc
-// We'll use a separate collection: 'appInstallProgress' with doc id = uid_taskId
-async function getAppInstallProgress(taskId){
-  if(!currentUser) return null;
-  const docId = currentUser.uid + '_' + taskId;
-  const snap = await db.collection('appInstallProgress').doc(docId).get();
-  return snap.exists ? snap.data() : null;
-}
-
-async function computeTaskState(t, completion, progress){
-  if(t.type === 'app-install'){
-    if(progress && progress.completed) return { status:'done' };
-    if(progress && progress.days.length > 0){
-      const lastCheckin = progress.lastCheckin ? progress.lastCheckin.toMillis() : 0;
-      const today = new Date().setHours(0,0,0,0);
-      const canCheckinToday = lastCheckin < today;
-      return { status:'app-progress', daysDone: progress.days.length, requiredDays: t.requiredDays || 14, canCheckinToday };
-    }
-    return { status:'app-not-started' };
-  }
-  // Non app-install logic remains same
+function computeTaskState(t, completion){
+  if(t.type === 'app-install') return computeAppInstallState(completion);
   const cooldownMs = (t.cooldownMinutes||0) * 60000;
   if(cooldownMs > 0){
     if(!completion) return { status:'available' };
@@ -738,47 +1118,56 @@ async function computeTaskState(t, completion, progress){
   return completion ? { status:'done' } : { status:'available' };
 }
 
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+function computeAppInstallState(completion){
+  if(!completion) return { status:'available' };
+  if(completion.status === 'completed') return { status:'done' };
+  const streakDays = completion.streakDays || 0;
+  const checkedInToday = completion.lastCheckinDate === todayStr();
+  return { status:'in-progress', streakDays, checkedInToday };
+}
+
 async function buildTaskCardHtml(id, t){
-  let completion = null, progress = null;
-  if(t.type === 'app-install') progress = await getAppInstallProgress(id);
-  else completion = await fetchCompletion(id);
-  const state = await computeTaskState(t, completion, progress);
+  if(t.type === 'app-install') return buildAppInstallCardHtml(id, t);
+  const completion = await fetchCompletion(id);
+  const state = computeTaskState(t, completion);
   const icon = TASK_ICONS[t.type] || '⭐';
   let btnHtml;
-  let subText = '';
+  if(state.status === 'done'){ btnHtml = `<button class="task-btn done" disabled>Completed</button>`; }
+  else if(state.status === 'cooldown'){ btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`; }
+  else{
+    const label = t.type === 'video' ? 'Watch Ad' : 'Watch Now';
+    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
+  }
+  const defaultSub = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
+  return `<div class="card task-card" id="taskcard-${id}">
+    <div class="task-icon">${icon}</div>
+    <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || defaultSub}</div></div>
+    ${btnHtml}
+  </div>`;
+}
 
+async function buildAppInstallCardHtml(id, t){
+  const completion = await fetchCompletion(id);
+  const state = computeAppInstallState(completion);
+  const icon = TASK_ICONS['app-install'];
+  let btnHtml, subText;
   if(state.status === 'done'){
     btnHtml = `<button class="task-btn done" disabled>Completed</button>`;
-    subText = `Reward earned`;
-  }
-  else if(state.status === 'pending'){
-    btnHtml = `<button class="task-btn pending" disabled>Pending</button>`;
-    subText = 'Awaiting verification';
-  }
-  else if(state.status === 'cooldown'){
-    btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`;
-    subText = `Cooldown remaining`;
-  }
-  else if(state.status === 'app-not-started'){
-    btnHtml = `<button class="task-btn" onclick="handleAppInstallStart('${id}')">Install</button>`;
-    subText = `Install and open daily for ${t.requiredDays||14} days`;
-  }
-  else if(state.status === 'app-progress'){
-    const daysLeft = state.requiredDays - state.daysDone;
-    if(state.canCheckinToday){
-      btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${id}')">Check-in Today</button>`;
-      subText = `Progress: ${state.daysDone}/${state.requiredDays} days`;
+    subText = `14-day engagement complete · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} earned`;
+  } else if(state.status === 'in-progress'){
+    if(state.checkedInToday){
+      btnHtml = `<button class="task-btn pending" disabled>Day ${state.streakDays}/14 ✓</button>`;
+      subText = `Checked in today — come back tomorrow to continue your streak`;
     } else {
-      btnHtml = `<button class="task-btn" disabled>Checked Today</button>`;
-      subText = `Progress: ${state.daysDone}/${state.requiredDays} days`;
+      btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Check In (Day ${state.streakDays+1}/14)</button>`;
+      subText = `Open the app and stay 30s to continue your streak — ${state.streakDays}/14 days done`;
     }
+  } else {
+    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Install & Start</button>`;
+    subText = `Install, then open daily for 30s over 14 days to earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
   }
-  else { // available (video, social, youtube)
-    const label = t.type === 'app-install' ? 'Install' : (t.type==='video'||t.type==='youtube' ? 'Watch' : 'Go');
-    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
-    subText = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${t.reward.toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${t.reward.toFixed(2)}`;
-  }
-
   return `<div class="card task-card" id="taskcard-${id}">
     <div class="task-icon">${icon}</div>
     <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || subText}</div></div>
@@ -793,14 +1182,14 @@ async function refreshSingleTaskCard(taskId){
   el.outerHTML = await buildTaskCardHtml(taskId, t);
 }
 
-/* ============ HANDLE TASK CLICKS ============ */
+function simulateAdView(ms){ return new Promise(res=>setTimeout(res, ms)); }
+
 function handleTaskClick(taskId){
   const t = taskCache[taskId];
   if(!t || !currentUser) return;
   if(t.type === 'video') return handleVideoAdTask(taskId, t);
-  if(t.type === 'youtube') return handleYouTubeTask(taskId, t);
-  if(t.type === 'facebook' || t.type === 'telegram') return handleSocialLinkTask(taskId, t);
-  if(t.type === 'app-install') return handleAppInstallStart(taskId);
+  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram') return handleRedirectTask(taskId, t);
+  if(t.type === 'app-install') return handleAppInstallTask(taskId, t);
 }
 
 async function handleVideoAdTask(taskId, t){
@@ -808,119 +1197,126 @@ async function handleVideoAdTask(taskId, t){
   const el = document.getElementById('taskcard-'+taskId);
   const btn = el ? el.querySelector('.task-btn') : null;
   if(btn){ btn.disabled = true; btn.textContent = 'Loading Ad...'; }
-  // >>> Replace with actual rewarded ad SDK call
-  await new Promise(res=>setTimeout(res,4000));
-  await claimGenericTask(taskId, t);
-}
-
-function extractYoutubeId(link){
-  if(!link) return 'dQw4w9WgXcQ';
-  const m = link.match(/(?:youtu\.be\/|[?&]v=|embed\/)([a-zA-Z0-9_-]{6,})/);
-  return m ? m[1] : link.trim();
-}
-
-// YouTube: open in new tab, then allow claim after 30 seconds
-async function handleYouTubeTask(taskId, t){
-  const completion = await fetchCompletion(taskId);
-  if(completion){ showToast('You already completed this task.','info'); refreshSingleTaskCard(taskId); return; }
-  // Open YouTube in new tab
-  window.open(`https://www.youtube.com/watch?v=${extractYoutubeId(t.link)}`, '_blank');
-  showToast('Please watch the video for at least 30 seconds, then come back to claim.','info');
-  // Start a timer: disable claim until 30 seconds elapsed
-  const el = document.getElementById('taskcard-'+taskId);
-  const btn = el ? el.querySelector('.task-btn') : null;
-  if(btn){ btn.disabled = true; btn.textContent = 'Watching...'; }
-  await new Promise(res=>setTimeout(res, YOUTUBE_WATCH_SECONDS * 1000));
-  // Now allow claim
-  if(btn){ btn.disabled = false; btn.textContent = 'Claim Reward'; }
-  // Attach a one-time claim handler
-  btn.onclick = async ()=>{ await claimGenericTask(taskId, t); };
-}
-
-async function handleSocialLinkTask(taskId, t){
-  const completion = await fetchCompletion(taskId);
-  if(completion){ showToast('You already completed this task.','info'); refreshSingleTaskCard(taskId); return; }
-  if(t.link) window.open(t.link, '_blank');
-  const el = document.getElementById('taskcard-'+taskId);
-  const btn = el ? el.querySelector('.task-btn') : null;
-  if(btn){ btn.disabled = true; btn.textContent = 'Verifying...'; }
-  await new Promise(res=>setTimeout(res, 8000));
-  await claimGenericTask(taskId, t);
-}
-
-/* ============ APP-INSTALL STREAK LOGIC ============ */
-async function handleAppInstallStart(taskId){
-  const t = taskCache[taskId];
-  if(!t || !currentUser) return;
-  // First time: redirect to install link
-  window.open(t.link || 'https://play.google.com', '_blank');
-  // Create progress record if not exists
-  const docId = currentUser.uid + '_' + taskId;
-  const ref = db.collection('appInstallProgress').doc(docId);
-  const snap = await ref.get();
-  if(!snap.exists){
-    await ref.set({
-      uid: currentUser.uid,
-      taskId,
-      days: [],
-      lastCheckin: null,
-      completed: false,
-      startedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
+  // >>> AD SDK INTEGRATION POINT: if window.OPULIX_showRewardedAd is defined (by pasting your
+  // ad network's SDK script — see AD_CONFIG.rewardedAdUnitId), it's used instead of the
+  // simulated view. It must return a Promise that resolves only once the network confirms
+  // the reward was actually earned — never resolve on ad close alone.
+  if(typeof window.OPULIX_showRewardedAd === 'function'){
+    try{ await window.OPULIX_showRewardedAd(AD_CONFIG.rewardedAdUnitId); }
+    catch(err){ showToast('Ad failed to load. Try again.','error'); refreshSingleTaskCard(taskId); return; }
+  } else {
+    await simulateAdView(4000);
   }
-  showToast('Install the app, then come back daily to check-in for 30 seconds.','info');
-  refreshSingleTaskCard(taskId);
+  await claimGenericTask(taskId, t);
 }
 
-async function startAppInstallCheckin(taskId){
-  const t = taskCache[taskId];
-  if(!t || !currentUser) return;
-  // Simulate opening app for 30 seconds
-  showLoading(true);
-  // Replace with actual timer or app open detection
-  await new Promise(res=>setTimeout(res, 30000)); // 30 seconds
-  showLoading(false);
-  // Record today's check-in
-  const docId = currentUser.uid + '_' + taskId;
-  const ref = db.collection('appInstallProgress').doc(docId);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
-  await db.runTransaction(async (tx)=>{
-    const snap = await tx.get(ref);
-    const data = snap.data();
-    if(!data) throw new Error('Progress not found');
-    if(data.days.includes(todayStr)) throw new Error('Already checked in today');
-    const newDays = [...data.days, todayStr];
-    const required = t.requiredDays || 14;
-    let completed = newDays.length >= required;
-    tx.update(ref, {
-      days: newDays,
-      lastCheckin: firebase.firestore.FieldValue.serverTimestamp(),
-      completed
-    });
-    if(completed){
-      // Credit reward
-      tx.update(db.collection('users').doc(currentUser.uid), {
-        balance: firebase.firestore.FieldValue.increment(t.reward),
-        totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
-      });
-      // Mark as completedTask for record
-      tx.set(db.collection('completedTasks').doc(currentUser.uid + '_' + taskId), {
-        uid: currentUser.uid,
-        taskId,
-        amount: t.reward,
-        status: 'approved',
-        completedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    }
+// Shared per-type wait before a "Watch Now" redirect task's claim unlocks — long enough to
+// plausibly watch/follow/join, short enough not to be annoying. Opens the real destination
+// directly (YouTube/Facebook/Telegram) instead of keeping the user inside the app.
+const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8 };
+
+async function handleRedirectTask(taskId, t){
+  if(t.link) window.open(t.link, '_blank');
+  else { showToast('This task has no link configured — ask an admin to add one.','error'); return; }
+  const waitSecs = REDIRECT_WAIT_SECONDS[t.type] || 8;
+  const el = document.getElementById('taskcard-'+taskId);
+  const btn = el ? el.querySelector('.task-btn') : null;
+  if(btn) btn.disabled = true;
+  let secs = waitSecs;
+  await new Promise(resolve=>{
+    if(btn) btn.textContent = `Verifying... ${secs}s`;
+    const iv = setInterval(()=>{
+      secs--;
+      if(btn) btn.textContent = `Verifying... ${Math.max(secs,0)}s`;
+      if(secs <= 0){ clearInterval(iv); resolve(); }
+    }, 1000);
   });
-  await addTransaction(currentUser.uid, `App install check-in (${t.title})`, completed ? t.reward : 0, completed ? 'credit' : 'info');
-  showToast(completed ? `Congratulations! You earned ${CURRENCY_SYMBOL}${t.reward.toFixed(2)}` : 'Check-in recorded!', completed ? 'success' : 'info');
+  await claimGenericTask(taskId, t);
+}
+
+/* App Install — 14-day engagement model: first click sends the user to install the app and
+   starts a streak tracker; each subsequent day they must reopen the app (this page) and stay
+   for 30 continuous seconds (paused while the tab is hidden) to bank that day's check-in.
+   Reaching 14 unique days credits the reward once and marks the task completed. */
+async function handleAppInstallTask(taskId, t){
+  const completion = await fetchCompletion(taskId);
+  const today = todayStr();
+
+  if(!completion){
+    window.open(t.link || 'https://play.google.com', '_blank');
+    try{
+      await db.collection('completedTasks').doc(currentUser.uid + '_' + taskId).set({
+        uid: currentUser.uid, taskId, amount: t.reward, status:'in-progress',
+        streakDays: 0, lastCheckinDate: null,
+        startedAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      await addNotification(currentUser.uid, `You started "${t.title}" — open the app daily for 30 seconds over 14 days to earn ${CURRENCY_SYMBOL}${t.reward.toFixed(2)}.`);
+      showToast('Install started! Come back daily and stay open 30s to build your streak.','info');
+    }catch(err){ showToast('Failed to start install task.','error'); }
+    refreshSingleTaskCard(taskId);
+    return;
+  }
+
+  if(completion.status === 'completed'){ showToast('You already completed this task.','info'); refreshSingleTaskCard(taskId); return; }
+  if(completion.lastCheckinDate === today){ showToast(`Already checked in today — Day ${completion.streakDays}/14. Come back tomorrow!`,'info'); return; }
+
+  const el = document.getElementById('taskcard-'+taskId);
+  const btn = el ? el.querySelector('.task-btn') : null;
+  if(btn) btn.disabled = true;
+  let secs = 30;
+  await new Promise(resolve=>{
+    if(btn) btn.textContent = `Stay open... ${secs}s`;
+    const iv = setInterval(()=>{
+      if(document.hidden) return; // pause while the tab/app isn't actually in the foreground
+      secs--;
+      if(btn) btn.textContent = `Stay open... ${Math.max(secs,0)}s`;
+      if(secs <= 0){ clearInterval(iv); resolve(); }
+    }, 1000);
+  });
+  await completeAppInstallDailyCheckin(taskId, t);
+}
+
+async function completeAppInstallDailyCheckin(taskId, t){
+  const docId = currentUser.uid + '_' + taskId;
+  let justCompleted = false, newStreak = 0;
+  try{
+    await db.runTransaction(async (tx)=>{
+      const ref = db.collection('completedTasks').doc(docId);
+      const snap = await tx.get(ref);
+      if(!snap.exists) throw new Error('NOT_STARTED');
+      const data = snap.data();
+      const today = todayStr();
+      if(data.status === 'completed') throw new Error('ALREADY_DONE');
+      if(data.lastCheckinDate === today) throw new Error('ALREADY_TODAY');
+      newStreak = (data.streakDays || 0) + 1;
+      if(newStreak >= 14){
+        justCompleted = true;
+        tx.update(ref, { streakDays: newStreak, lastCheckinDate: today, status:'completed' });
+        tx.update(db.collection('users').doc(currentUser.uid), {
+          balance: firebase.firestore.FieldValue.increment(t.reward),
+          totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
+        });
+      } else {
+        tx.update(ref, { streakDays: newStreak, lastCheckinDate: today });
+      }
+    });
+    if(justCompleted){
+      await addTransaction(currentUser.uid, t.title, t.reward, 'credit');
+      showToast(`14-day streak complete! +${CURRENCY_SYMBOL}${t.reward.toFixed(2)} credited!`,'success');
+      await maybeShowInterstitial();
+    } else {
+      showToast(`Day ${newStreak}/14 checked in! Come back tomorrow.`,'success');
+    }
+  }catch(err){
+    if(err.message === 'ALREADY_TODAY'){ showToast('Already checked in today.','info'); }
+    else if(err.message === 'ALREADY_DONE'){ showToast('You already completed this task.','info'); }
+    else { showToast('Failed to record check-in. Try again.','error'); }
+  }
   refreshSingleTaskCard(taskId);
 }
 
-/* ============ CLAIM GENERIC TASK ============ */
+// Shared claim path for repeatable/one-time video, youtube, and social tasks.
+// App-install is NOT routed through here — its own 14-day flow above handles crediting.
 async function claimGenericTask(taskId, t){
   if(!currentUser) return false;
   const cooldownMs = (t.cooldownMinutes||0) * 60000;
@@ -963,14 +1359,24 @@ async function claimGenericTask(taskId, t){
   }
 }
 
-/* ============ WITHDRAW ============ */
-async function submitWithdraw(e){ /* ... same but with CURRENCY_SYMBOL */ }
+/* =====================================================================================
+   REFERRAL — COPY / SHARE
+===================================================================================== */
+function copyReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success'))
+    .catch(()=> showToast('Could not copy link.','error'));
+}
+function shareReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  if(navigator.share){
+    navigator.share({ title:'Join OPULIX', text:'Join OPULIX and start earning!', url: val }).catch(()=>{});
+  } else {
+    copyReferralLink();
+  }
+}
 
-/* ============ PROFILE ============ */
-async function saveProfile(e){ /* ... unchanged */ }
-async function handleAvatarUpload(e){ /* ... unchanged */ }
-
-/* ============ PRE-FILL REFERRAL ============ */
+// Auto-fill referral code from ?ref= param on load
 (function prefillReferral(){
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -979,6 +1385,90 @@ async function handleAvatarUpload(e){ /* ... unchanged */ }
     setTimeout(()=>{ const el = document.getElementById('signupReferral'); if(el) el.value = ref; }, 300);
   }
 })();
+
+/* =====================================================================================
+   WITHDRAW SYSTEM
+===================================================================================== */
+async function submitWithdraw(e){
+  e.preventDefault();
+  const errEl = document.getElementById('withdrawError');
+  errEl.style.display = 'none';
+  const method = document.getElementById('withdrawMethod').value;
+  const account = document.getElementById('withdrawAccount').value.trim();
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+
+  if(!method){ errEl.textContent='Please select a withdrawal method.'; errEl.style.display='block'; return false; }
+  if(!account){ errEl.textContent='Please enter your account details.'; errEl.style.display='block'; return false; }
+  if(isNaN(amount) || amount < MIN_WITHDRAW){ errEl.textContent=`Minimum withdrawal is ${CURRENCY_SYMBOL}${MIN_WITHDRAW}.`; errEl.style.display='block'; return false; }
+
+  showLoading(true);
+  try{
+    const userRef = db.collection('users').doc(currentUser.uid);
+    await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(userRef);
+      const bal = snap.data().balance || 0;
+      if(bal < amount) throw new Error('INSUFFICIENT_BALANCE');
+      tx.update(userRef, {
+        balance: firebase.firestore.FieldValue.increment(-amount),
+        pendingWithdraw: firebase.firestore.FieldValue.increment(amount)
+      });
+      const reqRef = db.collection('withdrawRequests').doc();
+      tx.set(reqRef, {
+        uid: currentUser.uid, method, account, amount, status: 'pending',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await addTransaction(currentUser.uid, `Withdraw request (${method})`, amount, 'debit');
+    await addNotification(currentUser.uid, `Withdraw request of ${CURRENCY_SYMBOL}${amount.toFixed(2)} submitted and is pending review.`);
+    showToast('Withdraw request submitted!','success');
+    document.getElementById('withdrawMethod').value='';
+    document.getElementById('withdrawAccount').value='';
+    document.getElementById('withdrawAmount').value='';
+  }catch(err){
+    if(err.message === 'INSUFFICIENT_BALANCE'){ errEl.textContent = 'Insufficient balance.'; errEl.style.display='block'; }
+    else { showToast('Failed to submit request. Try again.','error'); }
+  }
+  showLoading(false);
+  return false;
+}
+/* NOTE: Approving/rejecting withdrawRequests (status pending→approved/rejected) is an
+   ADMIN action done from Firestore console or a back-office panel — not exposed here for
+   security. On "rejected", refund balance and clear pendingWithdraw via an admin script
+   or Cloud Function; this is covered in the setup guide. */
+
+/* =====================================================================================
+   PROFILE — EDIT + PHOTO UPLOAD
+===================================================================================== */
+async function saveProfile(e){
+  e.preventDefault();
+  if(!currentUser) return false;
+  const name = document.getElementById('profileName').value.trim();
+  const phone = document.getElementById('profilePhone').value.trim();
+  if(name.length < 2){ showToast('Please enter a valid name.','error'); return false; }
+  showLoading(true);
+  try{
+    await db.collection('users').doc(currentUser.uid).update({ name, phone });
+    showToast('Profile updated!','success');
+  }catch(err){ showToast('Failed to update profile.','error'); }
+  showLoading(false);
+  return false;
+}
+
+async function handleAvatarUpload(e){
+  const file = e.target.files[0];
+  if(!file || !currentUser) return;
+  if(!file.type.startsWith('image/')){ showToast('Please select an image file.','error'); return; }
+  if(file.size > 5*1024*1024){ showToast('Image must be under 5MB.','error'); return; }
+  showLoading(true);
+  try{
+    const storageRef = storage.ref().child(`avatars/${currentUser.uid}/${Date.now()}_${file.name}`);
+    await storageRef.put(file);
+    const url = await storageRef.getDownloadURL();
+    await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
+    showToast('Profile photo updated!','success');
+  }catch(err){ showToast('Failed to upload photo.','error'); }
+  showLoading(false);
+}
 </script>
 </body>
 </html>
