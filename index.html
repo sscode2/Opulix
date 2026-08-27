@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>OPULIX — Earn Online</title>
 
-<!-- Firebase SDKs -->
+<!-- Firebase SDKs (compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -58,31 +58,20 @@ input,select{font-family:inherit;}
 .section-title{font-size:15px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
 .section-title .link{font-size:12px; color:var(--accent); font-weight:600;}
 
-/* ---------- Task cards & App Install Cards ---------- */
-.task-card{display:flex; flex-direction:column; gap:12px; padding:14px; margin-bottom:12px;}
-.task-header{display:flex; align-items:center; gap:12px;}
+/* ---------- Task cards & Progress ---------- */
+.task-card{display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:10px;}
 .task-icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background:var(--card2); flex-shrink:0;}
 .task-info{flex:1; min-width:0;}
 .task-name{font-weight:700; font-size:14px;}
 .task-sub{color:var(--muted); font-size:12px; margin-top:2px;}
 .empty-row{color:var(--muted); font-size:13px; padding:12px 4px;}
-.task-btn{padding:9px 14px; border-radius:10px; border:none; font-weight:700; font-size:12px; background:var(--accent); color:#fff; white-space:nowrap; text-align:center;}
-.task-btn:disabled{background:var(--card2); color:var(--muted); cursor:not-allowed;}
+.task-btn{padding:8px 14px; border-radius:10px; border:none; font-weight:700; font-size:12px; background:var(--accent); color:#fff; white-space:nowrap;}
+.task-btn:disabled{background:var(--card2); color:var(--muted);}
 .task-btn.pending{background:var(--warn); color:#1a1200;}
 .task-btn.done{background:var(--ok); color:#00281f;}
 
-/* App Install Specific Progress */
-.progress-bar-wrap{width:100%; height:8px; background:var(--card2); border-radius:4px; overflow:hidden; margin-top:6px;}
-.progress-bar-fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; transition:width .3s ease;}
-.days-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
-.day-chip{padding:3px 7px; font-size:10px; font-weight:700; border-radius:6px; background:var(--card2); color:var(--muted);}
-.day-chip.active{background:var(--accent); color:#fff;}
-.day-chip.done{background:var(--ok); color:#00281f;}
-
-/* ---------- Verification Modal ---------- */
-.verify-modal-box{text-align:center; padding:24px 20px;}
-.countdown-ring{font-size:42px; font-weight:900; color:var(--accent2); margin:18px 0;}
-.verify-instructions{font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:18px;}
+.progress-track{width:100%; height:6px; background:var(--card2); border-radius:3px; overflow:hidden; margin-top:6px;}
+.progress-fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .3s ease;}
 
 /* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
@@ -129,20 +118,23 @@ input,select{font-family:inherit;}
 .spinner{width:42px; height:42px; border-radius:50%; border:4px solid rgba(255,255,255,.15); border-top-color:var(--accent); animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
+/* ---------- Offline banner ---------- */
 #offlineBanner{position:fixed; top:0; left:0; right:0; background:var(--danger); color:#fff; text-align:center; font-size:12px; font-weight:700; padding:6px; z-index:1000;}
 
 /* ---------- Modal ---------- */
-.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:900; display:flex; align-items:center; justify-content:center; padding:16px;}
-.modal-box{background:var(--card); width:100%; max-width:440px; border-radius:20px; padding:20px; max-height:88vh; overflow-y:auto;}
+.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:900; display:flex; align-items:flex-end; justify-content:center;}
+.modal-box{background:var(--card); width:100%; max-width:480px; border-radius:20px 20px 0 0; padding:20px; max-height:85vh; overflow-y:auto;}
 .modal-title{font-size:16px; font-weight:800; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
 .modal-close{background:var(--card2); border:none; color:var(--text); width:28px; height:28px; border-radius:50%;}
 
+/* ---------- Notification item ---------- */
 .notif-item{display:flex; gap:10px; padding:12px; border-radius:12px; margin-bottom:8px; background:var(--card2);}
 .notif-item.unread{border-left:3px solid var(--accent);}
 .notif-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:5px; flex-shrink:0;}
 .notif-text{font-size:13px;}
 .notif-time{font-size:11px; color:var(--muted); margin-top:3px;}
 
+/* ---------- History row ---------- */
 .hist-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px;}
 .hist-row:last-child{border-bottom:none;}
 .hist-amt.plus{color:var(--ok); font-weight:700;}
@@ -159,7 +151,7 @@ input,select{font-family:inherit;}
 <div id="toastWrap"></div>
 <div id="loadingOverlay" class="hidden"><div class="spinner"></div></div>
 
-<!-- ================= AUTH SCREEN ================= -->
+<!-- ============================================================= AUTH SCREEN ============================================================= -->
 <div id="authScreen">
   <div class="auth-box">
     <div class="auth-logo">OPUL<span>IX</span></div>
@@ -221,9 +213,8 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ================= APP SHELL ================= -->
+<!-- ============================================================= APP SHELL ============================================================= -->
 <div id="appShell" class="hidden">
-
   <div class="topbar">
     <div class="brand">OPUL<span>IX</span></div>
     <div class="topbar-right">
@@ -233,7 +224,6 @@ input,select{font-family:inherit;}
   </div>
 
   <div class="container">
-
     <!-- DASHBOARD PAGE -->
     <div id="page-dashboard" class="page">
       <div class="card profile-card">
@@ -263,10 +253,16 @@ input,select{font-family:inherit;}
     <!-- TASKS PAGE -->
     <div id="page-tasks" class="page hidden">
       <div class="section-title">App Install & Check-in Tasks</div>
-      <div id="tasksGroup-appinstall"><div class="empty-row">Loading install tasks...</div></div>
+      <div id="tasksGroup-appinstall"><div class="empty-row">Loading tasks...</div></div>
 
-      <div class="section-title">Other Tasks</div>
-      <div id="tasksGroup-other"><div class="empty-row">Loading other tasks...</div></div>
+      <div class="section-title">Video Tasks</div>
+      <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
+
+      <div class="section-title">Social Tasks</div>
+      <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
+
+      <div class="section-title hidden" id="tasksGroupOtherTitle">Other Tasks</div>
+      <div id="tasksGroup-other"></div>
     </div>
 
     <!-- REFERRAL PAGE -->
@@ -302,7 +298,6 @@ input,select{font-family:inherit;}
             <option value="">Select method</option>
             <option value="bKash">bKash</option>
             <option value="Nagad">Nagad</option>
-            <option value="Rocket">Rocket</option>
             <option value="Bank">Bank Transfer</option>
           </select>
         </div>
@@ -344,7 +339,6 @@ input,select{font-family:inherit;}
       </form>
       <button class="btn secondary" onclick="handleLogout()">Logout</button>
     </div>
-
   </div>
 
   <div class="bottomnav">
@@ -356,7 +350,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ================= MODALS ================= -->
+<!-- MODALS -->
 <div id="forgotModal" class="modal-overlay hidden">
   <div class="modal-box">
     <div class="modal-title">Reset Password <button class="modal-close" onclick="closeModal('forgotModal')">✕</button></div>
@@ -374,21 +368,8 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- 30-Second App Verification Modal -->
-<div id="appVerifyModal" class="modal-overlay hidden">
-  <div class="modal-box verify-modal-box">
-    <div class="modal-title" style="margin-bottom:0;"><span id="verifyModalTitle">App Verification</span><button class="modal-close" onclick="cancelAppVerification()">✕</button></div>
-    <div class="countdown-ring" id="verifyCountdown">30s</div>
-    <div class="verify-instructions" id="verifyInstructions">
-      Keep this screen active and open the app for at least 30 seconds to verify your daily check-in. If you cancel or leave, progress will not be counted.
-    </div>
-    <button class="btn" id="verifyCompleteBtn" disabled onclick="submitVerifiedCheckin()">Verifying (30s)...</button>
-    <button class="btn secondary" onclick="cancelAppVerification()" style="margin-top:8px;">Cancel</button>
-  </div>
-</div>
-
 <script>
-/* ================= FIREBASE INITIALIZATION ================= */
+/* FIREBASE INITIALIZATION */
 const firebaseConfig = {
   apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
   authDomain: "opulix-app.firebaseapp.com",
@@ -404,7 +385,7 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-/* ================= APP STATE & CONSTANTS ================= */
+/* APP CONSTANTS */
 let REWARDS = {
   dailyCheckin: 1.00,
   referrerBonus: 5.00,
@@ -413,25 +394,22 @@ let REWARDS = {
 const CURRENCY_SYMBOLS = { BDT:'৳', USD:'$', INR:'₹' };
 let CURRENCY_SYMBOL = '৳';
 let MIN_WITHDRAW = 100;
+
 let currentUser = null;
-let activeTasksMap = {};
-let appProgressMap = {};
+let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
+let taskCache = {};
 
-let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null, unsubProgress = null;
-
-// Persistent URL Referral Code Capture before auth
-(function captureReferralParam(){
-  const urlParams = new URLSearchParams(window.location.search);
-  const refCode = urlParams.get('ref');
-  if(refCode){
-    localStorage.setItem('opulix_pending_ref', refCode.trim().toUpperCase());
+// Track URL referral parameter locally before sign up
+(function saveIncomingRef(){
+  const params = new URLSearchParams(window.location.search);
+  const ref = params.get('ref');
+  if(ref){
+    localStorage.setItem('opulix_ref_code', ref.trim().toUpperCase());
   }
 })();
 
-// Remote Settings Load
-db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
+db.collection('settings').doc('global').get().then(s => { if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
 
-/* ================= UI UTILITIES ================= */
 function showToast(msg, type='info'){
   const wrap = document.getElementById('toastWrap');
   const t = document.createElement('div');
@@ -445,8 +423,6 @@ function showLoading(show){
 }
 function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
 function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
-function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
-function getTodayStr(){ return new Date().toISOString().slice(0,10); }
 
 window.addEventListener('online', ()=>{ document.getElementById('offlineBanner').classList.add('hidden'); showToast('Back online','success'); });
 window.addEventListener('offline', ()=>{ document.getElementById('offlineBanner').classList.remove('hidden'); showToast('You are offline','error'); });
@@ -457,94 +433,78 @@ function switchAuthTab(tab){
   document.getElementById('tabSignupBtn').classList.toggle('active', tab==='signup');
   document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
   document.getElementById('signupForm').classList.toggle('hidden', tab!=='signup');
-  const pending = localStorage.getItem('opulix_pending_ref');
-  if(tab === 'signup' && pending){
-    const refInput = document.getElementById('signupReferral');
-    if(refInput && !refInput.value) refInput.value = pending;
+  if(tab === 'signup'){
+    const savedRef = localStorage.getItem('opulix_ref_code');
+    if(savedRef){ document.getElementById('signupReferral').value = savedRef; }
   }
 }
 
-/* ================= ROBUST REFERRAL & AUTH LOGIC ================= */
 function genReferralCode(uid){
   return 'OPX' + uid.substring(0,6).toUpperCase();
 }
 
-async function processReferralConnection(newUid, newUserName, manualRefCode = null){
-  try{
-    const userRef = db.collection('users').doc(newUid);
-    const userSnap = await userRef.get();
-    if(!userSnap.exists) return;
-    const userData = userSnap.data();
+/* PRODUCTION-GRADE REFERRAL PROCESSING (UPDATE 4) */
+async function processReferralConnection(newUid, newUserName, preferredRefCode = null){
+  const code = (preferredRefCode || localStorage.getItem('opulix_ref_code') || '').trim().toUpperCase();
+  if(!code) return;
 
-    // Prevent duplicate referral connection if user already linked
-    if(userData.referredBy) return;
+  const newUserRef = db.collection('users').doc(newUid);
+  const userSnap = await newUserRef.get();
+  if(!userSnap.exists) return;
+  const userData = userSnap.data();
 
-    let targetCode = (manualRefCode || localStorage.getItem('opulix_pending_ref') || '').trim().toUpperCase();
-    if(!targetCode) return;
+  // Guard: User already bound or attempting self-referral
+  if(userData.referredBy || userData.referralCode === code) return;
 
-    // Prevent self-referral
-    if(userData.referralCode === targetCode) {
-      localStorage.removeItem('opulix_pending_ref');
-      return;
-    }
+  const q = await db.collection('users').where('referralCode', '==', code).limit(1).get();
+  if(q.empty) return;
 
-    const q = await db.collection('users').where('referralCode', '==', targetCode).limit(1).get();
-    if(q.empty) {
-      localStorage.removeItem('opulix_pending_ref');
-      return;
-    }
+  const referrerDoc = q.docs[0];
+  const referrerUid = referrerDoc.id;
+  if(referrerUid === newUid) return; // Prevent self-referral
 
-    const referrerDoc = q.docs[0];
-    const referrerUid = referrerDoc.id;
+  // Atomic execution: bind relationship & credit rewards once
+  try {
+    await db.runTransaction(async (tx) => {
+      const refCheck = await tx.get(db.collection('referrals').doc(`${referrerUid}_${newUid}`));
+      if(refCheck.exists) return; // Reward already claimed
 
-    if(referrerUid === newUid) {
-      localStorage.removeItem('opulix_pending_ref');
-      return;
-    }
+      const curUser = await tx.get(newUserRef);
+      if(curUser.data().referredBy) return;
 
-    // Execute atomic referral assignment and reward disbursement
-    await db.runTransaction(async (tx)=>{
-      const rRef = db.collection('users').doc(referrerUid);
-      const uRef = db.collection('users').doc(newUid);
+      const referrerRef = db.collection('users').doc(referrerUid);
 
-      const rSnap = await tx.get(rRef);
-      const uSnap = await tx.get(uRef);
-
-      if(!rSnap.exists || !uSnap.exists) return;
-      if(uSnap.data().referredBy) return; // already connected
-
-      // Credit referrer
-      tx.update(rRef, {
-        balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
-        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
-        referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
-      });
-
-      // Credit referred user
-      tx.update(uRef, {
+      // 1. Mark referredBy on new user
+      tx.update(newUserRef, {
         referredBy: referrerUid,
         balance: firebase.firestore.FieldValue.increment(REWARDS.referredBonus),
         totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referredBonus)
       });
 
-      // Add to referrals tracking collection
-      const refRecordRef = db.collection('referrals').doc();
-      tx.set(refRecordRef, {
+      // 2. Award referrer
+      tx.update(referrerRef, {
+        balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+        referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
+      });
+
+      // 3. Save to referrals collection
+      tx.set(db.collection('referrals').doc(`${referrerUid}_${newUid}`), {
         referrerUid: referrerUid,
         referredUid: newUid,
-        referredName: newUserName || userData.name || 'New Member',
+        referredName: newUserName,
         referrerBonus: REWARDS.referrerBonus,
         referredBonus: REWARDS.referredBonus,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
 
-    await addTransaction(referrerUid, `Referral bonus (${newUserName})`, REWARDS.referrerBonus, 'credit');
-    await addTransaction(newUid, 'Welcome referral bonus', REWARDS.referredBonus, 'credit');
-    await addNotification(referrerUid, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for inviting ${newUserName}!`);
-    localStorage.removeItem('opulix_pending_ref');
-  } catch(err){
-    console.error('Referral connection error:', err);
+    await addNotification(referrerUid, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for referring ${newUserName}!`);
+    await addTransaction(referrerUid, 'Referral bonus', REWARDS.referrerBonus, 'credit');
+    await addTransaction(newUid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
+    localStorage.removeItem('opulix_ref_code');
+  } catch(err) {
+    console.error('Referral processing error:', err);
   }
 }
 
@@ -597,7 +557,11 @@ async function handleLogin(e){
   showLoading(true);
   try{
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
-    await auth.signInWithEmailAndPassword(email, password);
+    const res = await auth.signInWithEmailAndPassword(email, password);
+    const docSnap = await db.collection('users').doc(res.user.uid).get();
+    if(docSnap.exists){
+      await processReferralConnection(res.user.uid, docSnap.data().name || 'User');
+    }
     showToast('Welcome back!','success');
   }catch(err){
     errEl.textContent = friendlyAuthError(err);
@@ -616,11 +580,11 @@ async function handleGoogleLogin(){
     const uid = result.user.uid;
     const docRef = db.collection('users').doc(uid);
     const snap = await docRef.get();
-    let isNew = false;
+    let name = result.user.displayName || 'User';
+
     if(!snap.exists){
-      isNew = true;
       await docRef.set({
-        name: result.user.displayName || 'User',
+        name: name,
         email: result.user.email,
         phone: '',
         photoURL: result.user.photoURL || '',
@@ -629,11 +593,11 @@ async function handleGoogleLogin(){
         referredBy: null, lastCheckin: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+    } else {
+      name = snap.data().name || name;
     }
-    if(isNew){
-      await processReferralConnection(uid, result.user.displayName || 'Google User');
-    }
-    showToast('Signed in successfully','success');
+    await processReferralConnection(uid, name);
+    showToast('Logged in with Google','success');
   }catch(err){
     showToast(friendlyAuthError(err),'error');
   }
@@ -647,7 +611,7 @@ async function handleForgotPassword(e){
   showLoading(true);
   try{
     await auth.sendPasswordResetEmail(email);
-    showToast('Password reset link sent!','success');
+    showToast('Password reset email sent!','success');
     closeModal('forgotModal');
   }catch(err){
     showToast(friendlyAuthError(err),'error');
@@ -671,12 +635,11 @@ function friendlyAuthError(err){
     'auth/wrong-password':'Incorrect password.',
     'auth/invalid-credential':'Incorrect email or password.',
     'auth/too-many-requests':'Too many attempts. Please try again later.',
-    'auth/popup-closed-by-user':'Sign-in was cancelled.'
+    'auth/popup-closed-by-user':'Google sign-in was cancelled.'
   };
-  return map[err.code] || (err.message || 'Something went wrong.');
+  return map[err.code] || (err.message || 'Something went wrong. Please try again.');
 }
 
-/* ================= AUTH STATE & REALTIME DATA ================= */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
     showLoading(true);
@@ -687,41 +650,40 @@ auth.onAuthStateChanged(async (user)=>{
         applyRemoteSettings(s);
         if(s.maintenanceMode === true){
           showLoading(false);
-          showToast('OPULIX is currently under maintenance.','info');
+          showToast('OPULIX is under maintenance. Please check back soon.','info');
           await auth.signOut();
           return;
         }
       }
+
       const userDocSnap = await db.collection('users').doc(user.uid).get();
       if(userDocSnap.exists && userDocSnap.data().banned === true){
         showLoading(false);
-        showToast('Your account is suspended. Contact support.','error');
+        showToast('Your account has been suspended. Contact support for help.','error');
         await auth.signOut();
         return;
       }
-    }catch(e){}
+    }catch(err){}
     showLoading(false);
 
     currentUser = user;
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('appShell').classList.remove('hidden');
-
     attachUserListener(user.uid);
     attachNotifListener(user.uid);
     attachHistoryListener(user.uid);
     attachWithdrawListener(user.uid);
     attachReferralListener(user.uid);
     attachTasksListener();
-    attachAppProgressListener(user.uid);
   } else {
     currentUser = null;
+    taskCache = {};
+    ['tasksGroup-appinstall','tasksGroup-video','tasksGroup-social','tasksGroup-other'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.innerHTML = '';
+    });
     detachAllListeners();
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
-    const pending = localStorage.getItem('opulix_pending_ref');
-    if(pending){
-      switchAuthTab('signup');
-    }
   }
 });
 
@@ -732,7 +694,14 @@ function detachAllListeners(){
   if(unsubWithdraw) unsubWithdraw();
   if(unsubReferrals) unsubReferrals();
   if(unsubTasks) unsubTasks();
-  if(unsubProgress) unsubProgress();
+}
+
+function attachUserListener(uid){
+  unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
+    if(!doc.exists) return;
+    const d = doc.data();
+    renderUserData(d);
+  }, (err)=>{ showToast('Failed to load profile data','error'); });
 }
 
 function applyRemoteSettings(s){
@@ -741,27 +710,18 @@ function applyRemoteSettings(s){
   if(typeof s.referrerBonus === 'number') REWARDS.referrerBonus = s.referrerBonus;
   if(typeof s.referredBonus === 'number') REWARDS.referredBonus = s.referredBonus;
   if(typeof s.currency === 'string') CURRENCY_SYMBOL = CURRENCY_SYMBOLS[s.currency] || '৳';
-
   const label = document.getElementById('withdrawMinLabel');
   if(label) label.textContent = `Amount (Minimum ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
   const amountInput = document.getElementById('withdrawAmount');
   if(amountInput) amountInput.min = MIN_WITHDRAW;
 }
 
-function attachUserListener(uid){
-  unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
-    if(!doc.exists) return;
-    const d = doc.data();
-    if(d.banned === true){
-      showToast('Account suspended.','error');
-      auth.signOut();
-      return;
-    }
-    renderUserData(d);
-  });
-}
-
 function renderUserData(d){
+  if(d.banned === true && currentUser){
+    showToast('Your account has been suspended.','error');
+    auth.signOut();
+    return;
+  }
   const avatar = d.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(d.name||'U')}`;
   document.getElementById('dashAvatar').src = avatar;
   document.getElementById('dashName').textContent = d.name || 'User';
@@ -771,16 +731,15 @@ function renderUserData(d){
   document.getElementById('statWithdrawn').textContent = CURRENCY_SYMBOL + (d.totalWithdrawn||0).toFixed(2);
   document.getElementById('statPending').textContent = CURRENCY_SYMBOL + (d.pendingWithdraw||0).toFixed(2);
   document.getElementById('statReferral').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
-  document.getElementById('withdrawAvailBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
 
+  document.getElementById('withdrawAvailBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
   document.getElementById('profileAvatarBig').src = avatar;
   document.getElementById('profileName').value = d.name || '';
   document.getElementById('profilePhone').value = d.phone || '';
   document.getElementById('profileEmailReadonly').value = d.email || '';
 
-  const refCode = d.referralCode || genReferralCode(currentUser.uid);
-  document.getElementById('referralCodeDisplay').value = refCode;
-  document.getElementById('referralLinkDisplay').value = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
+  document.getElementById('referralCodeDisplay').value = d.referralCode || '';
+  document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
   document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
   const now = Date.now();
@@ -794,8 +753,10 @@ function renderUserData(d){
     timerEl.textContent = 'Ready!';
   } else {
     btn.disabled = true;
+    const remain = dayMs - diff;
+    timerEl.textContent = formatHM(remain);
     btn.textContent = 'Already Claimed';
-    timerEl.textContent = formatHM(dayMs - diff);
+    startBonusCountdown(dayMs - diff);
   }
 }
 
@@ -804,6 +765,22 @@ function formatHM(ms){
   const m = Math.floor((ms%3600000)/60000);
   return `${h}h ${m}m`;
 }
+let bonusCountdownInterval = null;
+function startBonusCountdown(remainMs){
+  if(bonusCountdownInterval) clearInterval(bonusCountdownInterval);
+  let remain = remainMs;
+  bonusCountdownInterval = setInterval(()=>{
+    remain -= 1000;
+    if(remain <= 0){
+      clearInterval(bonusCountdownInterval);
+      document.getElementById('dailyBonusBtn').disabled = false;
+      document.getElementById('dailyBonusBtn').textContent = 'Claim Daily Bonus';
+      document.getElementById('statBonusTimer').textContent = 'Ready!';
+      return;
+    }
+    document.getElementById('statBonusTimer').textContent = formatHM(remain);
+  }, 60000);
+}
 
 function goPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
@@ -811,310 +788,6 @@ function goPage(page){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
 }
 
-/* ================= APP INSTALL & 30-SECOND VERIFICATION ENGINE ================= */
-function attachTasksListener(){
-  unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
-    activeTasksMap = {};
-    snap.forEach(doc=> { activeTasksMap[doc.id] = { id: doc.id, ...doc.data() }; });
-    renderAllTasks();
-  });
-}
-
-function attachAppProgressListener(uid){
-  unsubProgress = db.collection('appInstallProgress').where('uid','==',uid).onSnapshot((snap)=>{
-    appProgressMap = {};
-    snap.forEach(doc=> { appProgressMap[doc.data().taskId] = doc.data(); });
-    renderAllTasks();
-  });
-}
-
-function renderAllTasks(){
-  const installContainer = document.getElementById('tasksGroup-appinstall');
-  const otherContainer = document.getElementById('tasksGroup-other');
-
-  const installTasks = [];
-  const otherTasks = [];
-
-  Object.values(activeTasksMap).forEach(t=>{
-    if(t.type === 'app-install') installTasks.push(t);
-    else if(t.type !== 'daily-bonus') otherTasks.push(t);
-  });
-
-  // Render App Install Tasks
-  if(installTasks.length === 0){
-    installContainer.innerHTML = '<div class="empty-row">No app install tasks currently available.</div>';
-  } else {
-    let html = '';
-    const today = getTodayStr();
-    installTasks.forEach(t=>{
-      const progress = appProgressMap[t.id];
-      const duration = t.durationDays || 1;
-      const currentDay = progress ? (progress.currentDay || 0) : 0;
-      const isCompleted = progress && progress.status === 'completed';
-      const checkedToday = progress && progress.lastCheckinDate === today;
-      const pct = Math.min(100, Math.round((currentDay / duration) * 100));
-
-      let chips = '';
-      for(let i=1; i<=Math.min(duration, 30); i++){
-        let cClass = 'day-chip';
-        if(i <= currentDay) cClass += ' done';
-        else if(i === currentDay + 1) cClass += ' active';
-        chips += `<span class="${cClass}">D${i}</span>`;
-      }
-
-      let btnHtml = '';
-      if(isCompleted){
-        btnHtml = `<button class="task-btn done" disabled>Task Completed (${CURRENCY_SYMBOL}${t.reward.toFixed(2)})</button>`;
-      } else if(checkedToday){
-        btnHtml = `<button class="task-btn pending" disabled>Day ${currentDay}/${duration} Done (Come Back Tomorrow)</button>`;
-      } else if(currentDay === 0){
-        btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${t.id}')">Install & Start Day 1</button>`;
-      } else {
-        btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${t.id}')">Open App / Check In (Day ${currentDay + 1}/${duration})</button>`;
-      }
-
-      const dailyBonusText = (t.dailyReward && t.dailyReward > 0) ? `+${CURRENCY_SYMBOL}${t.dailyReward.toFixed(2)}/day & ` : '';
-
-      html += `
-        <div class="card task-card">
-          <div class="task-header">
-            <div class="task-icon">📲</div>
-            <div class="task-info">
-              <div class="task-name">${escapeHtml(t.appName || t.title)}</div>
-              <div class="task-sub">${dailyBonusText}Final: ${CURRENCY_SYMBOL}${t.reward.toFixed(2)} (${duration} Days Streak)</div>
-            </div>
-          </div>
-          <div style="font-size:12px; color:var(--muted);">${escapeHtml(t.description || 'Open the app daily and stay active for at least 30 seconds.')}</div>
-          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
-          <div class="days-chips">${chips}</div>
-          ${btnHtml}
-        </div>
-      `;
-    });
-    installContainer.innerHTML = html;
-  }
-
-  // Render Other Simple Click/Social Tasks
-  if(otherTasks.length === 0){
-    otherContainer.innerHTML = '<div class="empty-row">No other tasks available.</div>';
-  } else {
-    let oHtml = '';
-    otherTasks.forEach(t=>{
-      oHtml += `
-        <div class="card task-card">
-          <div class="task-header">
-            <div class="task-icon">${t.type==='youtube'?'▶️':'⭐'}</div>
-            <div class="task-info">
-              <div class="task-name">${escapeHtml(t.title)}</div>
-              <div class="task-sub">Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}</div>
-            </div>
-            <button class="task-btn" onclick="handleSimpleTask('${t.id}')">Start Task</button>
-          </div>
-        </div>
-      `;
-    });
-    otherContainer.innerHTML = oHtml;
-  }
-}
-
-/* --- 30-Second Verification Execution --- */
-let activeVerifyTaskId = null;
-let verifyTimer = null;
-let secondsLeft = 30;
-let userLeftPrematurely = false;
-
-function startAppInstallCheckin(taskId){
-  const t = activeTasksMap[taskId];
-  if(!t || !currentUser) return;
-
-  activeVerifyTaskId = taskId;
-  secondsLeft = 30;
-  userLeftPrematurely = false;
-
-  document.getElementById('verifyModalTitle').textContent = `Checking In: ${t.appName || t.title}`;
-  document.getElementById('verifyCountdown').textContent = `${secondsLeft}s`;
-  const completeBtn = document.getElementById('verifyCompleteBtn');
-  completeBtn.disabled = true;
-  completeBtn.textContent = `Verifying (30s)...`;
-
-  openModal('appVerifyModal');
-
-  // Trigger app launch or fallback to Play Store
-  const targetLink = t.deepLink || t.playStoreLink || t.link;
-  if(targetLink){
-    window.open(targetLink, '_blank');
-  }
-
-  // Listen to tab visibility
-  document.addEventListener('visibilitychange', handleVisibilityChange);
-
-  // Start strict countdown
-  if(verifyTimer) clearInterval(verifyTimer);
-  verifyTimer = setInterval(()=>{
-    // If the user navigates away completely or minimizes browser without coming back
-    secondsLeft--;
-    document.getElementById('verifyCountdown').textContent = `${Math.max(0, secondsLeft)}s`;
-    completeBtn.textContent = `Verifying (${Math.max(0, secondsLeft)}s)...`;
-
-    if(secondsLeft <= 0){
-      clearInterval(verifyTimer);
-      verifyTimer = null;
-      completeBtn.disabled = false;
-      completeBtn.textContent = `Claim Check-in Reward`;
-      document.getElementById('verifyCountdown').textContent = 'Verified ✓';
-    }
-  }, 1000);
-}
-
-function handleVisibilityChange(){
-  // Informational handler - if required to pause on hide, we can pause the timer
-}
-
-function cancelAppVerification(){
-  if(verifyTimer) clearInterval(verifyTimer);
-  verifyTimer = null;
-  activeVerifyTaskId = null;
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
-  closeModal('appVerifyModal');
-  showToast('Check-in cancelled. You must stay for 30s to verify.','error');
-}
-
-async function submitVerifiedCheckin(){
-  if(!activeVerifyTaskId || !currentUser) return;
-  const taskId = activeVerifyTaskId;
-  const task = activeTasksMap[taskId];
-  if(!task) return;
-
-  showLoading(true);
-  try{
-    const today = getTodayStr();
-    const progressDocId = `${currentUser.uid}_${taskId}`;
-    const progressRef = db.collection('appInstallProgress').doc(progressDocId);
-    const userRef = db.collection('users').doc(currentUser.uid);
-
-    let earnedDaily = task.dailyReward || 0;
-    let earnedFinal = 0;
-    let newDayCount = 1;
-    let isFinished = false;
-
-    await db.runTransaction(async (tx)=>{
-      const pSnap = await tx.get(progressRef);
-      const duration = task.durationDays || 1;
-
-      if(pSnap.exists){
-        const pData = pSnap.data();
-        if(pData.lastCheckinDate === today){
-          throw new Error('ALREADY_CHECKED_IN');
-        }
-        if(pData.status === 'completed'){
-          throw new Error('TASK_ALREADY_COMPLETED');
-        }
-        newDayCount = (pData.currentDay || 0) + 1;
-      } else {
-        newDayCount = 1;
-      }
-
-      if(newDayCount >= duration){
-        isFinished = true;
-        earnedFinal = task.reward || 0;
-      }
-
-      const totalGain = earnedDaily + earnedFinal;
-
-      // Update progress record
-      tx.set(progressRef, {
-        uid: currentUser.uid,
-        taskId: taskId,
-        appName: task.appName || task.title,
-        durationDays: duration,
-        currentDay: newDayCount,
-        lastCheckinDate: today,
-        status: isFinished ? 'completed' : 'in_progress',
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
-
-      // Update user wallet balance if rewards given
-      if(totalGain > 0){
-        tx.update(userRef, {
-          balance: firebase.firestore.FieldValue.increment(totalGain),
-          totalEarnings: firebase.firestore.FieldValue.increment(totalGain)
-        });
-      }
-    });
-
-    // Record ledger transactions
-    if(earnedDaily > 0){
-      await addTransaction(currentUser.uid, `${task.appName || task.title} — Day ${newDayCount} Check-in`, earnedDaily, 'credit');
-    }
-    if(earnedFinal > 0){
-      await addTransaction(currentUser.uid, `${task.appName || task.title} — Streak Completed!`, earnedFinal, 'credit');
-      await addNotification(currentUser.uid, `🎉 You completed the ${task.durationDays}-day streak for ${task.appName || task.title} and received ${CURRENCY_SYMBOL}${earnedFinal.toFixed(2)}!`);
-    }
-
-    showToast(isFinished ? `🎉 Completed! Earned ${CURRENCY_SYMBOL}${(earnedDaily + earnedFinal).toFixed(2)}!` : `Day ${newDayCount} Checked in (+${CURRENCY_SYMBOL}${earnedDaily.toFixed(2)})!`, 'success');
-    closeModal('appVerifyModal');
-  } catch(err){
-    if(err.message === 'ALREADY_CHECKED_IN'){
-      showToast('You have already completed today\'s check-in.','info');
-    } else if(err.message === 'TASK_ALREADY_COMPLETED'){
-      showToast('You have already finished this task.','info');
-    } else {
-      showToast('Failed to record check-in. Please try again.','error');
-    }
-  }
-  showLoading(false);
-  activeVerifyTaskId = null;
-  document.removeEventListener('visibilitychange', handleVisibilityChange);
-}
-
-async function handleSimpleTask(taskId){
-  const t = activeTasksMap[taskId];
-  if(!t || !currentUser) return;
-  if(t.link) window.open(t.link, '_blank');
-  showToast('Opening task... Completing verification...','info');
-  await new Promise(r=>setTimeout(r, 6000));
-  try{
-    await db.runTransaction(async (tx)=>{
-      tx.update(db.collection('users').doc(currentUser.uid), {
-        balance: firebase.firestore.FieldValue.increment(t.reward),
-        totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
-      });
-    });
-    await addTransaction(currentUser.uid, t.title, t.reward, 'credit');
-    showToast(`+${CURRENCY_SYMBOL}${t.reward.toFixed(2)} credited!`,'success');
-  }catch(e){
-    showToast('Failed to credit task.','error');
-  }
-}
-
-/* ================= DAILY BONUS ================= */
-async function claimDailyCheckin(){
-  if(!currentUser) return;
-  showLoading(true);
-  try{
-    const ref = db.collection('users').doc(currentUser.uid);
-    await db.runTransaction(async (tx)=>{
-      const snap = await tx.get(ref);
-      const d = snap.data();
-      const now = Date.now();
-      const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
-      if(now - last < 24*60*60*1000){ throw new Error('ALREADY_CLAIMED'); }
-      tx.update(ref, {
-        balance: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
-        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
-        lastCheckin: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
-    await addTransaction(currentUser.uid, 'Daily check-in bonus', REWARDS.dailyCheckin, 'credit');
-    showToast(`+${CURRENCY_SYMBOL}${REWARDS.dailyCheckin.toFixed(2)} bonus claimed!`,'success');
-  }catch(err){
-    if(err.message === 'ALREADY_CLAIMED'){ showToast("Already claimed today's bonus.",'error'); }
-    else { showToast('Failed to claim bonus.','error'); }
-  }
-  showLoading(false);
-}
-
-/* ================= TRANSACTIONS & NOTIFICATIONS ================= */
 async function addTransaction(uid, label, amount, type){
   await db.collection('transactions').add({
     uid, label, amount, type,
@@ -1141,15 +814,16 @@ function attachNotifListener(uid){
         if(!n.read) unread++;
         const div = document.createElement('div');
         div.className = 'notif-item ' + (n.read?'':'unread');
-        div.onclick = ()=> db.collection('notifications').doc(doc.id).update({read:true});
+        div.onclick = ()=> markNotifRead(doc.id);
         div.innerHTML = `<div class="notif-dot" style="opacity:${n.read?0:1}"></div>
           <div><div class="notif-text">${escapeHtml(n.message)}</div>
           <div class="notif-time">${n.createdAt ? n.createdAt.toDate().toLocaleString() : 'just now'}</div></div>`;
         list.appendChild(div);
       });
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-    });
+    }, err=>{});
 }
+async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
 function openNotifications(){ openModal('notifModal'); }
 
 function attachHistoryListener(uid){
@@ -1175,7 +849,7 @@ function attachHistoryListener(uid){
       });
       recentEl.innerHTML = recentHtml;
       fullEl.innerHTML = fullHtml;
-    });
+    }, err=>{});
 }
 
 function attachWithdrawListener(uid){
@@ -1190,7 +864,7 @@ function attachWithdrawListener(uid){
           <span style="text-align:right;">${CURRENCY_SYMBOL}${w.amount.toFixed(2)}<br><span class="status-pill ${w.status}">${w.status}</span></span></div>`;
       });
       el.innerHTML = html;
-    });
+    }, err=>{});
 }
 
 function attachReferralListener(uid){
@@ -1202,13 +876,296 @@ function attachReferralListener(uid){
       let html = '';
       snap.forEach(doc=>{
         const r = doc.data();
-        html += `<div class="hist-row"><span>${escapeHtml(r.referredName||'New User')}<br><span style="color:var(--muted);font-size:11px;">${r.createdAt?r.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt plus">+${CURRENCY_SYMBOL}${r.referrerBonus.toFixed(2)}</span></div>`;
+        html += `<div class="hist-row"><span>${escapeHtml(r.referredName||'New user')}<br><span style="color:var(--muted);font-size:11px;">${r.createdAt?r.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt plus">+${CURRENCY_SYMBOL}${r.referrerBonus.toFixed(2)}</span></div>`;
       });
       el.innerHTML = html;
-    });
+    }, err=>{});
 }
 
-/* ================= WITHDRAWALS ================= */
+function escapeHtml(str){
+  const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML;
+}
+
+async function claimDailyCheckin(){
+  if(!currentUser) return;
+  showLoading(true);
+  try{
+    const ref = db.collection('users').doc(currentUser.uid);
+    await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(ref);
+      const d = snap.data();
+      const now = Date.now();
+      const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
+      if(now - last < 24*60*60*1000){ throw new Error('ALREADY_CLAIMED'); }
+      tx.update(ref, {
+        balance: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        lastCheckin: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await addTransaction(currentUser.uid, 'Daily check-in bonus', REWARDS.dailyCheckin, 'credit');
+    showToast(`+${CURRENCY_SYMBOL}${REWARDS.dailyCheckin.toFixed(2)} daily bonus claimed!`,'success');
+  }catch(err){
+    if(err.message === 'ALREADY_CLAIMED'){ showToast("You already claimed today's bonus.",'error'); }
+    else { showToast('Failed to claim bonus. Try again.','error'); }
+  }
+  showLoading(false);
+}
+
+/* =====================================================================================
+   TASK SYSTEM (UPDATES 2 & 3)
+===================================================================================== */
+const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
+
+function attachTasksListener(){
+  unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
+    taskCache = {};
+    snap.forEach(doc=>{ taskCache[doc.id] = doc.data(); });
+    renderAllTaskGroups();
+  }, err=>{
+    console.error(err);
+  });
+}
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+
+async function renderAllTaskGroups(){
+  if(!currentUser) return;
+  const groups = { video:[], social:[], appinstall:[], other:[] };
+  Object.entries(taskCache).forEach(([id,t])=>{
+    if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
+    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
+    else if(t.type === 'app-install') groups.appinstall.push([id,t]);
+    else groups.other.push([id,t]);
+  });
+
+  await renderAppInstallTasks(groups.appinstall);
+  await renderGenericTaskGroup('tasksGroup-video', groups.video, 'No video tasks available right now.');
+  await renderGenericTaskGroup('tasksGroup-social', groups.social, 'No social tasks available right now.');
+  const otherTitle = document.getElementById('tasksGroupOtherTitle');
+  if(groups.other.length){ otherTitle.classList.remove('hidden'); await renderGenericTaskGroup('tasksGroup-other', groups.other, ''); }
+  else { otherTitle.classList.add('hidden'); document.getElementById('tasksGroup-other').innerHTML = ''; }
+}
+
+async function renderAppInstallTasks(list){
+  const container = document.getElementById('tasksGroup-appinstall');
+  if(!container) return;
+  if(list.length === 0){ container.innerHTML = '<div class="empty-row">No app install tasks right now.</div>'; return; }
+
+  const cardsHtml = await Promise.all(list.map(async ([id, t]) => {
+    const totalDays = t.durationDays || 14;
+    const progDoc = await db.collection('appInstallProgress').doc(`${currentUser.uid}_${id}`).get();
+    const prog = progDoc.exists ? progDoc.data() : null;
+
+    const streak = prog ? (prog.streakDays || 0) : 0;
+    const isCompleted = prog && (prog.status === 'completed' || streak >= totalDays);
+    const checkedInToday = prog && prog.lastCheckinDate === todayStr();
+    const percent = Math.min(100, Math.round((streak / totalDays) * 100));
+
+    let btnHtml = '';
+    let subInfo = `Day ${streak}/${totalDays} · Total Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
+
+    if(isCompleted){
+      btnHtml = `<button class="task-btn done" disabled>Completed</button>`;
+      subInfo = `Completed! ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} earned`;
+    } else if(checkedInToday){
+      btnHtml = `<button class="task-btn pending" disabled>Checked In Today</button>`;
+      subInfo = `Day ${streak}/${totalDays} complete. Come back tomorrow!`;
+    } else {
+      const nextDay = streak + 1;
+      btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${id}')">Open App / Day ${nextDay}</button>`;
+    }
+
+    return `
+      <div class="card task-card" id="taskcard-${id}" style="display:block;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="task-icon">📲</div>
+          <div class="task-info">
+            <div class="task-name">${escapeHtml(t.appName || t.title)}</div>
+            <div class="task-sub">${escapeHtml(t.description || subInfo)}</div>
+          </div>
+          ${btnHtml}
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
+      </div>
+    `;
+  }));
+
+  container.innerHTML = cardsHtml.join('');
+}
+
+async function renderGenericTaskGroup(containerId, list, emptyMsg){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  if(list.length === 0){ container.innerHTML = emptyMsg ? `<div class="empty-row">${emptyMsg}</div>` : ''; return; }
+
+  const cardsHtml = await Promise.all(list.map(async ([id, t]) => {
+    const icon = TASK_ICONS[t.type] || '⭐';
+    return `<div class="card task-card" id="taskcard-${id}">
+      <div class="task-icon">${icon}</div>
+      <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || `Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`}</div></div>
+      <button class="task-btn" onclick="handleGenericTaskClick('${id}')">Start Task</button>
+    </div>`;
+  }));
+
+  container.innerHTML = cardsHtml.join('');
+}
+
+/* UPDATE 3: STRICT 30-SECOND VERIFICATION SYSTEM */
+let activeVerification = null;
+
+async function startAppInstallCheckin(taskId){
+  const t = taskCache[taskId];
+  if(!t || !currentUser) return;
+
+  const progRef = db.collection('appInstallProgress').doc(`${currentUser.uid}_${taskId}`);
+  const snap = await progRef.get();
+  const prog = snap.exists ? snap.data() : null;
+  const today = todayStr();
+
+  if(prog && (prog.status === 'completed' || prog.lastCheckinDate === today)){
+    showToast('Task already checked in today or completed.','info');
+    return;
+  }
+
+  // Open App Deep Link or fallback to Play Store
+  const targetUrl = t.deepLink || t.playStoreLink || t.link || 'https://play.google.com';
+  window.open(targetUrl, '_blank');
+
+  const card = document.getElementById(`taskcard-${taskId}`);
+  const btn = card ? card.querySelector('.task-btn') : null;
+  if(btn) btn.disabled = true;
+
+  showToast('Verification started: Stay active on this page for 30s to verify check-in.','info');
+
+  let remaining = 30;
+  if(activeVerification) clearInterval(activeVerification);
+
+  activeVerification = setInterval(async () => {
+    // If user minimizes/switches tab, countdown pauses
+    if(document.hidden){
+      if(btn) btn.textContent = 'Paused (Tab Hidden)';
+      return;
+    }
+
+    remaining--;
+    if(btn) btn.textContent = `Verifying... ${remaining}s`;
+
+    if(remaining <= 0){
+      clearInterval(activeVerification);
+      activeVerification = null;
+      await finishAppInstallCheckin(taskId, t);
+    }
+  }, 1000);
+}
+
+async function finishAppInstallCheckin(taskId, t){
+  showLoading(true);
+  const totalDays = t.durationDays || 14;
+  const dailyReward = Number(t.dailyReward) || 0;
+  const finalReward = Number(t.reward) || 0;
+  const docId = `${currentUser.uid}_${taskId}`;
+  const today = todayStr();
+
+  try {
+    let completedFinal = false;
+    let earnedToday = 0;
+    let newStreak = 1;
+
+    await db.runTransaction(async (tx) => {
+      const progRef = db.collection('appInstallProgress').doc(docId);
+      const userRef = db.collection('users').doc(currentUser.uid);
+
+      const pSnap = await tx.get(progRef);
+      const pData = pSnap.exists ? pSnap.data() : null;
+
+      if(pData && (pData.status === 'completed' || pData.lastCheckinDate === today)){
+        throw new Error('ALREADY_DONE_TODAY');
+      }
+
+      newStreak = pData ? (pData.streakDays + 1) : 1;
+      completedFinal = newStreak >= totalDays;
+
+      earnedToday = dailyReward;
+      if(completedFinal){
+        earnedToday += finalReward;
+      }
+
+      tx.set(progRef, {
+        uid: currentUser.uid,
+        taskId: taskId,
+        streakDays: newStreak,
+        lastCheckinDate: today,
+        status: completedFinal ? 'completed' : 'in-progress',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      if(earnedToday > 0){
+        tx.update(userRef, {
+          balance: firebase.firestore.FieldValue.increment(earnedToday),
+          totalEarnings: firebase.firestore.FieldValue.increment(earnedToday)
+        });
+      }
+    });
+
+    if(earnedToday > 0){
+      await addTransaction(currentUser.uid, `App Check-in: ${t.appName || t.title} (Day ${newStreak})`, earnedToday, 'credit');
+    }
+
+    if(completedFinal){
+      showToast(`🎉 Full ${totalDays}-Day Check-in completed! +${CURRENCY_SYMBOL}${earnedToday.toFixed(2)} credited.`,'success');
+    } else {
+      showToast(`✅ Day ${newStreak}/${totalDays} verified! +${CURRENCY_SYMBOL}${earnedToday.toFixed(2)} credited.`,'success');
+    }
+
+    renderAllTaskGroups();
+  } catch(err){
+    if(err.message === 'ALREADY_DONE_TODAY'){
+      showToast('You have already verified your check-in today.','info');
+    } else {
+      console.error(err);
+      showToast('Verification failed. Try again.','error');
+    }
+  }
+  showLoading(false);
+}
+
+async function handleGenericTaskClick(taskId){
+  const t = taskCache[taskId];
+  if(!t) return;
+  if(t.link) window.open(t.link, '_blank');
+
+  const reward = Number(t.reward) || 0;
+  showLoading(true);
+  try{
+    await db.collection('users').doc(currentUser.uid).update({
+      balance: firebase.firestore.FieldValue.increment(reward),
+      totalEarnings: firebase.firestore.FieldValue.increment(reward)
+    });
+    await addTransaction(currentUser.uid, t.title, reward, 'credit');
+    showToast(`Task complete! +${CURRENCY_SYMBOL}${reward.toFixed(2)} added.`,'success');
+  }catch(e){
+    showToast('Failed to complete task','error');
+  }
+  showLoading(false);
+}
+
+/* REFERRAL COPY & SHARE */
+function copyReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success'))
+    .catch(()=> showToast('Could not copy link.','error'));
+}
+function shareReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  if(navigator.share){
+    navigator.share({ title:'Join OPULIX', text:'Join OPULIX and start earning!', url: val }).catch(()=>{});
+  } else {
+    copyReferralLink();
+  }
+}
+
+/* WITHDRAW SYSTEM */
 async function submitWithdraw(e){
   e.preventDefault();
   const errEl = document.getElementById('withdrawError');
@@ -1217,8 +1174,8 @@ async function submitWithdraw(e){
   const account = document.getElementById('withdrawAccount').value.trim();
   const amount = parseFloat(document.getElementById('withdrawAmount').value);
 
-  if(!method){ errEl.textContent='Please select a method.'; errEl.style.display='block'; return false; }
-  if(!account){ errEl.textContent='Please enter account number.'; errEl.style.display='block'; return false; }
+  if(!method){ errEl.textContent='Please select a withdrawal method.'; errEl.style.display='block'; return false; }
+  if(!account){ errEl.textContent='Please enter your account details.'; errEl.style.display='block'; return false; }
   if(isNaN(amount) || amount < MIN_WITHDRAW){ errEl.textContent=`Minimum withdrawal is ${CURRENCY_SYMBOL}${MIN_WITHDRAW}.`; errEl.style.display='block'; return false; }
 
   showLoading(true);
@@ -1246,30 +1203,19 @@ async function submitWithdraw(e){
     document.getElementById('withdrawAmount').value='';
   }catch(err){
     if(err.message === 'INSUFFICIENT_BALANCE'){ errEl.textContent = 'Insufficient balance.'; errEl.style.display='block'; }
-    else { showToast('Failed to submit request.','error'); }
+    else { showToast('Failed to submit request. Try again.','error'); }
   }
   showLoading(false);
   return false;
 }
 
-/* ================= PROFILE & REFERRALS ================= */
-function copyReferralLink(){
-  const val = document.getElementById('referralLinkDisplay').value;
-  navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success')).catch(()=> showToast('Could not copy link.','error'));
-}
-function shareReferralLink(){
-  const val = document.getElementById('referralLinkDisplay').value;
-  if(navigator.share){
-    navigator.share({ title:'Join OPULIX', text:'Earn money on OPULIX!', url: val }).catch(()=>{});
-  } else {
-    copyReferralLink();
-  }
-}
+/* PROFILE EDIT & UPLOAD */
 async function saveProfile(e){
   e.preventDefault();
   if(!currentUser) return false;
   const name = document.getElementById('profileName').value.trim();
   const phone = document.getElementById('profilePhone').value.trim();
+  if(name.length < 2){ showToast('Please enter a valid name.','error'); return false; }
   showLoading(true);
   try{
     await db.collection('users').doc(currentUser.uid).update({ name, phone });
@@ -1278,17 +1224,20 @@ async function saveProfile(e){
   showLoading(false);
   return false;
 }
+
 async function handleAvatarUpload(e){
   const file = e.target.files[0];
   if(!file || !currentUser) return;
+  if(!file.type.startsWith('image/')){ showToast('Please select an image file.','error'); return; }
+  if(file.size > 5*1024*1024){ showToast('Image must be under 5MB.','error'); return; }
   showLoading(true);
   try{
     const storageRef = storage.ref().child(`avatars/${currentUser.uid}/${Date.now()}_${file.name}`);
     await storageRef.put(file);
     const url = await storageRef.getDownloadURL();
     await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
-    showToast('Profile picture updated!','success');
-  }catch(err){ showToast('Failed to upload picture.','error'); }
+    showToast('Profile photo updated!','success');
+  }catch(err){ showToast('Failed to upload photo.','error'); }
   showLoading(false);
 }
 </script>
