@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>OPULIX — Earn Online</title>
 
-<!-- ================= FIREBASE SDKs (compat, easiest for vanilla JS) ================= -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -58,17 +58,31 @@ input,select{font-family:inherit;}
 .section-title{font-size:15px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
 .section-title .link{font-size:12px; color:var(--accent); font-weight:600;}
 
-/* ---------- Task cards ---------- */
-.task-card{display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:10px;}
+/* ---------- Task cards & App Install Cards ---------- */
+.task-card{display:flex; flex-direction:column; gap:12px; padding:14px; margin-bottom:12px;}
+.task-header{display:flex; align-items:center; gap:12px;}
 .task-icon{width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; background:var(--card2); flex-shrink:0;}
 .task-info{flex:1; min-width:0;}
 .task-name{font-weight:700; font-size:14px;}
 .task-sub{color:var(--muted); font-size:12px; margin-top:2px;}
 .empty-row{color:var(--muted); font-size:13px; padding:12px 4px;}
-.task-btn{padding:8px 14px; border-radius:10px; border:none; font-weight:700; font-size:12px; background:var(--accent); color:#fff; white-space:nowrap;}
-.task-btn:disabled{background:var(--card2); color:var(--muted);}
+.task-btn{padding:9px 14px; border-radius:10px; border:none; font-weight:700; font-size:12px; background:var(--accent); color:#fff; white-space:nowrap; text-align:center;}
+.task-btn:disabled{background:var(--card2); color:var(--muted); cursor:not-allowed;}
 .task-btn.pending{background:var(--warn); color:#1a1200;}
 .task-btn.done{background:var(--ok); color:#00281f;}
+
+/* App Install Specific Progress */
+.progress-bar-wrap{width:100%; height:8px; background:var(--card2); border-radius:4px; overflow:hidden; margin-top:6px;}
+.progress-bar-fill{height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:4px; transition:width .3s ease;}
+.days-chips{display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;}
+.day-chip{padding:3px 7px; font-size:10px; font-weight:700; border-radius:6px; background:var(--card2); color:var(--muted);}
+.day-chip.active{background:var(--accent); color:#fff;}
+.day-chip.done{background:var(--ok); color:#00281f;}
+
+/* ---------- Verification Modal ---------- */
+.verify-modal-box{text-align:center; padding:24px 20px;}
+.countdown-ring{font-size:42px; font-weight:900; color:var(--accent2); margin:18px 0;}
+.verify-instructions{font-size:13px; color:var(--muted); line-height:1.5; margin-bottom:18px;}
 
 /* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
@@ -115,23 +129,20 @@ input,select{font-family:inherit;}
 .spinner{width:42px; height:42px; border-radius:50%; border:4px solid rgba(255,255,255,.15); border-top-color:var(--accent); animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ---------- Offline banner ---------- */
 #offlineBanner{position:fixed; top:0; left:0; right:0; background:var(--danger); color:#fff; text-align:center; font-size:12px; font-weight:700; padding:6px; z-index:1000;}
 
 /* ---------- Modal ---------- */
-.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:900; display:flex; align-items:flex-end; justify-content:center;}
-.modal-box{background:var(--card); width:100%; max-width:480px; border-radius:20px 20px 0 0; padding:20px; max-height:85vh; overflow-y:auto;}
+.modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:900; display:flex; align-items:center; justify-content:center; padding:16px;}
+.modal-box{background:var(--card); width:100%; max-width:440px; border-radius:20px; padding:20px; max-height:88vh; overflow-y:auto;}
 .modal-title{font-size:16px; font-weight:800; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;}
 .modal-close{background:var(--card2); border:none; color:var(--text); width:28px; height:28px; border-radius:50%;}
 
-/* ---------- Notification item ---------- */
 .notif-item{display:flex; gap:10px; padding:12px; border-radius:12px; margin-bottom:8px; background:var(--card2);}
 .notif-item.unread{border-left:3px solid var(--accent);}
 .notif-dot{width:8px; height:8px; border-radius:50%; background:var(--accent); margin-top:5px; flex-shrink:0;}
 .notif-text{font-size:13px;}
 .notif-time{font-size:11px; color:var(--muted); margin-top:3px;}
 
-/* ---------- History row ---------- */
 .hist-row{display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px;}
 .hist-row:last-child{border-bottom:none;}
 .hist-amt.plus{color:var(--ok); font-weight:700;}
@@ -140,8 +151,6 @@ input,select{font-family:inherit;}
 .status-pill.pending{background:rgba(255,184,77,.15); color:var(--warn);}
 .status-pill.approved{background:rgba(34,211,165,.15); color:var(--ok);}
 .status-pill.rejected{background:rgba(255,91,107,.15); color:var(--danger);}
-
-.ad-banner{width:100%; min-height:60px; background:var(--card2); border:1px dashed rgba(255,255,255,.15); border-radius:12px; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:12px; margin-bottom:14px;}
 </style>
 </head>
 <body>
@@ -150,7 +159,7 @@ input,select{font-family:inherit;}
 <div id="toastWrap"></div>
 <div id="loadingOverlay" class="hidden"><div class="spinner"></div></div>
 
-<!-- ============================================================= AUTH SCREEN ============================================================= -->
+<!-- ================= AUTH SCREEN ================= -->
 <div id="authScreen">
   <div class="auth-box">
     <div class="auth-logo">OPUL<span>IX</span></div>
@@ -212,7 +221,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ============================================================= APP SHELL (shown after login) ============================================================= -->
+<!-- ================= APP SHELL ================= -->
 <div id="appShell" class="hidden">
 
   <div class="topbar">
@@ -225,7 +234,7 @@ input,select{font-family:inherit;}
 
   <div class="container">
 
-    <!-- ---------------- DASHBOARD PAGE ---------------- -->
+    <!-- DASHBOARD PAGE -->
     <div id="page-dashboard" class="page">
       <div class="card profile-card">
         <img id="dashAvatar" class="avatar" src="https://api.dicebear.com/7.x/initials/svg?seed=U" />
@@ -234,8 +243,6 @@ input,select{font-family:inherit;}
           <div class="profile-email" id="dashEmail">—</div>
         </div>
       </div>
-
-      <div class="ad-banner" id="adBannerSlot" data-ad-unit-id="">Loading banner ad configuration...</div>
 
       <div class="card">
         <div class="balance-grid">
@@ -253,22 +260,16 @@ input,select{font-family:inherit;}
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
 
-    <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
+    <!-- TASKS PAGE -->
     <div id="page-tasks" class="page hidden">
-      <div class="section-title">Video Tasks</div>
-      <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
+      <div class="section-title">App Install & Check-in Tasks</div>
+      <div id="tasksGroup-appinstall"><div class="empty-row">Loading install tasks...</div></div>
 
-      <div class="section-title">Social Tasks</div>
-      <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
-
-      <div class="section-title">App Install</div>
-      <div id="tasksGroup-appinstall"><div class="empty-row">Loading tasks...</div></div>
-
-      <div class="section-title hidden" id="tasksGroupOtherTitle">Other Tasks</div>
-      <div id="tasksGroup-other"></div>
+      <div class="section-title">Other Tasks</div>
+      <div id="tasksGroup-other"><div class="empty-row">Loading other tasks...</div></div>
     </div>
 
-    <!-- ---------------- REFERRAL PAGE ---------------- -->
+    <!-- REFERRAL PAGE -->
     <div id="page-referral" class="page hidden">
       <div class="card">
         <div class="section-title" style="margin-top:0;">Your Referral Code</div>
@@ -287,7 +288,7 @@ input,select{font-family:inherit;}
       <div class="card" id="referralHistoryList"><div class="hist-row"><span>No referrals yet</span></div></div>
     </div>
 
-    <!-- ---------------- WITHDRAW PAGE ---------------- -->
+    <!-- WITHDRAW PAGE -->
     <div id="page-withdraw" class="page hidden">
       <div class="card">
         <div class="stat-label">Available Balance</div>
@@ -301,6 +302,7 @@ input,select{font-family:inherit;}
             <option value="">Select method</option>
             <option value="bKash">bKash</option>
             <option value="Nagad">Nagad</option>
+            <option value="Rocket">Rocket</option>
             <option value="Bank">Bank Transfer</option>
           </select>
         </div>
@@ -319,13 +321,13 @@ input,select{font-family:inherit;}
       <div class="card" id="withdrawHistoryList"><div class="hist-row"><span>No withdrawals yet</span></div></div>
     </div>
 
-    <!-- ---------------- HISTORY PAGE ---------------- -->
+    <!-- HISTORY PAGE -->
     <div id="page-history" class="page hidden">
       <div class="section-title" style="margin-top:0;">Transaction History</div>
       <div class="card" id="fullHistoryList"><div class="hist-row"><span>No transactions yet</span></div></div>
     </div>
 
-    <!-- ---------------- PROFILE PAGE ---------------- -->
+    <!-- PROFILE PAGE -->
     <div id="page-profile" class="page hidden">
       <div class="card" style="text-align:center;">
         <img id="profileAvatarBig" class="avatar" style="width:84px;height:84px;margin-bottom:10px;" src="https://api.dicebear.com/7.x/initials/svg?seed=U" />
@@ -354,7 +356,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ---------------- MODALS ---------------- -->
+<!-- ================= MODALS ================= -->
 <div id="forgotModal" class="modal-overlay hidden">
   <div class="modal-box">
     <div class="modal-title">Reset Password <button class="modal-close" onclick="closeModal('forgotModal')">✕</button></div>
@@ -372,28 +374,21 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- Interstitial ad slot — shown briefly between actions when enabled from the admin panel.
-     No real ad network is wired in by default; this renders the configured ad unit id
-     so you can confirm the admin → user pipeline works, and is the drop-in point for a
-     real interstitial SDK call (see AD_CONFIG.interstitialAdUnitId in the script). -->
-<div id="interstitialModal" class="modal-overlay hidden">
-  <div class="modal-box" style="text-align:center;">
-    <div class="modal-title" style="justify-content:center;">Advertisement</div>
-    <div style="background:var(--card2); border:1px dashed rgba(255,255,255,.15); border-radius:12px; padding:40px 16px; margin-bottom:14px;">
-      <div style="color:var(--muted); font-size:12px;">Interstitial Ad Slot</div>
-      <div style="font-size:13px; margin-top:6px;" id="interstitialAdUnitLabel">—</div>
+<!-- 30-Second App Verification Modal -->
+<div id="appVerifyModal" class="modal-overlay hidden">
+  <div class="modal-box verify-modal-box">
+    <div class="modal-title" style="margin-bottom:0;"><span id="verifyModalTitle">App Verification</span><button class="modal-close" onclick="cancelAppVerification()">✕</button></div>
+    <div class="countdown-ring" id="verifyCountdown">30s</div>
+    <div class="verify-instructions" id="verifyInstructions">
+      Keep this screen active and open the app for at least 30 seconds to verify your daily check-in. If you cancel or leave, progress will not be counted.
     </div>
-    <div style="font-size:13px; color:var(--muted);">Closing in <b id="interstitialCountdown">3</b>s</div>
+    <button class="btn" id="verifyCompleteBtn" disabled onclick="submitVerifiedCheckin()">Verifying (30s)...</button>
+    <button class="btn secondary" onclick="cancelAppVerification()" style="margin-top:8px;">Cancel</button>
   </div>
 </div>
 
 <script>
-/* =====================================================================================
-   OPULIX — FIREBASE CONFIGURATION
-   >>> REPLACE the values below with YOUR Firebase project config <<<
-   Firebase Console → Project Settings → General → Your apps → SDK setup and configuration
-===================================================================================== */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+/* ================= FIREBASE INITIALIZATION ================= */
 const firebaseConfig = {
   apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
   authDomain: "opulix-app.firebaseapp.com",
@@ -409,53 +404,34 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-/* =====================================================================================
-   AD NETWORK CONFIGURATION
-   >>> Paste your ad network IDs here (e.g. AdSense/AdMob-for-web, Monetag, Adsterra, etc.)
-   All of this is normally set from the admin panel's Ads Manager instead of edited here —
-   these are just the defaults used before that config loads, or if it's never set.
-   For rewarded/interstitial ads to show a REAL ad (not the built-in simulation/placeholder),
-   define window.OPULIX_showRewardedAd(adUnitId) and/or window.OPULIX_showInterstitialAd(adUnitId)
-   using your ad network's actual SDK — see the AD SDK INTEGRATION POINT comments below.
-===================================================================================== */
-const AD_CONFIG = {
-  bannerAdUnitId: "PASTE_BANNER_AD_UNIT_ID_HERE",
-  rewardedAdUnitId: "PASTE_REWARDED_AD_UNIT_ID_HERE",
-  interstitialAdUnitId: "PASTE_INTERSTITIAL_AD_UNIT_ID_HERE",
-  bannerCode: "", // raw HTML/script embed snippet from your ad network, set via the admin panel
-  bannerEnabled: true,
-  rewardedEnabled: true,
-  interstitialEnabled: true
-};
-
-/* =====================================================================================
-   APP CONSTANTS
-===================================================================================== */
+/* ================= APP STATE & CONSTANTS ================= */
 let REWARDS = {
-  videoTask: 2.00,
-  youtubeTask: 1.50,
   dailyCheckin: 1.00,
-  socialTask: 3.00,
-  appInstall: 10.00,
   referrerBonus: 5.00,
   referredBonus: 2.00
 };
 const CURRENCY_SYMBOLS = { BDT:'৳', USD:'$', INR:'₹' };
-let CURRENCY_SYMBOL = '৳'; // overwritten from settings/global.currency if the admin changes it
-const YOUTUBE_WATCH_SECONDS = 30;        // must watch this long before claim unlocks (per YouTube-type task)
-let MIN_WITHDRAW = 100;                  // overridden at runtime by settings/global if present
-
+let CURRENCY_SYMBOL = '৳';
+let MIN_WITHDRAW = 100;
 let currentUser = null;
-let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
+let activeTasksMap = {};
+let appProgressMap = {};
 
-// Pull admin-configured settings/ads on page load too (not just after login), so that
-// signup-time referral bonuses already reflect the latest admin-set amounts.
+let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null, unsubProgress = null;
+
+// Persistent URL Referral Code Capture before auth
+(function captureReferralParam(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const refCode = urlParams.get('ref');
+  if(refCode){
+    localStorage.setItem('opulix_pending_ref', refCode.trim().toUpperCase());
+  }
+})();
+
+// Remote Settings Load
 db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
-db.collection('ads').doc('config').get().then(a=>{ if(a.exists) applyRemoteAdsConfig(a.data()); }).catch(()=>{});
 
-/* =====================================================================================
-   UI HELPERS: toast, spinner, offline
-===================================================================================== */
+/* ================= UI UTILITIES ================= */
 function showToast(msg, type='info'){
   const wrap = document.getElementById('toastWrap');
   const t = document.createElement('div');
@@ -469,26 +445,107 @@ function showLoading(show){
 }
 function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
 function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function escapeHtml(str){ const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML; }
+function getTodayStr(){ return new Date().toISOString().slice(0,10); }
 
 window.addEventListener('online', ()=>{ document.getElementById('offlineBanner').classList.add('hidden'); showToast('Back online','success'); });
 window.addEventListener('offline', ()=>{ document.getElementById('offlineBanner').classList.remove('hidden'); showToast('You are offline','error'); });
 if(!navigator.onLine){ document.getElementById('offlineBanner').classList.remove('hidden'); }
 
-/* =====================================================================================
-   AUTH TAB SWITCHING
-===================================================================================== */
 function switchAuthTab(tab){
   document.getElementById('tabLoginBtn').classList.toggle('active', tab==='login');
   document.getElementById('tabSignupBtn').classList.toggle('active', tab==='signup');
   document.getElementById('loginForm').classList.toggle('hidden', tab!=='login');
   document.getElementById('signupForm').classList.toggle('hidden', tab!=='signup');
+  const pending = localStorage.getItem('opulix_pending_ref');
+  if(tab === 'signup' && pending){
+    const refInput = document.getElementById('signupReferral');
+    if(refInput && !refInput.value) refInput.value = pending;
+  }
 }
 
-/* =====================================================================================
-   AUTH: SIGNUP / LOGIN / GOOGLE / FORGOT / LOGOUT
-===================================================================================== */
+/* ================= ROBUST REFERRAL & AUTH LOGIC ================= */
 function genReferralCode(uid){
   return 'OPX' + uid.substring(0,6).toUpperCase();
+}
+
+async function processReferralConnection(newUid, newUserName, manualRefCode = null){
+  try{
+    const userRef = db.collection('users').doc(newUid);
+    const userSnap = await userRef.get();
+    if(!userSnap.exists) return;
+    const userData = userSnap.data();
+
+    // Prevent duplicate referral connection if user already linked
+    if(userData.referredBy) return;
+
+    let targetCode = (manualRefCode || localStorage.getItem('opulix_pending_ref') || '').trim().toUpperCase();
+    if(!targetCode) return;
+
+    // Prevent self-referral
+    if(userData.referralCode === targetCode) {
+      localStorage.removeItem('opulix_pending_ref');
+      return;
+    }
+
+    const q = await db.collection('users').where('referralCode', '==', targetCode).limit(1).get();
+    if(q.empty) {
+      localStorage.removeItem('opulix_pending_ref');
+      return;
+    }
+
+    const referrerDoc = q.docs[0];
+    const referrerUid = referrerDoc.id;
+
+    if(referrerUid === newUid) {
+      localStorage.removeItem('opulix_pending_ref');
+      return;
+    }
+
+    // Execute atomic referral assignment and reward disbursement
+    await db.runTransaction(async (tx)=>{
+      const rRef = db.collection('users').doc(referrerUid);
+      const uRef = db.collection('users').doc(newUid);
+
+      const rSnap = await tx.get(rRef);
+      const uSnap = await tx.get(uRef);
+
+      if(!rSnap.exists || !uSnap.exists) return;
+      if(uSnap.data().referredBy) return; // already connected
+
+      // Credit referrer
+      tx.update(rRef, {
+        balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
+        referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
+      });
+
+      // Credit referred user
+      tx.update(uRef, {
+        referredBy: referrerUid,
+        balance: firebase.firestore.FieldValue.increment(REWARDS.referredBonus),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referredBonus)
+      });
+
+      // Add to referrals tracking collection
+      const refRecordRef = db.collection('referrals').doc();
+      tx.set(refRecordRef, {
+        referrerUid: referrerUid,
+        referredUid: newUid,
+        referredName: newUserName || userData.name || 'New Member',
+        referrerBonus: REWARDS.referrerBonus,
+        referredBonus: REWARDS.referredBonus,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+
+    await addTransaction(referrerUid, `Referral bonus (${newUserName})`, REWARDS.referrerBonus, 'credit');
+    await addTransaction(newUid, 'Welcome referral bonus', REWARDS.referredBonus, 'credit');
+    await addNotification(referrerUid, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for inviting ${newUserName}!`);
+    localStorage.removeItem('opulix_pending_ref');
+  } catch(err){
+    console.error('Referral connection error:', err);
+  }
 }
 
 async function handleSignup(e){
@@ -511,49 +568,17 @@ async function handleSignup(e){
     const uid = cred.user.uid;
     const myRefCode = genReferralCode(uid);
 
-    let referredBy = null;
-    if(refCodeInput){
-      const q = await db.collection('users').where('referralCode','==', refCodeInput).limit(1).get();
-      if(!q.empty){ referredBy = q.docs[0].id; }
-    }
-
     await db.collection('users').doc(uid).set({
       name, email, phone,
       photoURL: '',
       balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
       referralCode: myRefCode,
-      referredBy: referredBy || null,
+      referredBy: null,
       lastCheckin: null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    // Credit referral bonuses (one-time, both sides) — see security note in setup guide
-    if(referredBy){
-      const referrerRef = db.collection('users').doc(referredBy);
-      const newUserRef = db.collection('users').doc(uid);
-      await db.runTransaction(async (tx)=>{
-        const referrerSnap = await tx.get(referrerRef);
-        if(!referrerSnap.exists) return;
-        tx.update(referrerRef, {
-          balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
-          totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
-          referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
-        });
-        tx.update(newUserRef, {
-          balance: firebase.firestore.FieldValue.increment(REWARDS.referredBonus),
-          totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referredBonus)
-        });
-      });
-      await db.collection('referrals').add({
-        referrerUid: referredBy, referredUid: uid, referredName: name,
-        referrerBonus: REWARDS.referrerBonus, referredBonus: REWARDS.referredBonus,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      await addNotification(referredBy, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for referring ${name}!`);
-      await addTransaction(referredBy, 'Referral bonus', REWARDS.referrerBonus, 'credit');
-      await addTransaction(uid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
-    }
-
+    await processReferralConnection(uid, name, refCodeInput);
     showToast('Account created successfully!','success');
   }catch(err){
     errEl.textContent = friendlyAuthError(err);
@@ -591,7 +616,9 @@ async function handleGoogleLogin(){
     const uid = result.user.uid;
     const docRef = db.collection('users').doc(uid);
     const snap = await docRef.get();
+    let isNew = false;
     if(!snap.exists){
+      isNew = true;
       await docRef.set({
         name: result.user.displayName || 'User',
         email: result.user.email,
@@ -603,7 +630,10 @@ async function handleGoogleLogin(){
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
     }
-    showToast('Logged in with Google','success');
+    if(isNew){
+      await processReferralConnection(uid, result.user.displayName || 'Google User');
+    }
+    showToast('Signed in successfully','success');
   }catch(err){
     showToast(friendlyAuthError(err),'error');
   }
@@ -617,7 +647,7 @@ async function handleForgotPassword(e){
   showLoading(true);
   try{
     await auth.sendPasswordResetEmail(email);
-    showToast('Password reset email sent!','success');
+    showToast('Password reset link sent!','success');
     closeModal('forgotModal');
   }catch(err){
     showToast(friendlyAuthError(err),'error');
@@ -641,17 +671,14 @@ function friendlyAuthError(err){
     'auth/wrong-password':'Incorrect password.',
     'auth/invalid-credential':'Incorrect email or password.',
     'auth/too-many-requests':'Too many attempts. Please try again later.',
-    'auth/popup-closed-by-user':'Google sign-in was cancelled.'
+    'auth/popup-closed-by-user':'Sign-in was cancelled.'
   };
-  return map[err.code] || (err.message || 'Something went wrong. Please try again.');
+  return map[err.code] || (err.message || 'Something went wrong.');
 }
 
-/* =====================================================================================
-   AUTH STATE — REDIRECT PROTECTION
-===================================================================================== */
+/* ================= AUTH STATE & REALTIME DATA ================= */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
-    // Maintenance mode + ban check happen before the app shell is shown
     showLoading(true);
     try{
       const settingsSnap = await db.collection('settings').doc('global').get();
@@ -660,42 +687,41 @@ auth.onAuthStateChanged(async (user)=>{
         applyRemoteSettings(s);
         if(s.maintenanceMode === true){
           showLoading(false);
-          showToast('OPULIX is under maintenance. Please check back soon.','info');
+          showToast('OPULIX is currently under maintenance.','info');
           await auth.signOut();
           return;
         }
       }
-      const adsSnap = await db.collection('ads').doc('config').get();
-      if(adsSnap.exists) applyRemoteAdsConfig(adsSnap.data());
-
       const userDocSnap = await db.collection('users').doc(user.uid).get();
       if(userDocSnap.exists && userDocSnap.data().banned === true){
         showLoading(false);
-        showToast('Your account has been suspended. Contact support for help.','error');
+        showToast('Your account is suspended. Contact support.','error');
         await auth.signOut();
         return;
       }
-    }catch(err){ /* if settings/ads docs don't exist yet, fall back to local defaults below */ }
+    }catch(e){}
     showLoading(false);
 
     currentUser = user;
     document.getElementById('authScreen').classList.add('hidden');
     document.getElementById('appShell').classList.remove('hidden');
+
     attachUserListener(user.uid);
     attachNotifListener(user.uid);
     attachHistoryListener(user.uid);
     attachWithdrawListener(user.uid);
     attachReferralListener(user.uid);
     attachTasksListener();
+    attachAppProgressListener(user.uid);
   } else {
     currentUser = null;
-    taskCache = {};
-    ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall','tasksGroup-other'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.innerHTML = '';
-    });
     detachAllListeners();
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
+    const pending = localStorage.getItem('opulix_pending_ref');
+    if(pending){
+      switchAuthTab('signup');
+    }
   }
 });
 
@@ -706,17 +732,7 @@ function detachAllListeners(){
   if(unsubWithdraw) unsubWithdraw();
   if(unsubReferrals) unsubReferrals();
   if(unsubTasks) unsubTasks();
-}
-
-/* =====================================================================================
-   REALTIME USER DOC → DASHBOARD / PROFILE / WITHDRAW / REFERRAL RENDER
-===================================================================================== */
-function attachUserListener(uid){
-  unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
-    if(!doc.exists) return;
-    const d = doc.data();
-    renderUserData(d);
-  }, (err)=>{ showToast('Failed to load profile data','error'); });
+  if(unsubProgress) unsubProgress();
 }
 
 function applyRemoteSettings(s){
@@ -725,102 +741,27 @@ function applyRemoteSettings(s){
   if(typeof s.referrerBonus === 'number') REWARDS.referrerBonus = s.referrerBonus;
   if(typeof s.referredBonus === 'number') REWARDS.referredBonus = s.referredBonus;
   if(typeof s.currency === 'string') CURRENCY_SYMBOL = CURRENCY_SYMBOLS[s.currency] || '৳';
+
   const label = document.getElementById('withdrawMinLabel');
   if(label) label.textContent = `Amount (Minimum ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
   const amountInput = document.getElementById('withdrawAmount');
   if(amountInput) amountInput.min = MIN_WITHDRAW;
-  // referralEnabled is read here for future use — hiding the referral tab entirely when
-  // disabled is a small follow-up if you want it.
-}
-function applyRemoteAdsConfig(a){
-  if(typeof a.bannerAdUnitId === 'string') AD_CONFIG.bannerAdUnitId = a.bannerAdUnitId;
-  if(typeof a.rewardedAdUnitId === 'string') AD_CONFIG.rewardedAdUnitId = a.rewardedAdUnitId;
-  if(typeof a.interstitialAdUnitId === 'string') AD_CONFIG.interstitialAdUnitId = a.interstitialAdUnitId;
-  if(typeof a.bannerCode === 'string') AD_CONFIG.bannerCode = a.bannerCode;
-  AD_CONFIG.bannerEnabled = a.bannerEnabled !== false;
-  AD_CONFIG.rewardedEnabled = a.rewardedEnabled !== false;
-  AD_CONFIG.interstitialEnabled = a.interstitialEnabled !== false;
-  renderBannerSlot();
 }
 
-// Setting innerHTML does NOT execute embedded <script> tags — this recreates each script
-// node so the browser actually runs it, which real ad network embed snippets require.
-function injectHtmlWithScripts(container, html){
-  container.innerHTML = html;
-  container.querySelectorAll('script').forEach(oldScript=>{
-    const newScript = document.createElement('script');
-    Array.from(oldScript.attributes).forEach(attr=> newScript.setAttribute(attr.name, attr.value));
-    newScript.textContent = oldScript.textContent;
-    oldScript.replaceWith(newScript);
-  });
-}
-
-/* Renders the banner slot. If the admin pasted a real ad network embed snippet into
-   "Custom Banner Embed Code" in the Ads Manager (AD_CONFIG.bannerCode), that snippet is
-   injected and executed as-is — this is how an actual ad network's banner will render,
-   since every network's exact markup/script differs and can't be guessed from an ID alone.
-   With no custom code set, it falls back to showing the configured unit ID as text so you
-   can still confirm the admin → user config pipeline is working end-to-end. */
-function renderBannerSlot(){
-  const slot = document.getElementById('adBannerSlot');
-  if(!slot) return;
-  if(AD_CONFIG.bannerEnabled === false){
-    slot.classList.add('hidden');
-    return;
-  }
-  slot.classList.remove('hidden');
-  if(AD_CONFIG.bannerCode && AD_CONFIG.bannerCode.trim()){
-    injectHtmlWithScripts(slot, AD_CONFIG.bannerCode);
-    return;
-  }
-  const id = AD_CONFIG.bannerAdUnitId;
-  if(!id || id === 'PASTE_BANNER_AD_UNIT_ID_HERE'){
-    slot.textContent = 'Banner ad not configured yet — set a Banner Ad Unit ID (or paste a Custom Banner Embed Code) in the admin panel.';
-    slot.dataset.adUnitId = '';
-  } else {
-    slot.textContent = 'Banner Ad — Unit: ' + id + ' (no embed code set — paste your ad network\'s snippet in the admin panel to show a real ad here)';
-    slot.dataset.adUnitId = id;
-  }
-}
-renderBannerSlot(); // show sensible default state immediately, before any Firestore fetch resolves
-
-/* Shows the interstitial ad slot for a few seconds if interstitial ads are enabled.
-   Call this at natural transition points (e.g. after a task claim). Returns a Promise
-   that resolves once the interstitial has closed, so callers can await it if needed.
-   >>> AD SDK INTEGRATION POINT: if window.OPULIX_showInterstitialAd is defined (by pasting
-   your network's SDK script), it's called instead of the placeholder modal below. */
-function maybeShowInterstitial(){
-  if(typeof window.OPULIX_showInterstitialAd === 'function'){
-    if(!AD_CONFIG.interstitialEnabled) return Promise.resolve();
-    return Promise.resolve(window.OPULIX_showInterstitialAd(AD_CONFIG.interstitialAdUnitId)).catch(()=>{});
-  }
-  return new Promise((resolve)=>{
-    if(!AD_CONFIG.interstitialEnabled){ resolve(); return; }
-    const id = AD_CONFIG.interstitialAdUnitId;
-    const label = (!id || id === 'PASTE_INTERSTITIAL_AD_UNIT_ID_HERE') ? 'Not configured' : ('Unit: ' + id);
-    document.getElementById('interstitialAdUnitLabel').textContent = label;
-    openModal('interstitialModal');
-    let secs = 3;
-    document.getElementById('interstitialCountdown').textContent = secs;
-    const iv = setInterval(()=>{
-      secs--;
-      document.getElementById('interstitialCountdown').textContent = Math.max(secs,0);
-      if(secs <= 0){
-        clearInterval(iv);
-        closeModal('interstitialModal');
-        resolve();
-      }
-    }, 1000);
+function attachUserListener(uid){
+  unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
+    if(!doc.exists) return;
+    const d = doc.data();
+    if(d.banned === true){
+      showToast('Account suspended.','error');
+      auth.signOut();
+      return;
+    }
+    renderUserData(d);
   });
 }
 
 function renderUserData(d){
-  // Realtime ban enforcement: if an admin bans this user mid-session, sign them out immediately
-  if(d.banned === true && currentUser){
-    showToast('Your account has been suspended. Contact support for help.','error');
-    auth.signOut();
-    return;
-  }
   const avatar = d.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(d.name||'U')}`;
   document.getElementById('dashAvatar').src = avatar;
   document.getElementById('dashName').textContent = d.name || 'User';
@@ -830,7 +771,6 @@ function renderUserData(d){
   document.getElementById('statWithdrawn').textContent = CURRENCY_SYMBOL + (d.totalWithdrawn||0).toFixed(2);
   document.getElementById('statPending').textContent = CURRENCY_SYMBOL + (d.pendingWithdraw||0).toFixed(2);
   document.getElementById('statReferral').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
-
   document.getElementById('withdrawAvailBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
 
   document.getElementById('profileAvatarBig').src = avatar;
@@ -838,11 +778,11 @@ function renderUserData(d){
   document.getElementById('profilePhone').value = d.phone || '';
   document.getElementById('profileEmailReadonly').value = d.email || '';
 
-  document.getElementById('referralCodeDisplay').value = d.referralCode || '';
-  document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
+  const refCode = d.referralCode || genReferralCode(currentUser.uid);
+  document.getElementById('referralCodeDisplay').value = refCode;
+  document.getElementById('referralLinkDisplay').value = `${window.location.origin}${window.location.pathname}?ref=${refCode}`;
   document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
-  // Daily check-in state
   const now = Date.now();
   const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
   const diff = now - last;
@@ -854,10 +794,8 @@ function renderUserData(d){
     timerEl.textContent = 'Ready!';
   } else {
     btn.disabled = true;
-    const remain = dayMs - diff;
-    timerEl.textContent = formatHM(remain);
     btn.textContent = 'Already Claimed';
-    startBonusCountdown(dayMs - diff);
+    timerEl.textContent = formatHM(dayMs - diff);
   }
 }
 
@@ -866,38 +804,320 @@ function formatHM(ms){
   const m = Math.floor((ms%3600000)/60000);
   return `${h}h ${m}m`;
 }
-let bonusCountdownInterval = null;
-function startBonusCountdown(remainMs){
-  if(bonusCountdownInterval) clearInterval(bonusCountdownInterval);
-  let remain = remainMs;
-  bonusCountdownInterval = setInterval(()=>{
-    remain -= 1000;
-    if(remain <= 0){
-      clearInterval(bonusCountdownInterval);
-      document.getElementById('dailyBonusBtn').disabled = false;
-      document.getElementById('dailyBonusBtn').textContent = 'Claim Daily Bonus';
-      document.getElementById('statBonusTimer').textContent = 'Ready!';
-      return;
-    }
-    document.getElementById('statBonusTimer').textContent = formatHM(remain);
-  }, 60000);
-}
 
-/* =====================================================================================
-   NAVIGATION
-===================================================================================== */
 function goPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById('page-'+page).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
 }
 
-/* =====================================================================================
-   TRANSACTIONS + NOTIFICATIONS (shared helpers)
-===================================================================================== */
+/* ================= APP INSTALL & 30-SECOND VERIFICATION ENGINE ================= */
+function attachTasksListener(){
+  unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
+    activeTasksMap = {};
+    snap.forEach(doc=> { activeTasksMap[doc.id] = { id: doc.id, ...doc.data() }; });
+    renderAllTasks();
+  });
+}
+
+function attachAppProgressListener(uid){
+  unsubProgress = db.collection('appInstallProgress').where('uid','==',uid).onSnapshot((snap)=>{
+    appProgressMap = {};
+    snap.forEach(doc=> { appProgressMap[doc.data().taskId] = doc.data(); });
+    renderAllTasks();
+  });
+}
+
+function renderAllTasks(){
+  const installContainer = document.getElementById('tasksGroup-appinstall');
+  const otherContainer = document.getElementById('tasksGroup-other');
+
+  const installTasks = [];
+  const otherTasks = [];
+
+  Object.values(activeTasksMap).forEach(t=>{
+    if(t.type === 'app-install') installTasks.push(t);
+    else if(t.type !== 'daily-bonus') otherTasks.push(t);
+  });
+
+  // Render App Install Tasks
+  if(installTasks.length === 0){
+    installContainer.innerHTML = '<div class="empty-row">No app install tasks currently available.</div>';
+  } else {
+    let html = '';
+    const today = getTodayStr();
+    installTasks.forEach(t=>{
+      const progress = appProgressMap[t.id];
+      const duration = t.durationDays || 1;
+      const currentDay = progress ? (progress.currentDay || 0) : 0;
+      const isCompleted = progress && progress.status === 'completed';
+      const checkedToday = progress && progress.lastCheckinDate === today;
+      const pct = Math.min(100, Math.round((currentDay / duration) * 100));
+
+      let chips = '';
+      for(let i=1; i<=Math.min(duration, 30); i++){
+        let cClass = 'day-chip';
+        if(i <= currentDay) cClass += ' done';
+        else if(i === currentDay + 1) cClass += ' active';
+        chips += `<span class="${cClass}">D${i}</span>`;
+      }
+
+      let btnHtml = '';
+      if(isCompleted){
+        btnHtml = `<button class="task-btn done" disabled>Task Completed (${CURRENCY_SYMBOL}${t.reward.toFixed(2)})</button>`;
+      } else if(checkedToday){
+        btnHtml = `<button class="task-btn pending" disabled>Day ${currentDay}/${duration} Done (Come Back Tomorrow)</button>`;
+      } else if(currentDay === 0){
+        btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${t.id}')">Install & Start Day 1</button>`;
+      } else {
+        btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${t.id}')">Open App / Check In (Day ${currentDay + 1}/${duration})</button>`;
+      }
+
+      const dailyBonusText = (t.dailyReward && t.dailyReward > 0) ? `+${CURRENCY_SYMBOL}${t.dailyReward.toFixed(2)}/day & ` : '';
+
+      html += `
+        <div class="card task-card">
+          <div class="task-header">
+            <div class="task-icon">📲</div>
+            <div class="task-info">
+              <div class="task-name">${escapeHtml(t.appName || t.title)}</div>
+              <div class="task-sub">${dailyBonusText}Final: ${CURRENCY_SYMBOL}${t.reward.toFixed(2)} (${duration} Days Streak)</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:var(--muted);">${escapeHtml(t.description || 'Open the app daily and stay active for at least 30 seconds.')}</div>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%;"></div></div>
+          <div class="days-chips">${chips}</div>
+          ${btnHtml}
+        </div>
+      `;
+    });
+    installContainer.innerHTML = html;
+  }
+
+  // Render Other Simple Click/Social Tasks
+  if(otherTasks.length === 0){
+    otherContainer.innerHTML = '<div class="empty-row">No other tasks available.</div>';
+  } else {
+    let oHtml = '';
+    otherTasks.forEach(t=>{
+      oHtml += `
+        <div class="card task-card">
+          <div class="task-header">
+            <div class="task-icon">${t.type==='youtube'?'▶️':'⭐'}</div>
+            <div class="task-info">
+              <div class="task-name">${escapeHtml(t.title)}</div>
+              <div class="task-sub">Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}</div>
+            </div>
+            <button class="task-btn" onclick="handleSimpleTask('${t.id}')">Start Task</button>
+          </div>
+        </div>
+      `;
+    });
+    otherContainer.innerHTML = oHtml;
+  }
+}
+
+/* --- 30-Second Verification Execution --- */
+let activeVerifyTaskId = null;
+let verifyTimer = null;
+let secondsLeft = 30;
+let userLeftPrematurely = false;
+
+function startAppInstallCheckin(taskId){
+  const t = activeTasksMap[taskId];
+  if(!t || !currentUser) return;
+
+  activeVerifyTaskId = taskId;
+  secondsLeft = 30;
+  userLeftPrematurely = false;
+
+  document.getElementById('verifyModalTitle').textContent = `Checking In: ${t.appName || t.title}`;
+  document.getElementById('verifyCountdown').textContent = `${secondsLeft}s`;
+  const completeBtn = document.getElementById('verifyCompleteBtn');
+  completeBtn.disabled = true;
+  completeBtn.textContent = `Verifying (30s)...`;
+
+  openModal('appVerifyModal');
+
+  // Trigger app launch or fallback to Play Store
+  const targetLink = t.deepLink || t.playStoreLink || t.link;
+  if(targetLink){
+    window.open(targetLink, '_blank');
+  }
+
+  // Listen to tab visibility
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+
+  // Start strict countdown
+  if(verifyTimer) clearInterval(verifyTimer);
+  verifyTimer = setInterval(()=>{
+    // If the user navigates away completely or minimizes browser without coming back
+    secondsLeft--;
+    document.getElementById('verifyCountdown').textContent = `${Math.max(0, secondsLeft)}s`;
+    completeBtn.textContent = `Verifying (${Math.max(0, secondsLeft)}s)...`;
+
+    if(secondsLeft <= 0){
+      clearInterval(verifyTimer);
+      verifyTimer = null;
+      completeBtn.disabled = false;
+      completeBtn.textContent = `Claim Check-in Reward`;
+      document.getElementById('verifyCountdown').textContent = 'Verified ✓';
+    }
+  }, 1000);
+}
+
+function handleVisibilityChange(){
+  // Informational handler - if required to pause on hide, we can pause the timer
+}
+
+function cancelAppVerification(){
+  if(verifyTimer) clearInterval(verifyTimer);
+  verifyTimer = null;
+  activeVerifyTaskId = null;
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
+  closeModal('appVerifyModal');
+  showToast('Check-in cancelled. You must stay for 30s to verify.','error');
+}
+
+async function submitVerifiedCheckin(){
+  if(!activeVerifyTaskId || !currentUser) return;
+  const taskId = activeVerifyTaskId;
+  const task = activeTasksMap[taskId];
+  if(!task) return;
+
+  showLoading(true);
+  try{
+    const today = getTodayStr();
+    const progressDocId = `${currentUser.uid}_${taskId}`;
+    const progressRef = db.collection('appInstallProgress').doc(progressDocId);
+    const userRef = db.collection('users').doc(currentUser.uid);
+
+    let earnedDaily = task.dailyReward || 0;
+    let earnedFinal = 0;
+    let newDayCount = 1;
+    let isFinished = false;
+
+    await db.runTransaction(async (tx)=>{
+      const pSnap = await tx.get(progressRef);
+      const duration = task.durationDays || 1;
+
+      if(pSnap.exists){
+        const pData = pSnap.data();
+        if(pData.lastCheckinDate === today){
+          throw new Error('ALREADY_CHECKED_IN');
+        }
+        if(pData.status === 'completed'){
+          throw new Error('TASK_ALREADY_COMPLETED');
+        }
+        newDayCount = (pData.currentDay || 0) + 1;
+      } else {
+        newDayCount = 1;
+      }
+
+      if(newDayCount >= duration){
+        isFinished = true;
+        earnedFinal = task.reward || 0;
+      }
+
+      const totalGain = earnedDaily + earnedFinal;
+
+      // Update progress record
+      tx.set(progressRef, {
+        uid: currentUser.uid,
+        taskId: taskId,
+        appName: task.appName || task.title,
+        durationDays: duration,
+        currentDay: newDayCount,
+        lastCheckinDate: today,
+        status: isFinished ? 'completed' : 'in_progress',
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      // Update user wallet balance if rewards given
+      if(totalGain > 0){
+        tx.update(userRef, {
+          balance: firebase.firestore.FieldValue.increment(totalGain),
+          totalEarnings: firebase.firestore.FieldValue.increment(totalGain)
+        });
+      }
+    });
+
+    // Record ledger transactions
+    if(earnedDaily > 0){
+      await addTransaction(currentUser.uid, `${task.appName || task.title} — Day ${newDayCount} Check-in`, earnedDaily, 'credit');
+    }
+    if(earnedFinal > 0){
+      await addTransaction(currentUser.uid, `${task.appName || task.title} — Streak Completed!`, earnedFinal, 'credit');
+      await addNotification(currentUser.uid, `🎉 You completed the ${task.durationDays}-day streak for ${task.appName || task.title} and received ${CURRENCY_SYMBOL}${earnedFinal.toFixed(2)}!`);
+    }
+
+    showToast(isFinished ? `🎉 Completed! Earned ${CURRENCY_SYMBOL}${(earnedDaily + earnedFinal).toFixed(2)}!` : `Day ${newDayCount} Checked in (+${CURRENCY_SYMBOL}${earnedDaily.toFixed(2)})!`, 'success');
+    closeModal('appVerifyModal');
+  } catch(err){
+    if(err.message === 'ALREADY_CHECKED_IN'){
+      showToast('You have already completed today\'s check-in.','info');
+    } else if(err.message === 'TASK_ALREADY_COMPLETED'){
+      showToast('You have already finished this task.','info');
+    } else {
+      showToast('Failed to record check-in. Please try again.','error');
+    }
+  }
+  showLoading(false);
+  activeVerifyTaskId = null;
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
+}
+
+async function handleSimpleTask(taskId){
+  const t = activeTasksMap[taskId];
+  if(!t || !currentUser) return;
+  if(t.link) window.open(t.link, '_blank');
+  showToast('Opening task... Completing verification...','info');
+  await new Promise(r=>setTimeout(r, 6000));
+  try{
+    await db.runTransaction(async (tx)=>{
+      tx.update(db.collection('users').doc(currentUser.uid), {
+        balance: firebase.firestore.FieldValue.increment(t.reward),
+        totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
+      });
+    });
+    await addTransaction(currentUser.uid, t.title, t.reward, 'credit');
+    showToast(`+${CURRENCY_SYMBOL}${t.reward.toFixed(2)} credited!`,'success');
+  }catch(e){
+    showToast('Failed to credit task.','error');
+  }
+}
+
+/* ================= DAILY BONUS ================= */
+async function claimDailyCheckin(){
+  if(!currentUser) return;
+  showLoading(true);
+  try{
+    const ref = db.collection('users').doc(currentUser.uid);
+    await db.runTransaction(async (tx)=>{
+      const snap = await tx.get(ref);
+      const d = snap.data();
+      const now = Date.now();
+      const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
+      if(now - last < 24*60*60*1000){ throw new Error('ALREADY_CLAIMED'); }
+      tx.update(ref, {
+        balance: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
+        lastCheckin: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+    await addTransaction(currentUser.uid, 'Daily check-in bonus', REWARDS.dailyCheckin, 'credit');
+    showToast(`+${CURRENCY_SYMBOL}${REWARDS.dailyCheckin.toFixed(2)} bonus claimed!`,'success');
+  }catch(err){
+    if(err.message === 'ALREADY_CLAIMED'){ showToast("Already claimed today's bonus.",'error'); }
+    else { showToast('Failed to claim bonus.','error'); }
+  }
+  showLoading(false);
+}
+
+/* ================= TRANSACTIONS & NOTIFICATIONS ================= */
 async function addTransaction(uid, label, amount, type){
   await db.collection('transactions').add({
-    uid, label, amount, type, // type: 'credit' | 'debit'
+    uid, label, amount, type,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
@@ -921,19 +1141,15 @@ function attachNotifListener(uid){
         if(!n.read) unread++;
         const div = document.createElement('div');
         div.className = 'notif-item ' + (n.read?'':'unread');
-        div.onclick = ()=> markNotifRead(doc.id);
+        div.onclick = ()=> db.collection('notifications').doc(doc.id).update({read:true});
         div.innerHTML = `<div class="notif-dot" style="opacity:${n.read?0:1}"></div>
           <div><div class="notif-text">${escapeHtml(n.message)}</div>
           <div class="notif-time">${n.createdAt ? n.createdAt.toDate().toLocaleString() : 'just now'}</div></div>`;
         list.appendChild(div);
       });
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-    }, err=>{
-      console.error('notifications listener error:', err);
-      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications — this usually means a required Firestore index is missing. Check the browser console for a link to create it.</span></div>';
     });
 }
-async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
 function openNotifications(){ openModal('notifModal'); }
 
 function attachHistoryListener(uid){
@@ -959,10 +1175,6 @@ function attachHistoryListener(uid){
       });
       recentEl.innerHTML = recentHtml;
       fullEl.innerHTML = fullHtml;
-    }, err=>{
-      console.error('history listener error:', err);
-      document.getElementById('recentActivityList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
-      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
@@ -978,9 +1190,6 @@ function attachWithdrawListener(uid){
           <span style="text-align:right;">${CURRENCY_SYMBOL}${w.amount.toFixed(2)}<br><span class="status-pill ${w.status}">${w.status}</span></span></div>`;
       });
       el.innerHTML = html;
-    }, err=>{
-      console.error('withdraw listener error:', err);
-      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
@@ -993,402 +1202,13 @@ function attachReferralListener(uid){
       let html = '';
       snap.forEach(doc=>{
         const r = doc.data();
-        html += `<div class="hist-row"><span>${escapeHtml(r.referredName||'New user')}<br><span style="color:var(--muted);font-size:11px;">${r.createdAt?r.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt plus">+${CURRENCY_SYMBOL}${r.referrerBonus.toFixed(2)}</span></div>`;
+        html += `<div class="hist-row"><span>${escapeHtml(r.referredName||'New User')}<br><span style="color:var(--muted);font-size:11px;">${r.createdAt?r.createdAt.toDate().toLocaleString():''}</span></span><span class="hist-amt plus">+${CURRENCY_SYMBOL}${r.referrerBonus.toFixed(2)}</span></div>`;
       });
       el.innerHTML = html;
-    }, err=>{
-      console.error('referral listener error:', err);
-      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
-function escapeHtml(str){
-  const d = document.createElement('div'); d.textContent = str||''; return d.innerHTML;
-}
-
-/* =====================================================================================
-   DAILY CHECK-IN
-===================================================================================== */
-async function claimDailyCheckin(){
-  if(!currentUser) return;
-  showLoading(true);
-  try{
-    const ref = db.collection('users').doc(currentUser.uid);
-    await db.runTransaction(async (tx)=>{
-      const snap = await tx.get(ref);
-      const d = snap.data();
-      const now = Date.now();
-      const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
-      if(now - last < 24*60*60*1000){ throw new Error('ALREADY_CLAIMED'); }
-      tx.update(ref, {
-        balance: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
-        totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.dailyCheckin),
-        lastCheckin: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    });
-    await addTransaction(currentUser.uid, 'Daily check-in bonus', REWARDS.dailyCheckin, 'credit');
-    showToast(`+${CURRENCY_SYMBOL}${REWARDS.dailyCheckin.toFixed(2)} daily bonus claimed!`,'success');
-  }catch(err){
-    if(err.message === 'ALREADY_CLAIMED'){ showToast("You already claimed today's bonus.",'error'); }
-    else { showToast('Failed to claim bonus. Try again.','error'); }
-  }
-  showLoading(false);
-}
-
-/* =====================================================================================
-   TASK ENGINE — fully driven by Firestore tasks/{id} docs (created/edited/deleted from
-   the admin panel). No task is hardcoded here; the Tasks page renders whatever the admin
-   has enabled, grouped by type, and re-renders live whenever the admin changes something.
-===================================================================================== */
-const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
-let taskCache = {}; // { taskId: taskData } — enabled tasks only, kept in sync via onSnapshot
-
-function attachTasksListener(){
-  unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
-    taskCache = {};
-    let dailyBonusTask = null;
-    snap.forEach(doc=>{
-      const d = doc.data();
-      taskCache[doc.id] = d;
-      if(d.type === 'daily-bonus') dailyBonusTask = d;
-    });
-    // A "daily-bonus" type task lets the admin drive the Dashboard's daily bonus amount
-    // through the same Task Management screen, instead of it only living in Settings.
-    if(dailyBonusTask && typeof dailyBonusTask.reward === 'number'){
-      REWARDS.dailyCheckin = dailyBonusTask.reward;
-    }
-    renderAllTaskGroups().catch(err=>{
-      console.error('task rendering error:', err);
-      showTaskLoadError();
-    });
-  }, err=>{
-    console.error('tasks listener error:', err);
-    showTaskLoadError();
-  });
-}
-function showTaskLoadError(){
-  const msg = '<div class="empty-row">Failed to load tasks — check the browser console for details (this is often a missing Firestore index or rules issue).</div>';
-  ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall'].forEach(id=>{
-    const el = document.getElementById(id); if(el) el.innerHTML = msg;
-  });
-}
-
-async function renderAllTaskGroups(){
-  if(!currentUser) return;
-  const groups = { video:[], social:[], appinstall:[], other:[] };
-  Object.entries(taskCache).forEach(([id,t])=>{
-    if(t.type === 'daily-bonus') return; // has its own dedicated UI on the Dashboard
-    if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
-    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
-    else if(t.type === 'app-install') groups.appinstall.push([id,t]);
-    else groups.other.push([id,t]);
-  });
-  await renderTaskGroup('tasksGroup-video', groups.video, 'No video tasks available right now.');
-  await renderTaskGroup('tasksGroup-social', groups.social, 'No social tasks available right now.');
-  await renderTaskGroup('tasksGroup-appinstall', groups.appinstall, 'No app install tasks available right now.');
-  const otherTitle = document.getElementById('tasksGroupOtherTitle');
-  if(groups.other.length){ otherTitle.classList.remove('hidden'); await renderTaskGroup('tasksGroup-other', groups.other, ''); }
-  else { otherTitle.classList.add('hidden'); document.getElementById('tasksGroup-other').innerHTML = ''; }
-}
-
-async function renderTaskGroup(containerId, list, emptyMsg){
-  const container = document.getElementById(containerId);
-  if(!container) return;
-  if(list.length === 0){ container.innerHTML = emptyMsg ? `<div class="empty-row">${emptyMsg}</div>` : ''; return; }
-  const cardsHtml = await Promise.all(list.map(([id,t]) => buildTaskCardHtml(id,t)));
-  container.innerHTML = cardsHtml.join('');
-}
-
-async function fetchCompletion(taskId){
-  if(!currentUser) return null;
-  const snap = await db.collection('completedTasks').doc(currentUser.uid + '_' + taskId).get();
-  return snap.exists ? snap.data() : null;
-}
-
-function computeTaskState(t, completion){
-  if(t.type === 'app-install') return computeAppInstallState(completion);
-  const cooldownMs = (t.cooldownMinutes||0) * 60000;
-  if(cooldownMs > 0){
-    if(!completion) return { status:'available' };
-    const last = completion.lastClaimedAt ? completion.lastClaimedAt.toMillis() : 0;
-    const elapsed = Date.now() - last;
-    if(elapsed < cooldownMs) return { status:'cooldown', remainingMs: cooldownMs - elapsed };
-    return { status:'available' };
-  }
-  return completion ? { status:'done' } : { status:'available' };
-}
-
-function todayStr(){ return new Date().toISOString().slice(0,10); }
-
-function computeAppInstallState(completion){
-  if(!completion) return { status:'available' };
-  if(completion.status === 'completed') return { status:'done' };
-  const streakDays = completion.streakDays || 0;
-  const checkedInToday = completion.lastCheckinDate === todayStr();
-  return { status:'in-progress', streakDays, checkedInToday };
-}
-
-async function buildTaskCardHtml(id, t){
-  if(t.type === 'app-install') return buildAppInstallCardHtml(id, t);
-  const completion = await fetchCompletion(id);
-  const state = computeTaskState(t, completion);
-  const icon = TASK_ICONS[t.type] || '⭐';
-  let btnHtml;
-  if(state.status === 'done'){ btnHtml = `<button class="task-btn done" disabled>Completed</button>`; }
-  else if(state.status === 'cooldown'){ btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`; }
-  else{
-    const label = t.type === 'video' ? 'Watch Ad' : 'Watch Now';
-    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
-  }
-  const defaultSub = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
-  return `<div class="card task-card" id="taskcard-${id}">
-    <div class="task-icon">${icon}</div>
-    <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || defaultSub}</div></div>
-    ${btnHtml}
-  </div>`;
-}
-
-async function buildAppInstallCardHtml(id, t){
-  const completion = await fetchCompletion(id);
-  const state = computeAppInstallState(completion);
-  const icon = TASK_ICONS['app-install'];
-  let btnHtml, subText;
-  if(state.status === 'done'){
-    btnHtml = `<button class="task-btn done" disabled>Completed</button>`;
-    subText = `14-day engagement complete · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} earned`;
-  } else if(state.status === 'in-progress'){
-    if(state.checkedInToday){
-      btnHtml = `<button class="task-btn pending" disabled>Day ${state.streakDays}/14 ✓</button>`;
-      subText = `Checked in today — come back tomorrow to continue your streak`;
-    } else {
-      btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Check In (Day ${state.streakDays+1}/14)</button>`;
-      subText = `Open the app and stay 30s to continue your streak — ${state.streakDays}/14 days done`;
-    }
-  } else {
-    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Install & Start</button>`;
-    subText = `Install, then open daily for 30s over 14 days to earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
-  }
-  return `<div class="card task-card" id="taskcard-${id}">
-    <div class="task-icon">${icon}</div>
-    <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || subText}</div></div>
-    ${btnHtml}
-  </div>`;
-}
-
-async function refreshSingleTaskCard(taskId){
-  const t = taskCache[taskId];
-  const el = document.getElementById('taskcard-'+taskId);
-  if(!t || !el) return;
-  el.outerHTML = await buildTaskCardHtml(taskId, t);
-}
-
-function simulateAdView(ms){ return new Promise(res=>setTimeout(res, ms)); }
-
-function handleTaskClick(taskId){
-  const t = taskCache[taskId];
-  if(!t || !currentUser) return;
-  if(t.type === 'video') return handleVideoAdTask(taskId, t);
-  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram') return handleRedirectTask(taskId, t);
-  if(t.type === 'app-install') return handleAppInstallTask(taskId, t);
-}
-
-async function handleVideoAdTask(taskId, t){
-  if(AD_CONFIG.rewardedEnabled === false){ showToast('Video ads are currently disabled.','info'); return; }
-  const el = document.getElementById('taskcard-'+taskId);
-  const btn = el ? el.querySelector('.task-btn') : null;
-  if(btn){ btn.disabled = true; btn.textContent = 'Loading Ad...'; }
-  // >>> AD SDK INTEGRATION POINT: if window.OPULIX_showRewardedAd is defined (by pasting your
-  // ad network's SDK script — see AD_CONFIG.rewardedAdUnitId), it's used instead of the
-  // simulated view. It must return a Promise that resolves only once the network confirms
-  // the reward was actually earned — never resolve on ad close alone.
-  if(typeof window.OPULIX_showRewardedAd === 'function'){
-    try{ await window.OPULIX_showRewardedAd(AD_CONFIG.rewardedAdUnitId); }
-    catch(err){ showToast('Ad failed to load. Try again.','error'); refreshSingleTaskCard(taskId); return; }
-  } else {
-    await simulateAdView(4000);
-  }
-  await claimGenericTask(taskId, t);
-}
-
-// Shared per-type wait before a "Watch Now" redirect task's claim unlocks — long enough to
-// plausibly watch/follow/join, short enough not to be annoying. Opens the real destination
-// directly (YouTube/Facebook/Telegram) instead of keeping the user inside the app.
-const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8 };
-
-async function handleRedirectTask(taskId, t){
-  if(t.link) window.open(t.link, '_blank');
-  else { showToast('This task has no link configured — ask an admin to add one.','error'); return; }
-  const waitSecs = REDIRECT_WAIT_SECONDS[t.type] || 8;
-  const el = document.getElementById('taskcard-'+taskId);
-  const btn = el ? el.querySelector('.task-btn') : null;
-  if(btn) btn.disabled = true;
-  let secs = waitSecs;
-  await new Promise(resolve=>{
-    if(btn) btn.textContent = `Verifying... ${secs}s`;
-    const iv = setInterval(()=>{
-      secs--;
-      if(btn) btn.textContent = `Verifying... ${Math.max(secs,0)}s`;
-      if(secs <= 0){ clearInterval(iv); resolve(); }
-    }, 1000);
-  });
-  await claimGenericTask(taskId, t);
-}
-
-/* App Install — 14-day engagement model: first click sends the user to install the app and
-   starts a streak tracker; each subsequent day they must reopen the app (this page) and stay
-   for 30 continuous seconds (paused while the tab is hidden) to bank that day's check-in.
-   Reaching 14 unique days credits the reward once and marks the task completed. */
-async function handleAppInstallTask(taskId, t){
-  const completion = await fetchCompletion(taskId);
-  const today = todayStr();
-
-  if(!completion){
-    window.open(t.link || 'https://play.google.com', '_blank');
-    try{
-      await db.collection('completedTasks').doc(currentUser.uid + '_' + taskId).set({
-        uid: currentUser.uid, taskId, amount: t.reward, status:'in-progress',
-        streakDays: 0, lastCheckinDate: null,
-        startedAt: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      await addNotification(currentUser.uid, `You started "${t.title}" — open the app daily for 30 seconds over 14 days to earn ${CURRENCY_SYMBOL}${t.reward.toFixed(2)}.`);
-      showToast('Install started! Come back daily and stay open 30s to build your streak.','info');
-    }catch(err){ showToast('Failed to start install task.','error'); }
-    refreshSingleTaskCard(taskId);
-    return;
-  }
-
-  if(completion.status === 'completed'){ showToast('You already completed this task.','info'); refreshSingleTaskCard(taskId); return; }
-  if(completion.lastCheckinDate === today){ showToast(`Already checked in today — Day ${completion.streakDays}/14. Come back tomorrow!`,'info'); return; }
-
-  const el = document.getElementById('taskcard-'+taskId);
-  const btn = el ? el.querySelector('.task-btn') : null;
-  if(btn) btn.disabled = true;
-  let secs = 30;
-  await new Promise(resolve=>{
-    if(btn) btn.textContent = `Stay open... ${secs}s`;
-    const iv = setInterval(()=>{
-      if(document.hidden) return; // pause while the tab/app isn't actually in the foreground
-      secs--;
-      if(btn) btn.textContent = `Stay open... ${Math.max(secs,0)}s`;
-      if(secs <= 0){ clearInterval(iv); resolve(); }
-    }, 1000);
-  });
-  await completeAppInstallDailyCheckin(taskId, t);
-}
-
-async function completeAppInstallDailyCheckin(taskId, t){
-  const docId = currentUser.uid + '_' + taskId;
-  let justCompleted = false, newStreak = 0;
-  try{
-    await db.runTransaction(async (tx)=>{
-      const ref = db.collection('completedTasks').doc(docId);
-      const snap = await tx.get(ref);
-      if(!snap.exists) throw new Error('NOT_STARTED');
-      const data = snap.data();
-      const today = todayStr();
-      if(data.status === 'completed') throw new Error('ALREADY_DONE');
-      if(data.lastCheckinDate === today) throw new Error('ALREADY_TODAY');
-      newStreak = (data.streakDays || 0) + 1;
-      if(newStreak >= 14){
-        justCompleted = true;
-        tx.update(ref, { streakDays: newStreak, lastCheckinDate: today, status:'completed' });
-        tx.update(db.collection('users').doc(currentUser.uid), {
-          balance: firebase.firestore.FieldValue.increment(t.reward),
-          totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
-        });
-      } else {
-        tx.update(ref, { streakDays: newStreak, lastCheckinDate: today });
-      }
-    });
-    if(justCompleted){
-      await addTransaction(currentUser.uid, t.title, t.reward, 'credit');
-      showToast(`14-day streak complete! +${CURRENCY_SYMBOL}${t.reward.toFixed(2)} credited!`,'success');
-      await maybeShowInterstitial();
-    } else {
-      showToast(`Day ${newStreak}/14 checked in! Come back tomorrow.`,'success');
-    }
-  }catch(err){
-    if(err.message === 'ALREADY_TODAY'){ showToast('Already checked in today.','info'); }
-    else if(err.message === 'ALREADY_DONE'){ showToast('You already completed this task.','info'); }
-    else { showToast('Failed to record check-in. Try again.','error'); }
-  }
-  refreshSingleTaskCard(taskId);
-}
-
-// Shared claim path for repeatable/one-time video, youtube, and social tasks.
-// App-install is NOT routed through here — its own 14-day flow above handles crediting.
-async function claimGenericTask(taskId, t){
-  if(!currentUser) return false;
-  const cooldownMs = (t.cooldownMinutes||0) * 60000;
-  const docId = currentUser.uid + '_' + taskId;
-  try{
-    await db.runTransaction(async (tx)=>{
-      const ref = db.collection('completedTasks').doc(docId);
-      const snap = await tx.get(ref);
-      const now = Date.now();
-      if(snap.exists){
-        const data = snap.data();
-        if(cooldownMs > 0){
-          const last = data.lastClaimedAt ? data.lastClaimedAt.toMillis() : 0;
-          if(now - last < cooldownMs) throw new Error('COOLDOWN');
-        } else {
-          throw new Error('ALREADY_DONE');
-        }
-      }
-      tx.set(ref, {
-        uid: currentUser.uid, taskId, amount: t.reward,
-        lastClaimedAt: firebase.firestore.FieldValue.serverTimestamp(),
-        claimCount: firebase.firestore.FieldValue.increment(1)
-      }, { merge:true });
-      tx.update(db.collection('users').doc(currentUser.uid), {
-        balance: firebase.firestore.FieldValue.increment(t.reward),
-        totalEarnings: firebase.firestore.FieldValue.increment(t.reward)
-      });
-    });
-    await addTransaction(currentUser.uid, t.title, t.reward, 'credit');
-    showToast(`+${CURRENCY_SYMBOL}${t.reward.toFixed(2)} credited!`,'success');
-    await maybeShowInterstitial();
-    return true;
-  }catch(err){
-    if(err.message === 'ALREADY_DONE'){ showToast('You already completed this task.','info'); }
-    else if(err.message === 'COOLDOWN'){ showToast('This task is on cooldown. Try again later.','info'); }
-    else { showToast('Failed to credit reward. Try again.','error'); }
-    return false;
-  } finally {
-    refreshSingleTaskCard(taskId);
-  }
-}
-
-/* =====================================================================================
-   REFERRAL — COPY / SHARE
-===================================================================================== */
-function copyReferralLink(){
-  const val = document.getElementById('referralLinkDisplay').value;
-  navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success'))
-    .catch(()=> showToast('Could not copy link.','error'));
-}
-function shareReferralLink(){
-  const val = document.getElementById('referralLinkDisplay').value;
-  if(navigator.share){
-    navigator.share({ title:'Join OPULIX', text:'Join OPULIX and start earning!', url: val }).catch(()=>{});
-  } else {
-    copyReferralLink();
-  }
-}
-
-// Auto-fill referral code from ?ref= param on load
-(function prefillReferral(){
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get('ref');
-  if(ref){
-    switchAuthTab('signup');
-    setTimeout(()=>{ const el = document.getElementById('signupReferral'); if(el) el.value = ref; }, 300);
-  }
-})();
-
-/* =====================================================================================
-   WITHDRAW SYSTEM
-===================================================================================== */
+/* ================= WITHDRAWALS ================= */
 async function submitWithdraw(e){
   e.preventDefault();
   const errEl = document.getElementById('withdrawError');
@@ -1397,8 +1217,8 @@ async function submitWithdraw(e){
   const account = document.getElementById('withdrawAccount').value.trim();
   const amount = parseFloat(document.getElementById('withdrawAmount').value);
 
-  if(!method){ errEl.textContent='Please select a withdrawal method.'; errEl.style.display='block'; return false; }
-  if(!account){ errEl.textContent='Please enter your account details.'; errEl.style.display='block'; return false; }
+  if(!method){ errEl.textContent='Please select a method.'; errEl.style.display='block'; return false; }
+  if(!account){ errEl.textContent='Please enter account number.'; errEl.style.display='block'; return false; }
   if(isNaN(amount) || amount < MIN_WITHDRAW){ errEl.textContent=`Minimum withdrawal is ${CURRENCY_SYMBOL}${MIN_WITHDRAW}.`; errEl.style.display='block'; return false; }
 
   showLoading(true);
@@ -1419,32 +1239,37 @@ async function submitWithdraw(e){
       });
     });
     await addTransaction(currentUser.uid, `Withdraw request (${method})`, amount, 'debit');
-    await addNotification(currentUser.uid, `Withdraw request of ${CURRENCY_SYMBOL}${amount.toFixed(2)} submitted and is pending review.`);
+    await addNotification(currentUser.uid, `Withdraw request of ${CURRENCY_SYMBOL}${amount.toFixed(2)} submitted.`);
     showToast('Withdraw request submitted!','success');
     document.getElementById('withdrawMethod').value='';
     document.getElementById('withdrawAccount').value='';
     document.getElementById('withdrawAmount').value='';
   }catch(err){
     if(err.message === 'INSUFFICIENT_BALANCE'){ errEl.textContent = 'Insufficient balance.'; errEl.style.display='block'; }
-    else { showToast('Failed to submit request. Try again.','error'); }
+    else { showToast('Failed to submit request.','error'); }
   }
   showLoading(false);
   return false;
 }
-/* NOTE: Approving/rejecting withdrawRequests (status pending→approved/rejected) is an
-   ADMIN action done from Firestore console or a back-office panel — not exposed here for
-   security. On "rejected", refund balance and clear pendingWithdraw via an admin script
-   or Cloud Function; this is covered in the setup guide. */
 
-/* =====================================================================================
-   PROFILE — EDIT + PHOTO UPLOAD
-===================================================================================== */
+/* ================= PROFILE & REFERRALS ================= */
+function copyReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success')).catch(()=> showToast('Could not copy link.','error'));
+}
+function shareReferralLink(){
+  const val = document.getElementById('referralLinkDisplay').value;
+  if(navigator.share){
+    navigator.share({ title:'Join OPULIX', text:'Earn money on OPULIX!', url: val }).catch(()=>{});
+  } else {
+    copyReferralLink();
+  }
+}
 async function saveProfile(e){
   e.preventDefault();
   if(!currentUser) return false;
   const name = document.getElementById('profileName').value.trim();
   const phone = document.getElementById('profilePhone').value.trim();
-  if(name.length < 2){ showToast('Please enter a valid name.','error'); return false; }
   showLoading(true);
   try{
     await db.collection('users').doc(currentUser.uid).update({ name, phone });
@@ -1453,20 +1278,17 @@ async function saveProfile(e){
   showLoading(false);
   return false;
 }
-
 async function handleAvatarUpload(e){
   const file = e.target.files[0];
   if(!file || !currentUser) return;
-  if(!file.type.startsWith('image/')){ showToast('Please select an image file.','error'); return; }
-  if(file.size > 5*1024*1024){ showToast('Image must be under 5MB.','error'); return; }
   showLoading(true);
   try{
     const storageRef = storage.ref().child(`avatars/${currentUser.uid}/${Date.now()}_${file.name}`);
     await storageRef.put(file);
     const url = await storageRef.getDownloadURL();
     await db.collection('users').doc(currentUser.uid).update({ photoURL: url });
-    showToast('Profile photo updated!','success');
-  }catch(err){ showToast('Failed to upload photo.','error'); }
+    showToast('Profile picture updated!','success');
+  }catch(err){ showToast('Failed to upload picture.','error'); }
   showLoading(false);
 }
 </script>
