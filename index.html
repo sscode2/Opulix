@@ -249,13 +249,26 @@ input,select{font-family:inherit;}
       <div class="section-title">Recent Activity <a class="link" onclick="goPage('history')">View all</a></div>
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
+<script>
+  atOptions = {
+    'key' : '30c083eb8d9f496699a72bb0c21bb795',
+    'format' : 'iframe',
+    'height' : 50,
+    'width' : 320,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highrevenueformat.com/30c083eb8d9f496699a72bb0c21bb795/invoke.js"></script>
 
     <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
     <div id="page-tasks" class="page hidden">
       <div class="section-title">Video Tasks</div>
       <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
 
-      <div class="section-title">Social Tasks</div>
+      <div class="section-title">  Website Visit</div>
+      <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
+
+            <div class="section-title">Social Tasks</div>
       <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
 
       <div class="section-title">App Install</div>
