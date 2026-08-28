@@ -253,13 +253,13 @@ input,select{font-family:inherit;}
     <!-- TASKS PAGE -->
     <div id="page-tasks" class="page hidden">
       <div class="section-title">App Install & Check-in Tasks</div>
-      <div id="tasksGroup-appinstall"><div class="empty-row">Loading tasks...</div></div>
+      <div id="tasksGroup-appinstall"><div class="empty-row">No app install tasks right now.</div></div>
 
       <div class="section-title">Video Tasks</div>
-      <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
+      <div id="tasksGroup-video"><div class="empty-row">No video tasks available.</div></div>
 
       <div class="section-title">Social Tasks</div>
-      <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
+      <div id="tasksGroup-social"><div class="empty-row">No social tasks available.</div></div>
 
       <div class="section-title hidden" id="tasksGroupOtherTitle">Other Tasks</div>
       <div id="tasksGroup-other"></div>
@@ -369,7 +369,9 @@ input,select{font-family:inherit;}
 </div>
 
 <script>
-/* FIREBASE INITIALIZATION */
+/* =====================================================================================
+   FIREBASE INITIALIZATION
+===================================================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
   authDomain: "opulix-app.firebaseapp.com",
@@ -385,7 +387,9 @@ const auth = firebase.auth();
 const db = firebase.firestore();
 const storage = firebase.storage();
 
-/* APP CONSTANTS */
+/* =====================================================================================
+   APP CONSTANTS
+===================================================================================== */
 let REWARDS = {
   dailyCheckin: 1.00,
   referrerBonus: 5.00,
@@ -399,7 +403,7 @@ let currentUser = null;
 let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
 let taskCache = {};
 
-// Track URL referral parameter locally before sign up
+// Track URL referral parameter before signup
 (function saveIncomingRef(){
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -443,7 +447,9 @@ function genReferralCode(uid){
   return 'OPX' + uid.substring(0,6).toUpperCase();
 }
 
-/* PRODUCTION-GRADE REFERRAL PROCESSING (UPDATE 4) */
+/* =====================================================================================
+   REFERRAL SYSTEM
+===================================================================================== */
 async function processReferralConnection(newUid, newUserName, preferredRefCode = null){
   const code = (preferredRefCode || localStorage.getItem('opulix_ref_code') || '').trim().toUpperCase();
   if(!code) return;
@@ -453,7 +459,6 @@ async function processReferralConnection(newUid, newUserName, preferredRefCode =
   if(!userSnap.exists) return;
   const userData = userSnap.data();
 
-  // Guard: User already bound or attempting self-referral
   if(userData.referredBy || userData.referralCode === code) return;
 
   const q = await db.collection('users').where('referralCode', '==', code).limit(1).get();
@@ -461,34 +466,30 @@ async function processReferralConnection(newUid, newUserName, preferredRefCode =
 
   const referrerDoc = q.docs[0];
   const referrerUid = referrerDoc.id;
-  if(referrerUid === newUid) return; // Prevent self-referral
+  if(referrerUid === newUid) return;
 
-  // Atomic execution: bind relationship & credit rewards once
   try {
     await db.runTransaction(async (tx) => {
       const refCheck = await tx.get(db.collection('referrals').doc(`${referrerUid}_${newUid}`));
-      if(refCheck.exists) return; // Reward already claimed
+      if(refCheck.exists) return;
 
       const curUser = await tx.get(newUserRef);
       if(curUser.data().referredBy) return;
 
       const referrerRef = db.collection('users').doc(referrerUid);
 
-      // 1. Mark referredBy on new user
       tx.update(newUserRef, {
         referredBy: referrerUid,
         balance: firebase.firestore.FieldValue.increment(REWARDS.referredBonus),
         totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referredBonus)
       });
 
-      // 2. Award referrer
       tx.update(referrerRef, {
         balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
         totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
         referralEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus)
       });
 
-      // 3. Save to referrals collection
       tx.set(db.collection('referrals').doc(`${referrerUid}_${newUid}`), {
         referrerUid: referrerUid,
         referredUid: newUid,
@@ -504,7 +505,7 @@ async function processReferralConnection(newUid, newUserName, preferredRefCode =
     await addTransaction(newUid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
     localStorage.removeItem('opulix_ref_code');
   } catch(err) {
-    console.error('Referral processing error:', err);
+    console.error('Referral error:', err);
   }
 }
 
@@ -640,6 +641,9 @@ function friendlyAuthError(err){
   return map[err.code] || (err.message || 'Something went wrong. Please try again.');
 }
 
+/* =====================================================================================
+   AUTH LISTENER
+===================================================================================== */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
     showLoading(true);
@@ -678,9 +682,7 @@ auth.onAuthStateChanged(async (user)=>{
   } else {
     currentUser = null;
     taskCache = {};
-    ['tasksGroup-appinstall','tasksGroup-video','tasksGroup-social','tasksGroup-other'].forEach(id=>{
-      const el = document.getElementById(id); if(el) el.innerHTML = '';
-    });
+    clearTaskLoadingState();
     detachAllListeners();
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
@@ -913,17 +915,33 @@ async function claimDailyCheckin(){
 }
 
 /* =====================================================================================
-   TASK SYSTEM (UPDATES 2 & 3)
+   TASK SYSTEM (ROBUST & RESILIENT)
 ===================================================================================== */
 const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
 
 function attachTasksListener(){
-  unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
+  unsubTasks = db.collection('tasks').onSnapshot((snap)=>{
     taskCache = {};
-    snap.forEach(doc=>{ taskCache[doc.id] = doc.data(); });
-    renderAllTaskGroups();
-  }, err=>{
-    console.error(err);
+    snap.forEach(doc => {
+      const data = doc.data();
+      if (data.enabled !== false) {
+        taskCache[doc.id] = data;
+      }
+    });
+    renderAllTaskGroups().catch(err => {
+      console.error('Error rendering tasks:', err);
+      clearTaskLoadingState();
+    });
+  }, (err) => {
+    console.error('Firestore task listener error:', err);
+    clearTaskLoadingState('Failed to load tasks. Please check your connection.');
+  });
+}
+
+function clearTaskLoadingState(msg = 'No tasks available right now.') {
+  ['tasksGroup-appinstall', 'tasksGroup-video', 'tasksGroup-social'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = `<div class="empty-row">${msg}</div>`;
   });
 }
 
@@ -932,86 +950,108 @@ function todayStr(){ return new Date().toISOString().slice(0,10); }
 async function renderAllTaskGroups(){
   if(!currentUser) return;
   const groups = { video:[], social:[], appinstall:[], other:[] };
-  Object.entries(taskCache).forEach(([id,t])=>{
-    if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
-    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
-    else if(t.type === 'app-install') groups.appinstall.push([id,t]);
-    else groups.other.push([id,t]);
+  
+  Object.entries(taskCache).forEach(([id, t]) => {
+    if(t.type === 'video' || t.type === 'youtube') groups.video.push([id, t]);
+    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id, t]);
+    else if(t.type === 'app-install') groups.appinstall.push([id, t]);
+    else groups.other.push([id, t]);
   });
 
   await renderAppInstallTasks(groups.appinstall);
-  await renderGenericTaskGroup('tasksGroup-video', groups.video, 'No video tasks available right now.');
-  await renderGenericTaskGroup('tasksGroup-social', groups.social, 'No social tasks available right now.');
+  await renderGenericTaskGroup('tasksGroup-video', groups.video, 'No video tasks available.');
+  await renderGenericTaskGroup('tasksGroup-social', groups.social, 'No social tasks available.');
+  
   const otherTitle = document.getElementById('tasksGroupOtherTitle');
-  if(groups.other.length){ otherTitle.classList.remove('hidden'); await renderGenericTaskGroup('tasksGroup-other', groups.other, ''); }
-  else { otherTitle.classList.add('hidden'); document.getElementById('tasksGroup-other').innerHTML = ''; }
+  if(groups.other.length){ 
+    otherTitle.classList.remove('hidden'); 
+    await renderGenericTaskGroup('tasksGroup-other', groups.other, ''); 
+  } else { 
+    otherTitle.classList.add('hidden'); 
+    const otherEl = document.getElementById('tasksGroup-other');
+    if(otherEl) otherEl.innerHTML = ''; 
+  }
 }
 
 async function renderAppInstallTasks(list){
   const container = document.getElementById('tasksGroup-appinstall');
   if(!container) return;
-  if(list.length === 0){ container.innerHTML = '<div class="empty-row">No app install tasks right now.</div>'; return; }
+  if(list.length === 0){ 
+    container.innerHTML = '<div class="empty-row">No app install tasks right now.</div>'; 
+    return; 
+  }
 
-  const cardsHtml = await Promise.all(list.map(async ([id, t]) => {
-    const totalDays = t.durationDays || 14;
-    const progDoc = await db.collection('appInstallProgress').doc(`${currentUser.uid}_${id}`).get();
-    const prog = progDoc.exists ? progDoc.data() : null;
+  try {
+    const cardsHtml = await Promise.all(list.map(async ([id, t]) => {
+      const totalDays = Number(t.durationDays) || 14;
+      let prog = null;
+      try {
+        const progDoc = await db.collection('appInstallProgress').doc(`${currentUser.uid}_${id}`).get();
+        prog = progDoc.exists ? progDoc.data() : null;
+      } catch (e) {
+        console.warn('Could not read progress for task', id, e);
+      }
 
-    const streak = prog ? (prog.streakDays || 0) : 0;
-    const isCompleted = prog && (prog.status === 'completed' || streak >= totalDays);
-    const checkedInToday = prog && prog.lastCheckinDate === todayStr();
-    const percent = Math.min(100, Math.round((streak / totalDays) * 100));
+      const streak = prog ? (Number(prog.streakDays) || 0) : 0;
+      const isCompleted = prog && (prog.status === 'completed' || streak >= totalDays);
+      const checkedInToday = prog && prog.lastCheckinDate === todayStr();
+      const percent = Math.min(100, Math.round((streak / totalDays) * 100));
 
-    let btnHtml = '';
-    let subInfo = `Day ${streak}/${totalDays} · Total Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
+      let btnHtml = '';
+      let subInfo = `Day ${streak}/${totalDays} · Total Reward: ${CURRENCY_SYMBOL}${(Number(t.reward)||0).toFixed(2)}`;
 
-    if(isCompleted){
-      btnHtml = `<button class="task-btn done" disabled>Completed</button>`;
-      subInfo = `Completed! ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} earned`;
-    } else if(checkedInToday){
-      btnHtml = `<button class="task-btn pending" disabled>Checked In Today</button>`;
-      subInfo = `Day ${streak}/${totalDays} complete. Come back tomorrow!`;
-    } else {
-      const nextDay = streak + 1;
-      btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${id}')">Open App / Day ${nextDay}</button>`;
-    }
+      if(isCompleted){
+        btnHtml = `<button class="task-btn done" disabled>Completed</button>`;
+        subInfo = `Completed! ${CURRENCY_SYMBOL}${(Number(t.reward)||0).toFixed(2)} earned`;
+      } else if(checkedInToday){
+        btnHtml = `<button class="task-btn pending" disabled>Checked In Today</button>`;
+        subInfo = `Day ${streak}/${totalDays} complete. Come back tomorrow!`;
+      } else {
+        const nextDay = streak + 1;
+        btnHtml = `<button class="task-btn" onclick="startAppInstallCheckin('${id}')">Open App / Day ${nextDay}</button>`;
+      }
 
-    return `
-      <div class="card task-card" id="taskcard-${id}" style="display:block;">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div class="task-icon">📲</div>
-          <div class="task-info">
-            <div class="task-name">${escapeHtml(t.appName || t.title)}</div>
-            <div class="task-sub">${escapeHtml(t.description || subInfo)}</div>
+      return `
+        <div class="card task-card" id="taskcard-${id}" style="display:block;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div class="task-icon">📲</div>
+            <div class="task-info">
+              <div class="task-name">${escapeHtml(t.appName || t.title)}</div>
+              <div class="task-sub">${escapeHtml(t.description || subInfo)}</div>
+            </div>
+            ${btnHtml}
           </div>
-          ${btnHtml}
+          <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
         </div>
-        <div class="progress-track"><div class="progress-fill" style="width:${percent}%"></div></div>
-      </div>
-    `;
-  }));
+      `;
+    }));
 
-  container.innerHTML = cardsHtml.join('');
+    container.innerHTML = cardsHtml.join('');
+  } catch(err) {
+    container.innerHTML = '<div class="empty-row">No app install tasks right now.</div>';
+  }
 }
 
 async function renderGenericTaskGroup(containerId, list, emptyMsg){
   const container = document.getElementById(containerId);
   if(!container) return;
-  if(list.length === 0){ container.innerHTML = emptyMsg ? `<div class="empty-row">${emptyMsg}</div>` : ''; return; }
+  if(list.length === 0){ 
+    container.innerHTML = emptyMsg ? `<div class="empty-row">${emptyMsg}</div>` : ''; 
+    return; 
+  }
 
-  const cardsHtml = await Promise.all(list.map(async ([id, t]) => {
+  const cardsHtml = list.map(([id, t]) => {
     const icon = TASK_ICONS[t.type] || '⭐';
     return `<div class="card task-card" id="taskcard-${id}">
       <div class="task-icon">${icon}</div>
-      <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || `Reward: ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`}</div></div>
+      <div class="task-info"><div class="task-name">${escapeHtml(t.title)}</div><div class="task-sub">${escapeHtml(t.description) || `Reward: ${CURRENCY_SYMBOL}${(Number(t.reward)||0).toFixed(2)}`}</div></div>
       <button class="task-btn" onclick="handleGenericTaskClick('${id}')">Start Task</button>
     </div>`;
-  }));
+  });
 
   container.innerHTML = cardsHtml.join('');
 }
 
-/* UPDATE 3: STRICT 30-SECOND VERIFICATION SYSTEM */
 let activeVerification = null;
 
 async function startAppInstallCheckin(taskId){
@@ -1028,7 +1068,6 @@ async function startAppInstallCheckin(taskId){
     return;
   }
 
-  // Open App Deep Link or fallback to Play Store
   const targetUrl = t.deepLink || t.playStoreLink || t.link || 'https://play.google.com';
   window.open(targetUrl, '_blank');
 
@@ -1042,7 +1081,6 @@ async function startAppInstallCheckin(taskId){
   if(activeVerification) clearInterval(activeVerification);
 
   activeVerification = setInterval(async () => {
-    // If user minimizes/switches tab, countdown pauses
     if(document.hidden){
       if(btn) btn.textContent = 'Paused (Tab Hidden)';
       return;
@@ -1061,7 +1099,7 @@ async function startAppInstallCheckin(taskId){
 
 async function finishAppInstallCheckin(taskId, t){
   showLoading(true);
-  const totalDays = t.durationDays || 14;
+  const totalDays = Number(t.durationDays) || 14;
   const dailyReward = Number(t.dailyReward) || 0;
   const finalReward = Number(t.reward) || 0;
   const docId = `${currentUser.uid}_${taskId}`;
@@ -1083,7 +1121,7 @@ async function finishAppInstallCheckin(taskId, t){
         throw new Error('ALREADY_DONE_TODAY');
       }
 
-      newStreak = pData ? (pData.streakDays + 1) : 1;
+      newStreak = pData ? (Number(pData.streakDays) + 1) : 1;
       completedFinal = newStreak >= totalDays;
 
       earnedToday = dailyReward;
@@ -1150,7 +1188,9 @@ async function handleGenericTaskClick(taskId){
   showLoading(false);
 }
 
-/* REFERRAL COPY & SHARE */
+/* =====================================================================================
+   REFERRAL COPY & SHARE
+===================================================================================== */
 function copyReferralLink(){
   const val = document.getElementById('referralLinkDisplay').value;
   navigator.clipboard.writeText(val).then(()=> showToast('Referral link copied!','success'))
@@ -1165,7 +1205,9 @@ function shareReferralLink(){
   }
 }
 
-/* WITHDRAW SYSTEM */
+/* =====================================================================================
+   WITHDRAW SYSTEM
+===================================================================================== */
 async function submitWithdraw(e){
   e.preventDefault();
   const errEl = document.getElementById('withdrawError');
@@ -1209,7 +1251,9 @@ async function submitWithdraw(e){
   return false;
 }
 
-/* PROFILE EDIT & UPLOAD */
+/* =====================================================================================
+   PROFILE EDIT & PHOTO UPLOAD
+===================================================================================== */
 async function saveProfile(e){
   e.preventDefault();
   if(!currentUser) return false;
