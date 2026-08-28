@@ -73,6 +73,7 @@ input,select{font-family:inherit;}
 /* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
 .btn.secondary{background:var(--card2); color:var(--text);}
+.btn.sm{width:auto; padding:6px 12px; font-size:12px; margin-top:0;}
 .btn.google{background:#fff; color:#333; display:flex; align-items:center; justify-content:center; gap:8px;}
 .btn:disabled{opacity:.6;}
 .field{margin-top:12px;}
@@ -231,6 +232,7 @@ input,select{font-family:inherit;}
         <div>
           <div class="profile-name" id="dashName">Loading...</div>
           <div class="profile-email" id="dashEmail">—</div>
+          <button class="btn secondary sm hidden" id="howToWorkBtn" style="margin-top:8px; padding:6px 12px; font-size:12px;" onclick="window.open(this.dataset.url,'_blank')">▶️ How to Work</button>
         </div>
       </div>
 
@@ -249,26 +251,13 @@ input,select{font-family:inherit;}
       <div class="section-title">Recent Activity <a class="link" onclick="goPage('history')">View all</a></div>
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
-<script>
-  atOptions = {
-    'key' : '30c083eb8d9f496699a72bb0c21bb795',
-    'format' : 'iframe',
-    'height' : 50,
-    'width' : 320,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highrevenueformat.com/30c083eb8d9f496699a72bb0c21bb795/invoke.js"></script>
 
     <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
     <div id="page-tasks" class="page hidden">
       <div class="section-title">Video Tasks</div>
       <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
 
-      <div class="section-title">  Website Visit</div>
-      <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
-
-            <div class="section-title">Social Tasks</div>
+      <div class="section-title">Social Tasks</div>
       <div id="tasksGroup-social"><div class="empty-row">Loading tasks...</div></div>
 
       <div class="section-title">App Install</div>
@@ -386,17 +375,14 @@ input,select{font-family:inherit;}
 /* =====================================================================================
    OPULIX — FIREBASE CONFIGURATION
    >>> REPLACE the values below with YOUR Firebase project config <<<
-   Firebase Console → Project Settings → General → Your apps → SDK setup and configuration
 ===================================================================================== */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
-  authDomain: "opulix-app.firebaseapp.com",
-  projectId: "opulix-app",
-  storageBucket: "opulix-app.firebasestorage.app",
-  messagingSenderId: "607811760478",
-  appId: "1:607811760478:web:2ae82447b32fc031489fcf",
-  measurementId: "G-QX6L49K050"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -417,16 +403,27 @@ let REWARDS = {
   referredBonus: 2.00
 };
 const CURRENCY_SYMBOLS = { BDT:'৳', USD:'$', INR:'₹' };
-let CURRENCY_SYMBOL = '৳'; // overwritten from settings/global.currency if the admin changes it
-const YOUTUBE_WATCH_SECONDS = 30;        // must watch this long before claim unlocks (per YouTube-type task)
-let MIN_WITHDRAW = 100;                  // overridden at runtime by settings/global if present
+let CURRENCY_SYMBOL = '৳';
+const YOUTUBE_WATCH_SECONDS = 30;
+let MIN_WITHDRAW = 100;
 
 let currentUser = null;
 let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
 
-// Pull admin-configured settings on page load too (not just after login), so that
-// signup-time referral bonuses already reflect the latest admin-set amounts.
+// Pull admin-configured settings on page load
 db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
+
+// Fetch latest active tutorial video for "How to Work" button
+db.collection('tutorials').where('enabled','==',true).orderBy('createdAt','desc').limit(1).get()
+  .then(snap=>{
+    if(snap.empty) return;
+    const v = snap.docs[0].data();
+    const btn = document.getElementById('howToWorkBtn');
+    if(btn && v.youtubeUrl){
+      btn.dataset.url = v.youtubeUrl;
+      btn.classList.remove('hidden');
+    }
+  }).catch(()=>{});
 
 /* =====================================================================================
    UI HELPERS: toast, spinner, offline
@@ -466,11 +463,6 @@ function genReferralCode(uid){
   return 'OPX' + uid.substring(0,6).toUpperCase();
 }
 
-/* =====================================================================================
-   REFERRAL TRACKING — persists the ?ref= code across the login flow (even across a
-   switch from email signup to Google, or a page reload) and connects it exactly once,
-   only at account-creation time, from a single shared function.
-===================================================================================== */
 const REFERRAL_STORAGE_KEY = 'opulix_pending_ref';
 function getPendingReferralCode(){
   try{ return localStorage.getItem(REFERRAL_STORAGE_KEY) || ''; }catch(e){ return ''; }
@@ -482,20 +474,15 @@ function clearPendingReferralCode(){
   try{ localStorage.removeItem(REFERRAL_STORAGE_KEY); }catch(e){}
 }
 
-// Called after EITHER email signup or a brand-new Google sign-in — never for an existing
-// user logging back in, so a referral can only ever connect once, at account creation.
 async function connectReferral(newUid, newName, refCodeRaw){
   const refCode = (refCodeRaw || '').trim().toUpperCase();
   if(!refCode) return;
   try{
     const q = await db.collection('users').where('referralCode','==', refCode).limit(1).get();
-    if(q.empty){ clearPendingReferralCode(); return; } // unknown code — ignore silently
+    if(q.empty){ clearPendingReferralCode(); return; }
     const referrerUid = q.docs[0].id;
-    if(referrerUid === newUid){ clearPendingReferralCode(); return; } // self-referral guard
+    if(referrerUid === newUid){ clearPendingReferralCode(); return; }
 
-    // Deterministic doc ID (the invited user's own uid) means this can only ever be
-    // written ONCE per invited user — Firestore rules block overwriting an existing
-    // referrals doc, so a duplicate/race-condition attempt fails harmlessly.
     const referralRef = db.collection('referrals').doc(newUid);
     const existing = await referralRef.get();
     if(existing.exists){ clearPendingReferralCode(); return; }
@@ -525,8 +512,6 @@ async function connectReferral(newUid, newName, refCodeRaw){
     await addTransaction(referrerUid, 'Referral bonus', REWARDS.referrerBonus, 'credit');
     await addTransaction(newUid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
   }catch(err){
-    // Referral crediting must never block account creation — the account still exists
-    // either way; they just miss the referral bonus this one time.
     console.error('Referral connect failed:', err);
   }
   clearPendingReferralCode();
@@ -614,8 +599,6 @@ async function handleGoogleLogin(){
         referredBy: null, lastCheckin: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
-      // Google has no referral-code text field in the UI — this only ever comes from a
-      // code captured earlier (via ?ref= on this or an earlier visit) and persisted.
       await connectReferral(uid, name, getPendingReferralCode());
     }
     showToast('Logged in with Google','success');
@@ -666,7 +649,6 @@ function friendlyAuthError(err){
 ===================================================================================== */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
-    // Maintenance mode + ban check happen before the app shell is shown
     showLoading(true);
     try{
       const settingsSnap = await db.collection('settings').doc('global').get();
@@ -687,7 +669,7 @@ auth.onAuthStateChanged(async (user)=>{
         await auth.signOut();
         return;
       }
-    }catch(err){ /* if settings/ads docs don't exist yet, fall back to local defaults below */ }
+    }catch(err){ }
     showLoading(false);
 
     currentUser = user;
@@ -741,11 +723,9 @@ function applyRemoteSettings(s){
   if(label) label.textContent = `Amount (Minimum ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
   const amountInput = document.getElementById('withdrawAmount');
   if(amountInput) amountInput.min = MIN_WITHDRAW;
-  // referralEnabled is read here for future use — hiding the referral tab entirely when
-  // disabled is a small follow-up if you want it.
 }
+
 function renderUserData(d){
-  // Realtime ban enforcement: if an admin bans this user mid-session, sign them out immediately
   if(d.banned === true && currentUser){
     showToast('Your account has been suspended. Contact support for help.','error');
     auth.signOut();
@@ -823,11 +803,11 @@ function goPage(page){
 }
 
 /* =====================================================================================
-   TRANSACTIONS + NOTIFICATIONS (shared helpers)
+   TRANSACTIONS + NOTIFICATIONS
 ===================================================================================== */
 async function addTransaction(uid, label, amount, type){
   await db.collection('transactions').add({
-    uid, label, amount, type, // type: 'credit' | 'debit'
+    uid, label, amount, type,
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
@@ -860,7 +840,7 @@ function attachNotifListener(uid){
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
     }, err=>{
       console.error('notifications listener error:', err);
-      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications — this usually means a required Firestore index is missing. Check the browser console for a link to create it.</span></div>';
+      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications.</span></div>';
     });
 }
 async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
@@ -892,7 +872,7 @@ function attachHistoryListener(uid){
     }, err=>{
       console.error('history listener error:', err);
       document.getElementById('recentActivityList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
-      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity — a required Firestore index may be missing. Check the browser console.</span></div>';
+      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
     });
 }
 
@@ -910,7 +890,7 @@ function attachWithdrawListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('withdraw listener error:', err);
-      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals — a required Firestore index may be missing. Check the browser console.</span></div>';
+      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals.</span></div>';
     });
 }
 
@@ -928,7 +908,7 @@ function attachReferralListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('referral listener error:', err);
-      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals — a required Firestore index may be missing. Check the browser console.</span></div>';
+      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals.</span></div>';
     });
 }
 
@@ -966,12 +946,10 @@ async function claimDailyCheckin(){
 }
 
 /* =====================================================================================
-   TASK ENGINE — fully driven by Firestore tasks/{id} docs (created/edited/deleted from
-   the admin panel). No task is hardcoded here; the Tasks page renders whatever the admin
-   has enabled, grouped by type, and re-renders live whenever the admin changes something.
+   TASK ENGINE
 ===================================================================================== */
-const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
-let taskCache = {}; // { taskId: taskData } — enabled tasks only, kept in sync via onSnapshot
+const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', website:'🌐', 'app-install':'📲' };
+let taskCache = {};
 
 function attachTasksListener(){
   unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
@@ -982,8 +960,6 @@ function attachTasksListener(){
       taskCache[doc.id] = d;
       if(d.type === 'daily-bonus') dailyBonusTask = d;
     });
-    // A "daily-bonus" type task lets the admin drive the Dashboard's daily bonus amount
-    // through the same Task Management screen, instead of it only living in Settings.
     if(dailyBonusTask && typeof dailyBonusTask.reward === 'number'){
       REWARDS.dailyCheckin = dailyBonusTask.reward;
     }
@@ -997,7 +973,7 @@ function attachTasksListener(){
   });
 }
 function showTaskLoadError(){
-  const msg = '<div class="empty-row">Failed to load tasks — check the browser console for details (this is often a missing Firestore index or rules issue).</div>';
+  const msg = '<div class="empty-row">Failed to load tasks.</div>';
   ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall'].forEach(id=>{
     const el = document.getElementById(id); if(el) el.innerHTML = msg;
   });
@@ -1007,14 +983,14 @@ async function renderAllTaskGroups(){
   if(!currentUser) return;
   const groups = { video:[], social:[], appinstall:[], other:[] };
   Object.entries(taskCache).forEach(([id,t])=>{
-    if(t.type === 'daily-bonus') return; // has its own dedicated UI on the Dashboard
+    if(t.type === 'daily-bonus') return;
     if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
-    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
+    else if(t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') groups.social.push([id,t]);
     else if(t.type === 'app-install') groups.appinstall.push([id,t]);
     else groups.other.push([id,t]);
   });
   await renderTaskGroup('tasksGroup-video', groups.video, 'No video tasks available right now.');
-  await renderTaskGroup('tasksGroup-social', groups.social, 'No social tasks available right now.');
+  await renderTaskGroup('tasksGroup-social', groups.social, 'No social or website tasks available right now.');
   await renderTaskGroup('tasksGroup-appinstall', groups.appinstall, 'No app install tasks available right now.');
   const otherTitle = document.getElementById('tasksGroupOtherTitle');
   if(groups.other.length){ otherTitle.classList.remove('hidden'); await renderTaskGroup('tasksGroup-other', groups.other, ''); }
@@ -1050,8 +1026,6 @@ function computeTaskState(t, completion){
 
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 
-// App Install progress lives in its OWN collection (appInstallProgress), separate from
-// completedTasks used by every other task type — same doc-id convention: uid_taskId.
 async function fetchAppInstallProgress(taskId){
   if(!currentUser) return null;
   const snap = await db.collection('appInstallProgress').doc(currentUser.uid + '_' + taskId).get();
@@ -1076,7 +1050,7 @@ async function buildTaskCardHtml(id, t){
   if(state.status === 'done'){ btnHtml = `<button class="task-btn done" disabled>Completed</button>`; }
   else if(state.status === 'cooldown'){ btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`; }
   else{
-    const label = t.type === 'video' ? 'Watch Ad' : 'Watch Now';
+    const label = t.type === 'video' ? 'Watch Ad' : (t.type === 'website' ? 'Visit Now' : 'Watch Now');
     btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
   }
   const defaultSub = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
@@ -1131,7 +1105,7 @@ function handleTaskClick(taskId){
   const t = taskCache[taskId];
   if(!t || !currentUser) return;
   if(t.type === 'video') return handleVideoAdTask(taskId, t);
-  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram') return handleRedirectTask(taskId, t);
+  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') return handleRedirectTask(taskId, t);
   if(t.type === 'app-install') return handleAppInstallTask(taskId, t);
 }
 
@@ -1143,10 +1117,7 @@ async function handleVideoAdTask(taskId, t){
   await claimGenericTask(taskId, t);
 }
 
-// Shared per-type wait before a "Watch Now" redirect task's claim unlocks — long enough to
-// plausibly watch/follow/join, short enough not to be annoying. Opens the real destination
-// directly (YouTube/Facebook/Telegram) instead of keeping the user inside the app.
-const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8 };
+const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8, website: 10 };
 
 async function handleRedirectTask(taskId, t){
   if(t.link) window.open(t.link, '_blank');
@@ -1167,13 +1138,6 @@ async function handleRedirectTask(taskId, t){
   await claimGenericTask(taskId, t);
 }
 
-/* App Install — 14-day engagement model: first click sends the user to install the app and
-   starts a streak tracker; each subsequent day they must reopen the app (this page) and stay
-   for 30 continuous seconds (paused while the tab is hidden) to bank that day's check-in.
-   Reaching 14 unique days credits the reward once and marks the task completed. */
-// Attempts to open the installed app via its package name / deep link. If the page is
-// still visible/foreground shortly after (i.e. nothing intercepted the navigation, which
-// is what happens when the app ISN'T installed), falls back to the Play Store link.
 function tryOpenApp(deepLink, playStoreLink){
   return new Promise((resolve)=>{
     let didHide = false;
@@ -1225,9 +1189,6 @@ async function handleAppInstallTask(taskId, t){
   const btn = el ? el.querySelector('.task-btn') : null;
   if(btn) btn.disabled = true;
 
-  // Strict 30-second verification: leaving this tab/page at any point during the
-  // countdown resets it to zero — the user must restart by tapping the button again,
-  // rather than the countdown merely pausing and resuming.
   const verified = await new Promise(resolve=>{
     let secs = 30;
     if(btn) btn.textContent = `Verifying... ${secs}s`;
@@ -1311,8 +1272,6 @@ async function recordAppInstallCheckin(taskId, t){
   refreshSingleTaskCard(taskId);
 }
 
-// Shared claim path for repeatable/one-time video, youtube, and social tasks.
-// App-install is NOT routed through here — its own 14-day flow above handles crediting.
 async function claimGenericTask(taskId, t){
   if(!currentUser) return false;
   const cooldownMs = (t.cooldownMinutes||0) * 60000;
@@ -1371,8 +1330,6 @@ function shareReferralLink(){
   }
 }
 
-// Capture ?ref= from the URL and persist it before any login happens, so it survives a
-// page reload or a switch from the signup form to Google login (which has no code field).
 (function prefillReferral(){
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -1433,10 +1390,6 @@ async function submitWithdraw(e){
   showLoading(false);
   return false;
 }
-/* NOTE: Approving/rejecting withdrawRequests (status pending→approved/rejected) is an
-   ADMIN action done from Firestore console or a back-office panel — not exposed here for
-   security. On "rejected", refund balance and clear pendingWithdraw via an admin script
-   or Cloud Function; this is covered in the setup guide. */
 
 /* =====================================================================================
    PROFILE — EDIT + PHOTO UPLOAD
