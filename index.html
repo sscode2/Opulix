@@ -204,7 +204,7 @@ input,select{font-family:inherit;}
       <div class="error-text" id="signupError"></div>
       <button class="btn" type="submit">Create Account</button>
       <button class="btn google" type="button" onclick="handleGoogleLogin()">
-        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.9 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 16 3 9 7.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.5C29.4 36 26.9 37 24 37c-5.4 0-9.9-3.1-11.3-8l-6.6 5.1C9 40.6 16 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.9 2.6-2.5 4.8-4.8 6.3l6.5 5.5C40.2 37 44 31 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.9 32.9 29.4 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 12.4 3 3 12.4 3 24s9.4 21 21 21 21-9.4 21-21c0-1.2-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.8 1.1 8 3l6-6C34.6 5.1 29.6 3 24 3 16 3 9 7.4 6.3 14.7z"/><path fill="#4CAF50" d="M24 45c5.4 0 10.3-2.1 14-5.5l-6.5-5.5C29.4 36 26.9 37 24 37c-5.4 0-9.9-3.1-11.3-8l-6.6 5.1C9 40.6 16 45 24 45z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.9 2.6-2.5 4.8-4.8 6.3l6.5 5.5C40.2 37 44 31 44 24c0-1.2-.1-2.3-.4-3.5z"/></svg>
         Sign up with Google
       </button>
     </form>
@@ -253,7 +253,6 @@ input,select{font-family:inherit;}
 
     <!-- ---------------- TASKS PAGE ---------------- -->
     <div id="page-tasks" class="page hidden">
-      <!-- DEDICATED HOW TO WORK TUTORIAL VIDEOS -->
       <div id="tutorialSection" class="hidden">
         <div class="section-title">How to Work Videos</div>
         <div id="tutorialList"></div>
@@ -470,9 +469,9 @@ async function connectReferral(newUid, newName, refCodeRaw){
   const refCode = (refCodeRaw || '').trim().toUpperCase();
   if(!refCode) return;
   try{
-    const q = await db.collection('users').where('referralCode','==', refCode).limit(1).get();
-    if(q.empty){ clearPendingReferralCode(); return; }
-    const referrerUid = q.docs[0].id;
+    const codeDoc = await db.collection('referralCodes').doc(refCode).get();
+    if(!codeDoc.exists){ clearPendingReferralCode(); return; }
+    const referrerUid = codeDoc.data().uid;
     if(referrerUid === newUid){ clearPendingReferralCode(); return; }
 
     const referralRef = db.collection('referrals').doc(newUid);
@@ -539,6 +538,8 @@ async function handleSignup(e){
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    await db.collection('referralCodes').doc(myRefCode).set({ uid });
+
     const finalRefCode = refCodeInput || getPendingReferralCode();
     await connectReferral(uid, name, finalRefCode);
 
@@ -581,16 +582,18 @@ async function handleGoogleLogin(){
     const snap = await docRef.get();
     if(!snap.exists){
       const name = result.user.displayName || 'User';
+      const myRefCode = genReferralCode(uid);
       await docRef.set({
         name,
         email: result.user.email,
         phone: '',
         photoURL: result.user.photoURL || '',
         balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
-        referralCode: genReferralCode(uid),
+        referralCode: myRefCode,
         referredBy: null, lastCheckin: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
+      await db.collection('referralCodes').doc(myRefCode).set({ uid });
       await connectReferral(uid, name, getPendingReferralCode());
     }
     showToast('Logged in with Google','success');
@@ -673,7 +676,7 @@ auth.onAuthStateChanged(async (user)=>{
     attachWithdrawListener(user.uid);
     attachReferralListener(user.uid);
     attachTasksListener();
-    attachTutorialsListener(); // <- Realtime sync for Tutorial Videos
+    attachTutorialsListener();
   } else {
     currentUser = null;
     taskCache = {};
@@ -716,14 +719,12 @@ function attachTutorialsListener(){
       }
     });
 
-    // Sort newest first
     tutorials.sort((a,b) => {
       const tA = a.createdAt ? a.createdAt.toMillis() : 0;
       const tB = b.createdAt ? b.createdAt.toMillis() : 0;
       return tB - tA;
     });
 
-    // 1. Dashboard "How to Work" button
     const dashBtn = document.getElementById('howToWorkBtn');
     if(dashBtn){
       if(tutorials.length > 0 && tutorials[0].youtubeUrl){
@@ -734,7 +735,6 @@ function attachTutorialsListener(){
       }
     }
 
-    // 2. Tasks Page Tutorial Section
     const section = document.getElementById('tutorialSection');
     const listEl = document.getElementById('tutorialList');
     if(!section || !listEl) return;
@@ -815,7 +815,6 @@ function renderUserData(d){
   document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
   document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
-  // Daily check-in state
   const now = Date.now();
   const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
   const diff = now - last;
