@@ -73,6 +73,7 @@ input,select{font-family:inherit;}
 /* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
 .btn.secondary{background:var(--card2); color:var(--text);}
+.btn.sm{width:auto; padding:6px 12px; font-size:12px; margin-top:0;}
 .btn.google{background:#fff; color:#333; display:flex; align-items:center; justify-content:center; gap:8px;}
 .btn:disabled{opacity:.6;}
 .field{margin-top:12px;}
@@ -231,6 +232,7 @@ input,select{font-family:inherit;}
         <div>
           <div class="profile-name" id="dashName">Loading...</div>
           <div class="profile-email" id="dashEmail">—</div>
+          <button class="btn secondary sm hidden" id="howToWorkBtn" style="margin-top:8px;" onclick="openTutorialVideo(this.dataset.url)">▶️ How to Work</button>
         </div>
       </div>
 
@@ -252,6 +254,11 @@ input,select{font-family:inherit;}
 
     <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
     <div id="page-tasks" class="page hidden">
+      <div id="tutorialSection" class="hidden">
+        <div class="section-title">How to Work Videos</div>
+        <div id="tutorialList"></div>
+      </div>
+
       <div class="section-title">Video Tasks</div>
       <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
 
@@ -375,15 +382,13 @@ input,select{font-family:inherit;}
    >>> REPLACE the values below with YOUR Firebase project config <<<
    Firebase Console → Project Settings → General → Your apps → SDK setup and configuration
 ===================================================================================== */
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
-  authDomain: "opulix-app.firebaseapp.com",
-  projectId: "opulix-app",
-  storageBucket: "opulix-app.firebasestorage.app",
-  messagingSenderId: "607811760478",
-  appId: "1:607811760478:web:2ae82447b32fc031489fcf",
-  measurementId: "G-QX6L49K050"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -409,7 +414,7 @@ const YOUTUBE_WATCH_SECONDS = 30;        // must watch this long before claim un
 let MIN_WITHDRAW = 100;                  // overridden at runtime by settings/global if present
 
 let currentUser = null;
-let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
+let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null, unsubTutorials = null;
 
 // Pull admin-configured settings on page load too (not just after login), so that
 // signup-time referral bonuses already reflect the latest admin-set amounts.
@@ -699,6 +704,7 @@ auth.onAuthStateChanged(async (user)=>{
     attachWithdrawListener(user.uid);
     attachReferralListener(user.uid);
     attachTasksListener();
+    attachTutorialsListener();
   } else {
     currentUser = null;
     taskCache = {};
@@ -718,6 +724,73 @@ function detachAllListeners(){
   if(unsubWithdraw) unsubWithdraw();
   if(unsubReferrals) unsubReferrals();
   if(unsubTasks) unsubTasks();
+  if(unsubTutorials) unsubTutorials();
+}
+
+/* =====================================================================================
+   TUTORIAL VIDEOS ("HOW TO WORK")
+===================================================================================== */
+function openTutorialVideo(url){
+  if(!url){ showToast('No video link provided.', 'error'); return; }
+  window.open(url, '_blank');
+}
+
+function attachTutorialsListener(){
+  if(unsubTutorials) unsubTutorials();
+
+  unsubTutorials = db.collection('tutorials').onSnapshot((snap)=>{
+    const tutorials = [];
+    snap.forEach(doc=>{
+      const d = doc.data();
+      if(d.enabled !== false){
+        tutorials.push({ id: doc.id, ...d });
+      }
+    });
+
+    tutorials.sort((a,b) => {
+      const tA = a.createdAt ? a.createdAt.toMillis() : 0;
+      const tB = b.createdAt ? b.createdAt.toMillis() : 0;
+      return tB - tA;
+    });
+
+    const dashBtn = document.getElementById('howToWorkBtn');
+    if(dashBtn){
+      if(tutorials.length > 0 && tutorials[0].youtubeUrl){
+        dashBtn.dataset.url = tutorials[0].youtubeUrl;
+        dashBtn.classList.remove('hidden');
+      } else {
+        dashBtn.classList.add('hidden');
+      }
+    }
+
+    const section = document.getElementById('tutorialSection');
+    const listEl = document.getElementById('tutorialList');
+    if(!section || !listEl) return;
+
+    if(tutorials.length === 0){
+      section.classList.add('hidden');
+      listEl.innerHTML = '';
+      return;
+    }
+
+    section.classList.remove('hidden');
+    let html = '';
+    tutorials.forEach(t=>{
+      html += `
+        <div class="card task-card">
+          <div class="task-icon" style="background:rgba(255,0,0,0.12); color:#ff4d4d;">▶️</div>
+          <div class="task-info">
+            <div class="task-name">${escapeHtml(t.title)}</div>
+            <div class="task-sub">${escapeHtml(t.category || 'Work')} Tutorial · Watch to learn</div>
+          </div>
+          <button class="task-btn" style="background:#ff2e2e;" onclick="openTutorialVideo('${escapeHtml(t.youtubeUrl)}')">Watch</button>
+        </div>
+      `;
+    });
+    listEl.innerHTML = html;
+  }, (err)=>{
+    console.error('Tutorials listener error:', err);
+  });
 }
 
 /* =====================================================================================
@@ -970,7 +1043,7 @@ async function claimDailyCheckin(){
    the admin panel). No task is hardcoded here; the Tasks page renders whatever the admin
    has enabled, grouped by type, and re-renders live whenever the admin changes something.
 ===================================================================================== */
-const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
+const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', website:'🌐', 'app-install':'📲' };
 let taskCache = {}; // { taskId: taskData } — enabled tasks only, kept in sync via onSnapshot
 
 function attachTasksListener(){
@@ -1009,7 +1082,7 @@ async function renderAllTaskGroups(){
   Object.entries(taskCache).forEach(([id,t])=>{
     if(t.type === 'daily-bonus') return; // has its own dedicated UI on the Dashboard
     if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
-    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
+    else if(t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') groups.social.push([id,t]);
     else if(t.type === 'app-install') groups.appinstall.push([id,t]);
     else groups.other.push([id,t]);
   });
@@ -1076,7 +1149,7 @@ async function buildTaskCardHtml(id, t){
   if(state.status === 'done'){ btnHtml = `<button class="task-btn done" disabled>Completed</button>`; }
   else if(state.status === 'cooldown'){ btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`; }
   else{
-    const label = t.type === 'video' ? 'Watch Ad' : 'Watch Now';
+    const label = t.type === 'video' ? 'Watch Ad' : (t.type === 'website' ? 'Visit Now' : 'Watch Now');
     btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
   }
   const defaultSub = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
@@ -1131,7 +1204,7 @@ function handleTaskClick(taskId){
   const t = taskCache[taskId];
   if(!t || !currentUser) return;
   if(t.type === 'video') return handleVideoAdTask(taskId, t);
-  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram') return handleRedirectTask(taskId, t);
+  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') return handleRedirectTask(taskId, t);
   if(t.type === 'app-install') return handleAppInstallTask(taskId, t);
 }
 
@@ -1144,9 +1217,10 @@ async function handleVideoAdTask(taskId, t){
 }
 
 // Shared per-type wait before a "Watch Now" redirect task's claim unlocks — long enough to
-// plausibly watch/follow/join, short enough not to be annoying. Opens the real destination
-// directly (YouTube/Facebook/Telegram) instead of keeping the user inside the app.
-const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8 };
+// plausibly watch/follow/join/visit, short enough not to be annoying. Opens the real
+// destination directly (YouTube/Facebook/Telegram/website) instead of keeping the user
+// inside the app — this is what fixed "Visit Website" tasks completing without navigating.
+const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8, website: 10 };
 
 async function handleRedirectTask(taskId, t){
   if(t.link) window.open(t.link, '_blank');
