@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>OPULIX — Earn Online</title>
 
-<!-- ================= FIREBASE SDKs ================= -->
+<!-- ================= FIREBASE SDKs (compat, easiest for vanilla JS) ================= -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -73,7 +73,6 @@ input,select{font-family:inherit;}
 /* ---------- Buttons / forms ---------- */
 .btn{width:100%; padding:13px; border-radius:12px; border:none; font-weight:700; font-size:14px; background:var(--accent); color:#fff; margin-top:10px;}
 .btn.secondary{background:var(--card2); color:var(--text);}
-.btn.sm{width:auto; padding:6px 12px; font-size:12px; margin-top:0;}
 .btn.google{background:#fff; color:#333; display:flex; align-items:center; justify-content:center; gap:8px;}
 .btn:disabled{opacity:.6;}
 .field{margin-top:12px;}
@@ -141,6 +140,7 @@ input,select{font-family:inherit;}
 .status-pill.pending{background:rgba(255,184,77,.15); color:var(--warn);}
 .status-pill.approved{background:rgba(34,211,165,.15); color:var(--ok);}
 .status-pill.rejected{background:rgba(255,91,107,.15); color:var(--danger);}
+
 </style>
 </head>
 <body>
@@ -211,7 +211,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ============================================================= APP SHELL ============================================================= -->
+<!-- ============================================================= APP SHELL (shown after login) ============================================================= -->
 <div id="appShell" class="hidden">
 
   <div class="topbar">
@@ -231,7 +231,6 @@ input,select{font-family:inherit;}
         <div>
           <div class="profile-name" id="dashName">Loading...</div>
           <div class="profile-email" id="dashEmail">—</div>
-          <button class="btn secondary sm hidden" id="howToWorkBtn" style="margin-top:8px;" onclick="openTutorialVideo(this.dataset.url)">▶️ How to Work</button>
         </div>
       </div>
 
@@ -251,13 +250,8 @@ input,select{font-family:inherit;}
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
 
-    <!-- ---------------- TASKS PAGE ---------------- -->
+    <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
     <div id="page-tasks" class="page hidden">
-      <div id="tutorialSection" class="hidden">
-        <div class="section-title">How to Work Videos</div>
-        <div id="tutorialList"></div>
-      </div>
-
       <div class="section-title">Video Tasks</div>
       <div id="tasksGroup-video"><div class="empty-row">Loading tasks...</div></div>
 
@@ -377,17 +371,19 @@ input,select{font-family:inherit;}
 
 <script>
 /* =====================================================================================
-   FIREBASE CONFIG
+   OPULIX — FIREBASE CONFIGURATION
+   >>> REPLACE the values below with YOUR Firebase project config <<<
+   Firebase Console → Project Settings → General → Your apps → SDK setup and configuration
 ===================================================================================== */
 const firebaseConfig = {
-  apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
-  authDomain: "opulix-app.firebaseapp.com",
-  projectId: "opulix-app",
-  storageBucket: "opulix-app.firebasestorage.app",
-  messagingSenderId: "607811760478",
-  appId: "1:607811760478:web:2ae82447b32fc031489fcf",
-  measurementId: "G-QX6L49K050"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
+
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
@@ -406,18 +402,19 @@ let REWARDS = {
   referredBonus: 2.00
 };
 const CURRENCY_SYMBOLS = { BDT:'৳', USD:'$', INR:'₹' };
-let CURRENCY_SYMBOL = '৳';
-const YOUTUBE_WATCH_SECONDS = 30;
-let MIN_WITHDRAW = 100;
+let CURRENCY_SYMBOL = '৳'; // overwritten from settings/global.currency if the admin changes it
+const YOUTUBE_WATCH_SECONDS = 30;        // must watch this long before claim unlocks (per YouTube-type task)
+let MIN_WITHDRAW = 100;                  // overridden at runtime by settings/global if present
 
 let currentUser = null;
-let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null, unsubTutorials = null;
+let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null;
 
-// Pull remote settings
+// Pull admin-configured settings on page load too (not just after login), so that
+// signup-time referral bonuses already reflect the latest admin-set amounts.
 db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
 
 /* =====================================================================================
-   UI HELPERS
+   UI HELPERS: toast, spinner, offline
 ===================================================================================== */
 function showToast(msg, type='info'){
   const wrap = document.getElementById('toastWrap');
@@ -454,6 +451,11 @@ function genReferralCode(uid){
   return 'OPX' + uid.substring(0,6).toUpperCase();
 }
 
+/* =====================================================================================
+   REFERRAL TRACKING — persists the ?ref= code across the login flow (even across a
+   switch from email signup to Google, or a page reload) and connects it exactly once,
+   only at account-creation time, from a single shared function.
+===================================================================================== */
 const REFERRAL_STORAGE_KEY = 'opulix_pending_ref';
 function getPendingReferralCode(){
   try{ return localStorage.getItem(REFERRAL_STORAGE_KEY) || ''; }catch(e){ return ''; }
@@ -465,24 +467,36 @@ function clearPendingReferralCode(){
   try{ localStorage.removeItem(REFERRAL_STORAGE_KEY); }catch(e){}
 }
 
+// Called after EITHER email signup or a brand-new Google sign-in — never for an existing
+// user logging back in, so a referral can only ever connect once, at account creation.
 async function connectReferral(newUid, newName, refCodeRaw){
   const refCode = (refCodeRaw || '').trim().toUpperCase();
   if(!refCode) return;
   try{
+    // Looks up referralCodes/{code} — a narrow public mapping of code -> uid — instead of
+    // querying users by referralCode. The users collection only allows reading your OWN
+    // document, so a cross-user query there is silently denied and referrals never connect;
+    // referralCodes exists specifically to make this lookup possible without that problem.
     const codeDoc = await db.collection('referralCodes').doc(refCode).get();
-    if(!codeDoc.exists){ clearPendingReferralCode(); return; }
+    if(!codeDoc.exists){ clearPendingReferralCode(); return; } // unknown code — ignore silently
     const referrerUid = codeDoc.data().uid;
-    if(referrerUid === newUid){ clearPendingReferralCode(); return; }
+    if(referrerUid === newUid){ clearPendingReferralCode(); return; } // self-referral guard
 
+    // Deterministic doc ID (the invited user's own uid) means this can only ever be
+    // written ONCE per invited user — Firestore rules block overwriting an existing
+    // referrals doc, so a duplicate/race-condition attempt fails harmlessly.
     const referralRef = db.collection('referrals').doc(newUid);
     const existing = await referralRef.get();
     if(existing.exists){ clearPendingReferralCode(); return; }
 
     const referrerRef = db.collection('users').doc(referrerUid);
     const newUserRef = db.collection('users').doc(newUid);
+    // Deliberately NOT reading the referrer's user doc first (no tx.get(referrerRef)) —
+    // that read needs broader permissions than the users rule grants a stranger, and it's
+    // not needed anyway: referrerUid came from referralCodes, which is only ever written
+    // alongside a real users/{uid} doc, so its existence is already implied. If it somehow
+    // doesn't exist, tx.update() below just fails and the whole transaction aborts safely.
     await db.runTransaction(async (tx)=>{
-      const referrerSnap = await tx.get(referrerRef);
-      if(!referrerSnap.exists) throw new Error('REFERRER_MISSING');
       tx.update(referrerRef, {
         balance: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
         totalEarnings: firebase.firestore.FieldValue.increment(REWARDS.referrerBonus),
@@ -503,6 +517,8 @@ async function connectReferral(newUid, newName, refCodeRaw){
     await addTransaction(referrerUid, 'Referral bonus', REWARDS.referrerBonus, 'credit');
     await addTransaction(newUid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
   }catch(err){
+    // Referral crediting must never block account creation — the account still exists
+    // either way; they just miss the referral bonus this one time.
     console.error('Referral connect failed:', err);
   }
   clearPendingReferralCode();
@@ -538,6 +554,8 @@ async function handleSignup(e){
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
+    // Narrow public lookup so OTHER users' signups can resolve "who owns this code"
+    // without needing broad read access to everyone's profile (see connectReferral below).
     await db.collection('referralCodes').doc(myRefCode).set({ uid });
 
     const finalRefCode = refCodeInput || getPendingReferralCode();
@@ -594,6 +612,8 @@ async function handleGoogleLogin(){
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       await db.collection('referralCodes').doc(myRefCode).set({ uid });
+      // Google has no referral-code text field in the UI — this only ever comes from a
+      // code captured earlier (via ?ref= on this or an earlier visit) and persisted.
       await connectReferral(uid, name, getPendingReferralCode());
     }
     showToast('Logged in with Google','success');
@@ -640,10 +660,11 @@ function friendlyAuthError(err){
 }
 
 /* =====================================================================================
-   AUTH STATE
+   AUTH STATE — REDIRECT PROTECTION
 ===================================================================================== */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
+    // Maintenance mode + ban check happen before the app shell is shown
     showLoading(true);
     try{
       const settingsSnap = await db.collection('settings').doc('global').get();
@@ -664,7 +685,7 @@ auth.onAuthStateChanged(async (user)=>{
         await auth.signOut();
         return;
       }
-    }catch(err){ }
+    }catch(err){ /* if settings/ads docs don't exist yet, fall back to local defaults below */ }
     showLoading(false);
 
     currentUser = user;
@@ -676,7 +697,6 @@ auth.onAuthStateChanged(async (user)=>{
     attachWithdrawListener(user.uid);
     attachReferralListener(user.uid);
     attachTasksListener();
-    attachTutorialsListener();
   } else {
     currentUser = null;
     taskCache = {};
@@ -696,73 +716,6 @@ function detachAllListeners(){
   if(unsubWithdraw) unsubWithdraw();
   if(unsubReferrals) unsubReferrals();
   if(unsubTasks) unsubTasks();
-  if(unsubTutorials) unsubTutorials();
-}
-
-/* =====================================================================================
-   TUTORIAL VIDEOS ("HOW TO WORK")
-===================================================================================== */
-function openTutorialVideo(url){
-  if(!url){ showToast('No video link provided.', 'error'); return; }
-  window.open(url, '_blank');
-}
-
-function attachTutorialsListener(){
-  if(unsubTutorials) unsubTutorials();
-  
-  unsubTutorials = db.collection('tutorials').onSnapshot((snap)=>{
-    const tutorials = [];
-    snap.forEach(doc=>{
-      const d = doc.data();
-      if(d.enabled !== false){
-        tutorials.push({ id: doc.id, ...d });
-      }
-    });
-
-    tutorials.sort((a,b) => {
-      const tA = a.createdAt ? a.createdAt.toMillis() : 0;
-      const tB = b.createdAt ? b.createdAt.toMillis() : 0;
-      return tB - tA;
-    });
-
-    const dashBtn = document.getElementById('howToWorkBtn');
-    if(dashBtn){
-      if(tutorials.length > 0 && tutorials[0].youtubeUrl){
-        dashBtn.dataset.url = tutorials[0].youtubeUrl;
-        dashBtn.classList.remove('hidden');
-      } else {
-        dashBtn.classList.add('hidden');
-      }
-    }
-
-    const section = document.getElementById('tutorialSection');
-    const listEl = document.getElementById('tutorialList');
-    if(!section || !listEl) return;
-
-    if(tutorials.length === 0){
-      section.classList.add('hidden');
-      listEl.innerHTML = '';
-      return;
-    }
-
-    section.classList.remove('hidden');
-    let html = '';
-    tutorials.forEach(t=>{
-      html += `
-        <div class="card task-card">
-          <div class="task-icon" style="background:rgba(255,0,0,0.12); color:#ff4d4d;">▶️</div>
-          <div class="task-info">
-            <div class="task-name">${escapeHtml(t.title)}</div>
-            <div class="task-sub">${escapeHtml(t.category || 'Work')} Tutorial · Watch to learn</div>
-          </div>
-          <button class="task-btn" style="background:#ff2e2e;" onclick="openTutorialVideo('${escapeHtml(t.youtubeUrl)}')">Watch</button>
-        </div>
-      `;
-    });
-    listEl.innerHTML = html;
-  }, (err)=>{
-    console.error('Tutorials listener error:', err);
-  });
 }
 
 /* =====================================================================================
@@ -786,9 +739,11 @@ function applyRemoteSettings(s){
   if(label) label.textContent = `Amount (Minimum ${CURRENCY_SYMBOL}${MIN_WITHDRAW})`;
   const amountInput = document.getElementById('withdrawAmount');
   if(amountInput) amountInput.min = MIN_WITHDRAW;
+  // referralEnabled is read here for future use — hiding the referral tab entirely when
+  // disabled is a small follow-up if you want it.
 }
-
 function renderUserData(d){
+  // Realtime ban enforcement: if an admin bans this user mid-session, sign them out immediately
   if(d.banned === true && currentUser){
     showToast('Your account has been suspended. Contact support for help.','error');
     auth.signOut();
@@ -815,6 +770,7 @@ function renderUserData(d){
   document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
   document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
+  // Daily check-in state
   const now = Date.now();
   const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
   const diff = now - last;
@@ -865,11 +821,11 @@ function goPage(page){
 }
 
 /* =====================================================================================
-   TRANSACTIONS + NOTIFICATIONS
+   TRANSACTIONS + NOTIFICATIONS (shared helpers)
 ===================================================================================== */
 async function addTransaction(uid, label, amount, type){
   await db.collection('transactions').add({
-    uid, label, amount, type,
+    uid, label, amount, type, // type: 'credit' | 'debit'
     createdAt: firebase.firestore.FieldValue.serverTimestamp()
   });
 }
@@ -902,7 +858,7 @@ function attachNotifListener(uid){
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
     }, err=>{
       console.error('notifications listener error:', err);
-      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications.</span></div>';
+      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications — this usually means a required Firestore index is missing. Check the browser console for a link to create it.</span></div>';
     });
 }
 async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
@@ -934,7 +890,7 @@ function attachHistoryListener(uid){
     }, err=>{
       console.error('history listener error:', err);
       document.getElementById('recentActivityList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
-      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
+      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
@@ -952,7 +908,7 @@ function attachWithdrawListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('withdraw listener error:', err);
-      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals.</span></div>';
+      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
@@ -970,7 +926,7 @@ function attachReferralListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('referral listener error:', err);
-      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals.</span></div>';
+      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals — a required Firestore index may be missing. Check the browser console.</span></div>';
     });
 }
 
@@ -1008,10 +964,12 @@ async function claimDailyCheckin(){
 }
 
 /* =====================================================================================
-   TASK ENGINE
+   TASK ENGINE — fully driven by Firestore tasks/{id} docs (created/edited/deleted from
+   the admin panel). No task is hardcoded here; the Tasks page renders whatever the admin
+   has enabled, grouped by type, and re-renders live whenever the admin changes something.
 ===================================================================================== */
-const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', website:'🌐', 'app-install':'📲' };
-let taskCache = {};
+const TASK_ICONS = { video:'🎬', youtube:'▶️', facebook:'📘', telegram:'✈️', 'app-install':'📲' };
+let taskCache = {}; // { taskId: taskData } — enabled tasks only, kept in sync via onSnapshot
 
 function attachTasksListener(){
   unsubTasks = db.collection('tasks').where('enabled','==',true).onSnapshot((snap)=>{
@@ -1022,6 +980,8 @@ function attachTasksListener(){
       taskCache[doc.id] = d;
       if(d.type === 'daily-bonus') dailyBonusTask = d;
     });
+    // A "daily-bonus" type task lets the admin drive the Dashboard's daily bonus amount
+    // through the same Task Management screen, instead of it only living in Settings.
     if(dailyBonusTask && typeof dailyBonusTask.reward === 'number'){
       REWARDS.dailyCheckin = dailyBonusTask.reward;
     }
@@ -1035,7 +995,7 @@ function attachTasksListener(){
   });
 }
 function showTaskLoadError(){
-  const msg = '<div class="empty-row">Failed to load tasks.</div>';
+  const msg = '<div class="empty-row">Failed to load tasks — check the browser console for details (this is often a missing Firestore index or rules issue).</div>';
   ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall'].forEach(id=>{
     const el = document.getElementById(id); if(el) el.innerHTML = msg;
   });
@@ -1045,14 +1005,14 @@ async function renderAllTaskGroups(){
   if(!currentUser) return;
   const groups = { video:[], social:[], appinstall:[], other:[] };
   Object.entries(taskCache).forEach(([id,t])=>{
-    if(t.type === 'daily-bonus') return;
+    if(t.type === 'daily-bonus') return; // has its own dedicated UI on the Dashboard
     if(t.type === 'video' || t.type === 'youtube') groups.video.push([id,t]);
-    else if(t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') groups.social.push([id,t]);
+    else if(t.type === 'facebook' || t.type === 'telegram') groups.social.push([id,t]);
     else if(t.type === 'app-install') groups.appinstall.push([id,t]);
     else groups.other.push([id,t]);
   });
   await renderTaskGroup('tasksGroup-video', groups.video, 'No video tasks available right now.');
-  await renderTaskGroup('tasksGroup-social', groups.social, 'No social or website tasks available right now.');
+  await renderTaskGroup('tasksGroup-social', groups.social, 'No social tasks available right now.');
   await renderTaskGroup('tasksGroup-appinstall', groups.appinstall, 'No app install tasks available right now.');
   const otherTitle = document.getElementById('tasksGroupOtherTitle');
   if(groups.other.length){ otherTitle.classList.remove('hidden'); await renderTaskGroup('tasksGroup-other', groups.other, ''); }
@@ -1088,6 +1048,8 @@ function computeTaskState(t, completion){
 
 function todayStr(){ return new Date().toISOString().slice(0,10); }
 
+// App Install progress lives in its OWN collection (appInstallProgress), separate from
+// completedTasks used by every other task type — same doc-id convention: uid_taskId.
 async function fetchAppInstallProgress(taskId){
   if(!currentUser) return null;
   const snap = await db.collection('appInstallProgress').doc(currentUser.uid + '_' + taskId).get();
@@ -1112,7 +1074,7 @@ async function buildTaskCardHtml(id, t){
   if(state.status === 'done'){ btnHtml = `<button class="task-btn done" disabled>Completed</button>`; }
   else if(state.status === 'cooldown'){ btnHtml = `<button class="task-btn" disabled>${formatHM(state.remainingMs)}</button>`; }
   else{
-    const label = t.type === 'video' ? 'Watch Ad' : (t.type === 'website' ? 'Visit Now' : 'Watch Now');
+    const label = t.type === 'video' ? 'Watch Ad' : 'Watch Now';
     btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">${label}</button>`;
   }
   const defaultSub = t.cooldownMinutes>0 ? `Earn ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)} · every ${t.cooldownMinutes} min` : `One-time reward · ${CURRENCY_SYMBOL}${(t.reward||0).toFixed(2)}`;
@@ -1167,7 +1129,7 @@ function handleTaskClick(taskId){
   const t = taskCache[taskId];
   if(!t || !currentUser) return;
   if(t.type === 'video') return handleVideoAdTask(taskId, t);
-  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram' || t.type === 'website') return handleRedirectTask(taskId, t);
+  if(t.type === 'youtube' || t.type === 'facebook' || t.type === 'telegram') return handleRedirectTask(taskId, t);
   if(t.type === 'app-install') return handleAppInstallTask(taskId, t);
 }
 
@@ -1179,7 +1141,10 @@ async function handleVideoAdTask(taskId, t){
   await claimGenericTask(taskId, t);
 }
 
-const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8, website: 10 };
+// Shared per-type wait before a "Watch Now" redirect task's claim unlocks — long enough to
+// plausibly watch/follow/join, short enough not to be annoying. Opens the real destination
+// directly (YouTube/Facebook/Telegram) instead of keeping the user inside the app.
+const REDIRECT_WAIT_SECONDS = { youtube: YOUTUBE_WATCH_SECONDS, facebook: 8, telegram: 8 };
 
 async function handleRedirectTask(taskId, t){
   if(t.link) window.open(t.link, '_blank');
@@ -1200,6 +1165,13 @@ async function handleRedirectTask(taskId, t){
   await claimGenericTask(taskId, t);
 }
 
+/* App Install — 14-day engagement model: first click sends the user to install the app and
+   starts a streak tracker; each subsequent day they must reopen the app (this page) and stay
+   for 30 continuous seconds (paused while the tab is hidden) to bank that day's check-in.
+   Reaching 14 unique days credits the reward once and marks the task completed. */
+// Attempts to open the installed app via its package name / deep link. If the page is
+// still visible/foreground shortly after (i.e. nothing intercepted the navigation, which
+// is what happens when the app ISN'T installed), falls back to the Play Store link.
 function tryOpenApp(deepLink, playStoreLink){
   return new Promise((resolve)=>{
     let didHide = false;
@@ -1251,6 +1223,9 @@ async function handleAppInstallTask(taskId, t){
   const btn = el ? el.querySelector('.task-btn') : null;
   if(btn) btn.disabled = true;
 
+  // Strict 30-second verification: leaving this tab/page at any point during the
+  // countdown resets it to zero — the user must restart by tapping the button again,
+  // rather than the countdown merely pausing and resuming.
   const verified = await new Promise(resolve=>{
     let secs = 30;
     if(btn) btn.textContent = `Verifying... ${secs}s`;
@@ -1334,6 +1309,8 @@ async function recordAppInstallCheckin(taskId, t){
   refreshSingleTaskCard(taskId);
 }
 
+// Shared claim path for repeatable/one-time video, youtube, and social tasks.
+// App-install is NOT routed through here — its own 14-day flow above handles crediting.
 async function claimGenericTask(taskId, t){
   if(!currentUser) return false;
   const cooldownMs = (t.cooldownMinutes||0) * 60000;
@@ -1392,6 +1369,8 @@ function shareReferralLink(){
   }
 }
 
+// Capture ?ref= from the URL and persist it before any login happens, so it survives a
+// page reload or a switch from the signup form to Google login (which has no code field).
 (function prefillReferral(){
   const params = new URLSearchParams(window.location.search);
   const ref = params.get('ref');
@@ -1452,6 +1431,10 @@ async function submitWithdraw(e){
   showLoading(false);
   return false;
 }
+/* NOTE: Approving/rejecting withdrawRequests (status pending→approved/rejected) is an
+   ADMIN action done from Firestore console or a back-office panel — not exposed here for
+   security. On "rejected", refund balance and clear pendingWithdraw via an admin script
+   or Cloud Function; this is covered in the setup guide. */
 
 /* =====================================================================================
    PROFILE — EDIT + PHOTO UPLOAD
