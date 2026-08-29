@@ -1179,12 +1179,12 @@ async function buildAppInstallCardHtml(id, t){
       btnHtml = `<button class="task-btn pending" disabled>Day ${state.daysCompleted}/${state.checkinDays} ✓</button>`;
       subText = `Checked in today — come back tomorrow to continue (Day ${state.daysCompleted}/${state.checkinDays})`;
     } else {
-      btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Open App / Check In (Day ${state.daysCompleted+1}/${state.checkinDays})</button>`;
-      subText = `Open the app and stay 30s to check in — ${state.daysCompleted}/${state.checkinDays} days done · ${rewardNote}`;
+      btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Open</button>`;
+      subText = `Tap Open and stay in the app 30s to check in — Day ${state.daysCompleted+1}/${state.checkinDays} · ${rewardNote}`;
     }
   } else {
-    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Open App / Check In</button>`;
-    subText = `Install, then check in daily for 30s over ${state.checkinDays} days to earn ${rewardNote}`;
+    btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Install</button>`;
+    subText = `Install the app, then open it daily for 30s over ${state.checkinDays} days to earn ${rewardNote}`;
   }
   return `<div class="card task-card" id="taskcard-${id}">
     <div class="task-icon">${icon}</div>
@@ -1273,25 +1273,37 @@ function tryOpenApp(deepLink, playStoreLink){
 
 async function handleAppInstallTask(taskId, t){
   const progress = await fetchAppInstallProgress(taskId);
-  const today = todayStr();
+  if(!progress) return handleInstallClick(taskId, t);
+  return handleOpenAppCheckin(taskId, t, progress);
+}
+
+// First tap ever for this task: just send the user to the Play Store and mark the task as
+// started. No 30-second timer here — that only ever starts once they've actually installed
+// and come back to tap "Open" (the button switches to "Open" as soon as this succeeds).
+async function handleInstallClick(taskId, t){
+  const storeUrl = t.playStoreLink || t.appDeepLink;
+  if(!storeUrl){ showToast('This task has no install link configured — ask an admin to add one.','error'); return; }
+  window.open(storeUrl, '_blank');
   const checkinDays = Math.min(30, Math.max(1, t.checkinDays || 14));
+  try{
+    await db.collection('appInstallProgress').doc(currentUser.uid + '_' + taskId).set({
+      uid: currentUser.uid, taskId,
+      checkinDays, reward: t.reward || 0, dailyReward: t.dailyReward || 0,
+      daysCompleted: 0, lastCheckinDate: null, status: 'in-progress',
+      startedAt: firebase.firestore.FieldValue.serverTimestamp(), completedAt: null
+    });
+    await addNotification(currentUser.uid, `You started "${t.title}" — once installed, tap Open daily and stay in the app for 30 seconds to earn your reward.`);
+    showToast('Redirected to the Play Store. Once installed, come back and tap Open!','info');
+  }catch(err){ showToast('Failed to start install task.','error'); }
+  refreshSingleTaskCard(taskId);
+}
 
-  if(!progress){
-    await tryOpenApp(t.appDeepLink, t.playStoreLink);
-    try{
-      await db.collection('appInstallProgress').doc(currentUser.uid + '_' + taskId).set({
-        uid: currentUser.uid, taskId,
-        checkinDays, reward: t.reward || 0, dailyReward: t.dailyReward || 0,
-        daysCompleted: 0, lastCheckinDate: null, status: 'in-progress',
-        startedAt: firebase.firestore.FieldValue.serverTimestamp(), completedAt: null
-      });
-      await addNotification(currentUser.uid, `You started "${t.title}" — open the app daily for 30 seconds over ${checkinDays} days to earn your reward.`);
-      showToast('Install started! Come back daily and stay open 30s to check in.','info');
-    }catch(err){ showToast('Failed to start install task.','error'); }
-    refreshSingleTaskCard(taskId);
-    return;
-  }
-
+// Every subsequent day: launch the app directly (falling back to the Play Store link if
+// nothing seems to open — e.g. they never actually installed it), then verify 30
+// uninterrupted foreground seconds before auto-completing that day's check-in. No separate
+// "claim" step — reaching 30 seconds credits it automatically.
+async function handleOpenAppCheckin(taskId, t, progress){
+  const today = todayStr();
   if(progress.status === 'completed'){ showToast('You already completed this task.','info'); refreshSingleTaskCard(taskId); return; }
   if(progress.lastCheckinDate === today){ showToast(`Already checked in today — Day ${progress.daysCompleted}/${progress.checkinDays}. Come back tomorrow!`,'info'); return; }
 
@@ -1302,8 +1314,8 @@ async function handleAppInstallTask(taskId, t){
   if(btn) btn.disabled = true;
 
   // Strict 30-second verification: leaving this tab/page at any point during the
-  // countdown resets it to zero — the user must restart by tapping the button again,
-  // rather than the countdown merely pausing and resuming.
+  // countdown resets it to zero — the user must tap "Open" again to retry, rather than
+  // the countdown merely pausing and resuming.
   const verified = await new Promise(resolve=>{
     let secs = 30;
     if(btn) btn.textContent = `Verifying... ${secs}s`;
@@ -1325,7 +1337,7 @@ async function handleAppInstallTask(taskId, t){
   });
 
   if(!verified){
-    showToast('Verification interrupted — please tap Open App / Check In again to retry.','error');
+    showToast('Verification interrupted — please tap Open again to retry.','error');
     refreshSingleTaskCard(taskId);
     return;
   }
