@@ -52,6 +52,23 @@ input,select{font-family:inherit;}
 .profile-name{font-weight:700; font-size:16px;}
 .profile-email{color:var(--muted); font-size:12px; margin-top:2px;}
 
+/* Dynamic Admin Managed User Label */
+.user-profile-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, rgba(91,140,255,0.22), rgba(34,211,165,0.2));
+  color: var(--accent2);
+  border: 1px solid rgba(34,211,165,0.35);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-top: 6px;
+  letter-spacing: .3px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
 .balance-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
 .stat-box{background:var(--card2); border-radius:12px; padding:12px;}
 .stat-label{color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.5px;}
@@ -61,7 +78,7 @@ input,select{font-family:inherit;}
 .section-title{font-size:15px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
 .section-title .link{font-size:12px; color:var(--accent); font-weight:600;}
 
-/* ---------- FEATURED VIDEO & DIRECT ACTION SECTION (NEW) ---------- */
+/* ---------- FEATURED VIDEO & DIRECT ACTION SECTION ---------- */
 .home-video-card{
   margin: 16px 0 18px;
   border-radius: var(--radius);
@@ -73,7 +90,7 @@ input,select{font-family:inherit;}
 .home-video-box{
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 ratio */
+  padding-top: 56.25%;
   background: #000;
   overflow: hidden;
 }
@@ -85,7 +102,6 @@ input,select{font-family:inherit;}
   height: 100%;
   border: 0;
 }
-/* Overlay that restricts user control solely to Play / Pause */
 .video-touch-overlay{
   position: absolute;
   inset: 0;
@@ -115,7 +131,7 @@ input,select{font-family:inherit;}
   transform: scale(1);
 }
 
-/* Action Banner button matching screenshot */
+/* Action Banner button */
 .home-action-banner{
   display: flex;
   align-items: center;
@@ -346,7 +362,8 @@ input,select{font-family:inherit;}
         <div>
           <div class="profile-name" id="dashName">Loading...</div>
           <div class="profile-email" id="dashEmail">—</div>
-          <button class="btn secondary sm hidden" id="howToWorkBtn" style="margin-top:8px;" onclick="openTutorialVideo(this.dataset.url)">▶️ How to Work</button>
+          <!-- Dynamic Admin Controlled Label Display -->
+          <div id="dashUserLabel" class="user-profile-badge hidden"></div>
         </div>
       </div>
 
@@ -366,7 +383,6 @@ input,select{font-family:inherit;}
       <div id="homeFeaturedSection" class="home-video-card hidden">
         <div class="home-video-box">
           <div id="ytPlayerElement"></div>
-          <!-- Click overlay that permits only Play and Pause actions -->
           <div class="video-touch-overlay" id="videoTouchOverlay" onclick="toggleFeaturedVideoPlayback()">
             <div class="video-feedback-icon" id="videoFeedbackIcon">▶</div>
           </div>
@@ -655,6 +671,7 @@ async function handleSignup(e){
 
     await db.collection('users').doc(uid).set({
       name, email, phone, photoURL: '',
+      label: '', // dynamic profile label
       balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
       referralCode: myRefCode, referredBy: null, lastCheckin: null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -707,6 +724,7 @@ async function handleGoogleLogin(){
       await docRef.set({
         name, email: result.user.email, phone: '',
         photoURL: result.user.photoURL || '',
+        label: '', // dynamic profile label
         balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
         referralCode: myRefCode, referredBy: null, lastCheckin: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -820,7 +838,7 @@ function detachAllListeners(){
 }
 
 /* =====================================================================================
-   FEATURED YOUTUBE VIDEO & DIRECT ACTION LOGIC (NEW)
+   FEATURED YOUTUBE VIDEO & DIRECT ACTION LOGIC
 ===================================================================================== */
 let ytFeaturedPlayer = null;
 let currentFeaturedVideoId = null;
@@ -865,7 +883,6 @@ function attachFeaturedVideoListener(){
       return;
     }
 
-    // Set action texts
     document.getElementById('featuredActionTitle').textContent = data.actionTitle || 'Start Earning Now';
     document.getElementById('featuredActionSubtitle').textContent = data.actionSubtitle || 'Watch video & complete tasks';
     currentFeaturedActionTarget = data.actionUrl || 'tasks';
@@ -894,7 +911,6 @@ function initOrUpdateFeaturedPlayer(videoId){
     return;
   }
 
-  // Ensure mount node exists
   const box = document.querySelector('.home-video-box');
   let playerElem = document.getElementById('ytPlayerElement');
   if(!playerElem){
@@ -907,13 +923,13 @@ function initOrUpdateFeaturedPlayer(videoId){
     videoId: videoId,
     playerVars: {
       autoplay: 1,
-      mute: 0,             // Sound enabled
-      controls: 0,         // Disables all default controls (timeline, full screen, etc.)
-      disablekb: 1,        // Disable keyboard shortcuts
-      fs: 0,               // Disable fullscreen button
-      modestbranding: 1,   // Hide YouTube logo
-      rel: 0,              // Do not show related videos from other channels
-      iv_load_policy: 3,   // Hide video annotations
+      mute: 0,
+      controls: 0,
+      disablekb: 1,
+      fs: 0,
+      modestbranding: 1,
+      rel: 0,
+      iv_load_policy: 3,
       playsinline: 1
     },
     events: {
@@ -937,11 +953,9 @@ function destroyFeaturedPlayer(){
   currentFeaturedVideoId = null;
 }
 
-// Tap anywhere on the video area toggles Play / Pause ONLY
 function toggleFeaturedVideoPlayback(){
   if(!ytFeaturedPlayer || typeof ytFeaturedPlayer.getPlayerState !== 'function') return;
   const state = ytFeaturedPlayer.getPlayerState();
-  const icon = document.getElementById('videoFeedbackIcon');
 
   if(state === YT.PlayerState.PLAYING){
     ytFeaturedPlayer.pauseVideo();
@@ -963,7 +977,6 @@ function showVideoFeedback(symbol){
   setTimeout(()=>{ icon.classList.remove('show'); }, 500);
 }
 
-// Direct Action Card click trigger
 function triggerFeaturedAction(){
   if(!currentFeaturedActionTarget) return;
   const target = currentFeaturedActionTarget.trim();
@@ -979,7 +992,7 @@ function triggerFeaturedAction(){
 }
 
 /* =====================================================================================
-   TUTORIAL VIDEOS ("HOW TO WORK")
+   TUTORIAL VIDEOS ("HOW TO WORK") IN TASKS SECTION
 ===================================================================================== */
 function openTutorialVideo(url){
   if(!url){ showToast('No video link provided.', 'error'); return; }
@@ -1003,16 +1016,6 @@ function attachTutorialsListener(){
       const tB = b.createdAt ? b.createdAt.toMillis() : 0;
       return tB - tA;
     });
-
-    const dashBtn = document.getElementById('howToWorkBtn');
-    if(dashBtn){
-      if(tutorials.length > 0 && tutorials[0].youtubeUrl){
-        dashBtn.dataset.url = tutorials[0].youtubeUrl;
-        dashBtn.classList.remove('hidden');
-      } else {
-        dashBtn.classList.add('hidden');
-      }
-    }
 
     const section = document.getElementById('tutorialSection');
     const listEl = document.getElementById('tutorialList');
@@ -1045,7 +1048,7 @@ function attachTutorialsListener(){
 }
 
 /* =====================================================================================
-   REALTIME USER DOC
+   REALTIME USER DOC & DYNAMIC LABEL SYNC
 ===================================================================================== */
 function attachUserListener(uid){
   unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
@@ -1077,6 +1080,19 @@ function renderUserData(d){
   document.getElementById('dashAvatar').src = avatar;
   document.getElementById('dashName').textContent = d.name || 'User';
   document.getElementById('dashEmail').textContent = d.email || '';
+
+  // Render Dynamic Admin Managed Label
+  const labelEl = document.getElementById('dashUserLabel');
+  if(labelEl){
+    if(d.label && d.label.trim()){
+      labelEl.textContent = d.label.trim();
+      labelEl.classList.remove('hidden');
+    } else {
+      labelEl.textContent = '';
+      labelEl.classList.add('hidden');
+    }
+  }
+
   document.getElementById('statBalance').textContent = CURRENCY_SYMBOL + (d.balance||0).toFixed(2);
   document.getElementById('statEarnings').textContent = CURRENCY_SYMBOL + (d.totalEarnings||0).toFixed(2);
   document.getElementById('statWithdrawn').textContent = CURRENCY_SYMBOL + (d.totalWithdrawn||0).toFixed(2);
@@ -1142,7 +1158,6 @@ function goPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById('page-'+page).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
-  // If navigating away from home dashboard, pause the featured video to avoid background audio
   if(page !== 'dashboard' && ytFeaturedPlayer && typeof ytFeaturedPlayer.pauseVideo === 'function'){
     try{ ytFeaturedPlayer.pauseVideo(); }catch(e){}
   }
@@ -1729,7 +1744,7 @@ async function submitWithdraw(e){
     document.getElementById('withdrawAccount').value='';
     document.getElementById('withdrawAmount').value='';
   }catch(err){
-    if(err.message === 'INSUFFICIENT_BALANCE'){ errEl.textContent = 'Insufficient balance.'; errEl.style.display='block'; }
+    if(err.message === 'INSUFFICIENT_BALANCE'){ errEl.textContent = 'Insufficient balance.'; errEl.style.display='block'; return false; }
     else { showToast('Failed to submit request. Try again.','error'); }
   }
   showLoading(false);
