@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <title>OPULIX — Earn Online</title>
 
-<!-- ================= FIREBASE SDKs (compat, easiest for vanilla JS) ================= -->
+<!-- ================= FIREBASE SDKs ================= -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -61,19 +61,117 @@ input,select{font-family:inherit;}
 .section-title{font-size:15px; font-weight:700; margin:18px 0 10px; display:flex; align-items:center; justify-content:space-between;}
 .section-title .link{font-size:12px; color:var(--accent); font-weight:600;}
 
-/* ---------- Homepage Featured Video & Direct Action ---------- */
-.featured-video-card{padding:14px; overflow:hidden;}
-.video-player-wrap{position:relative; width:100%; padding-top:56.25%; border-radius:12px; overflow:hidden; background:#000; box-shadow:0 4px 16px rgba(0,0,0,.4);}
-.video-player-wrap iframe, .video-player-wrap #ytFeaturedPlayerDiv{position:absolute; top:0; left:0; width:100%; height:100%; border:none; pointer-events:none;}
-.video-click-overlay{position:absolute; inset:0; z-index:10; cursor:pointer; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.01);}
-.video-status-badge{position:absolute; bottom:10px; right:10px; z-index:12; background:rgba(11,15,26,.85); backdrop-filter:blur(6px); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; border:1px solid rgba(255,255,255,.1); pointer-events:none; display:flex; align-items:center; gap:5px;}
-.video-play-pulse{width:8px; height:8px; border-radius:50%; background:var(--ok); animation:pulse 1.5s infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1);} 50%{opacity:.4;transform:scale(.8);}}
+/* ---------- FEATURED VIDEO & DIRECT ACTION SECTION (NEW) ---------- */
+.home-video-card{
+  margin: 16px 0 18px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid rgba(255,255,255,.06);
+  box-shadow: var(--shadow);
+}
+.home-video-box{
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 ratio */
+  background: #000;
+  overflow: hidden;
+}
+.home-video-box iframe, .home-video-box #ytPlayerElement{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+/* Overlay that restricts user control solely to Play / Pause */
+.video-touch-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-feedback-icon{
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  opacity: 0;
+  transform: scale(0.7);
+  transition: opacity .25s ease, transform .25s ease;
+  pointer-events: none;
+}
+.video-feedback-icon.show{
+  opacity: 1;
+  transform: scale(1);
+}
 
-.featured-action-box{margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.06); display:flex; flex-direction:column; gap:8px;}
-.featured-action-title{font-size:14px; font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px;}
-.featured-action-btn{width:100%; padding:11px 16px; border-radius:11px; border:none; font-weight:700; font-size:13px; background:linear-gradient(90deg,var(--accent),#8054ff); color:#fff; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 14px rgba(91,140,255,.3); transition:transform .15s;}
-.featured-action-btn:active{transform:scale(.98);}
+/* Action Banner button matching screenshot */
+.home-action-banner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: linear-gradient(90deg, #00c853 0%, #00b0ff 100%);
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: transform .12s ease, opacity .12s ease;
+}
+.home-action-banner:active{
+  transform: scale(0.985);
+  opacity: 0.95;
+}
+.home-action-left{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.home-action-circle{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #00c853;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+}
+.home-action-title{
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.home-action-subtitle{
+  font-size: 11px;
+  opacity: 0.92;
+  margin-top: 3px;
+}
+.home-action-arrow{
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
 
 /* ---------- Task cards ---------- */
 .task-card{display:flex; align-items:center; gap:12px; padding:14px; margin-bottom:10px;}
@@ -158,7 +256,6 @@ input,select{font-family:inherit;}
 .status-pill.pending{background:rgba(255,184,77,.15); color:var(--warn);}
 .status-pill.approved{background:rgba(34,211,165,.15); color:var(--ok);}
 .status-pill.rejected{background:rgba(255,91,107,.15); color:var(--danger);}
-
 </style>
 </head>
 <body>
@@ -229,7 +326,7 @@ input,select{font-family:inherit;}
   </div>
 </div>
 
-<!-- ============================================================= APP SHELL (shown after login) ============================================================= -->
+<!-- ============================================================= APP SHELL ============================================================= -->
 <div id="appShell" class="hidden">
 
   <div class="topbar">
@@ -265,26 +362,25 @@ input,select{font-family:inherit;}
         <button class="btn" id="dailyBonusBtn" onclick="claimDailyCheckin()">Claim Daily Bonus</button>
       </div>
 
-      <!-- HOMEPAGE FEATURED YOUTUBE PLAYER & DIRECT ACTION TASK -->
-      <div class="card featured-video-card hidden" id="featuredVideoSection">
-        <div class="video-player-wrap">
-          <div id="ytFeaturedPlayerDiv"></div>
-          <!-- Click overlay allowing Play/Pause only with all other controls disabled -->
-          <div class="video-click-overlay" onclick="toggleFeaturedVideoPlayback()" title="Tap to Play / Pause"></div>
-          <div class="video-status-badge" id="videoStatusBadge">
-            <div class="video-play-pulse" id="videoPlayPulse"></div>
-            <span id="videoStatusText">Playing</span>
+      <!-- ================= HOMEPAGE FEATURED VIDEO & ACTION BANNER ================= -->
+      <div id="homeFeaturedSection" class="home-video-card hidden">
+        <div class="home-video-box">
+          <div id="ytPlayerElement"></div>
+          <!-- Click overlay that permits only Play and Pause actions -->
+          <div class="video-touch-overlay" id="videoTouchOverlay" onclick="toggleFeaturedVideoPlayback()">
+            <div class="video-feedback-icon" id="videoFeedbackIcon">▶</div>
           </div>
         </div>
 
-        <div class="featured-action-box" id="featuredActionWrap">
-          <div class="featured-action-title">
-            <span>⚡</span>
-            <span id="featuredActionTitleText">Direct Task Action</span>
+        <div class="home-action-banner" id="homeActionBanner" onclick="triggerFeaturedAction()">
+          <div class="home-action-left">
+            <div class="home-action-circle">▶</div>
+            <div>
+              <div class="home-action-title" id="featuredActionTitle">Start Earning Now</div>
+              <div class="home-action-subtitle" id="featuredActionSubtitle">Watch video & complete tasks</div>
+            </div>
           </div>
-          <button class="featured-action-btn" id="featuredActionBtn" onclick="handleDirectFeaturedAction()">
-            <span id="featuredActionBtnText">Complete Task Now</span> ➔
-          </button>
+          <div class="home-action-arrow">›</div>
         </div>
       </div>
 
@@ -292,7 +388,7 @@ input,select{font-family:inherit;}
       <div class="card" id="recentActivityList"><div class="hist-row"><span>No activity yet</span></div></div>
     </div>
 
-    <!-- ---------------- TASKS PAGE (rendered dynamically from Firestore tasks/{id}) ---------------- -->
+    <!-- ---------------- TASKS PAGE ---------------- -->
     <div id="page-tasks" class="page hidden">
       <div id="tutorialSection" class="hidden">
         <div class="section-title">How to Work Videos</div>
@@ -418,7 +514,7 @@ input,select{font-family:inherit;}
 
 <script>
 /* =====================================================================================
-   OPULIX — FIREBASE CONFIGURATION
+   FIREBASE CONFIGURATION
 ===================================================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAyZk5v3jpJ4e7ltx0CdIKaZsPy2p0QXUQ",
@@ -453,9 +549,9 @@ const YOUTUBE_WATCH_SECONDS = 30;
 let MIN_WITHDRAW = 100;
 
 let currentUser = null;
-let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, unsubReferrals = null, unsubTasks = null, unsubTutorials = null, unsubHomepageVideo = null;
+let unsubUserDoc = null, unsubNotif = null, unsubHistory = null, unsubWithdraw = null, 
+    unsubReferrals = null, unsubTasks = null, unsubTutorials = null, unsubFeaturedVideo = null;
 
-// Pull admin-configured settings
 db.collection('settings').doc('global').get().then(s=>{ if(s.exists) applyRemoteSettings(s.data()); }).catch(()=>{});
 
 /* =====================================================================================
@@ -490,22 +586,13 @@ function switchAuthTab(tab){
 }
 
 /* =====================================================================================
-   AUTH: SIGNUP / LOGIN / GOOGLE / FORGOT / LOGOUT
+   AUTH & REFERRAL
 ===================================================================================== */
-function genReferralCode(uid){
-  return 'OPX' + uid.substring(0,6).toUpperCase();
-}
-
+function genReferralCode(uid){ return 'OPX' + uid.substring(0,6).toUpperCase(); }
 const REFERRAL_STORAGE_KEY = 'opulix_pending_ref';
-function getPendingReferralCode(){
-  try{ return localStorage.getItem(REFERRAL_STORAGE_KEY) || ''; }catch(e){ return ''; }
-}
-function setPendingReferralCode(code){
-  try{ localStorage.setItem(REFERRAL_STORAGE_KEY, code); }catch(e){}
-}
-function clearPendingReferralCode(){
-  try{ localStorage.removeItem(REFERRAL_STORAGE_KEY); }catch(e){}
-}
+function getPendingReferralCode(){ try{ return localStorage.getItem(REFERRAL_STORAGE_KEY) || ''; }catch(e){ return ''; } }
+function setPendingReferralCode(code){ try{ localStorage.setItem(REFERRAL_STORAGE_KEY, code); }catch(e){} }
+function clearPendingReferralCode(){ try{ localStorage.removeItem(REFERRAL_STORAGE_KEY); }catch(e){} }
 
 async function connectReferral(newUid, newName, refCodeRaw){
   const refCode = (refCodeRaw || '').trim().toUpperCase();
@@ -542,9 +629,7 @@ async function connectReferral(newUid, newName, refCodeRaw){
     await addNotification(referrerUid, `🎉 You earned ${CURRENCY_SYMBOL}${REWARDS.referrerBonus.toFixed(2)} for referring ${newName}!`);
     await addTransaction(referrerUid, 'Referral bonus', REWARDS.referrerBonus, 'credit');
     await addTransaction(newUid, 'Referral signup bonus', REWARDS.referredBonus, 'credit');
-  }catch(err){
-    console.error('Referral connect failed:', err);
-  }
+  }catch(err){ console.error('Referral connect failed:', err); }
   clearPendingReferralCode();
 }
 
@@ -569,12 +654,9 @@ async function handleSignup(e){
     const myRefCode = genReferralCode(uid);
 
     await db.collection('users').doc(uid).set({
-      name, email, phone,
-      photoURL: '',
+      name, email, phone, photoURL: '',
       balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
-      referralCode: myRefCode,
-      referredBy: null,
-      lastCheckin: null,
+      referralCode: myRefCode, referredBy: null, lastCheckin: null,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
@@ -623,13 +705,10 @@ async function handleGoogleLogin(){
       const name = result.user.displayName || 'User';
       const myRefCode = genReferralCode(uid);
       await docRef.set({
-        name,
-        email: result.user.email,
-        phone: '',
+        name, email: result.user.email, phone: '',
         photoURL: result.user.photoURL || '',
         balance: 0, totalEarnings: 0, totalWithdrawn: 0, pendingWithdraw: 0, referralEarnings: 0,
-        referralCode: myRefCode,
-        referredBy: null, lastCheckin: null,
+        referralCode: myRefCode, referredBy: null, lastCheckin: null,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       });
       await db.collection('referralCodes').doc(myRefCode).set({ uid });
@@ -651,16 +730,14 @@ async function handleForgotPassword(e){
     await auth.sendPasswordResetEmail(email);
     showToast('Password reset email sent!','success');
     closeModal('forgotModal');
-  }catch(err){
-    showToast(friendlyAuthError(err),'error');
-  }
+  }catch(err){ showToast(friendlyAuthError(err),'error'); }
   showLoading(false);
   return false;
 }
 
 async function handleLogout(){
-  destroyFeaturedPlayer();
   detachAllListeners();
+  destroyFeaturedPlayer();
   await auth.signOut();
   showToast('Logged out','info');
 }
@@ -680,7 +757,7 @@ function friendlyAuthError(err){
 }
 
 /* =====================================================================================
-   AUTH STATE — REDIRECT PROTECTION
+   AUTH STATE
 ===================================================================================== */
 auth.onAuthStateChanged(async (user)=>{
   if(user){
@@ -704,7 +781,7 @@ auth.onAuthStateChanged(async (user)=>{
         await auth.signOut();
         return;
       }
-    }catch(err){ }
+    }catch(err){}
     showLoading(false);
 
     currentUser = user;
@@ -717,14 +794,14 @@ auth.onAuthStateChanged(async (user)=>{
     attachReferralListener(user.uid);
     attachTasksListener();
     attachTutorialsListener();
-    attachHomepageVideoListener();
+    attachFeaturedVideoListener();
   } else {
     currentUser = null;
     taskCache = {};
-    destroyFeaturedPlayer();
     ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall','tasksGroup-other'].forEach(id=>{
       const el = document.getElementById(id); if(el) el.innerHTML = '';
     });
+    destroyFeaturedPlayer();
     detachAllListeners();
     document.getElementById('appShell').classList.add('hidden');
     document.getElementById('authScreen').classList.remove('hidden');
@@ -739,170 +816,165 @@ function detachAllListeners(){
   if(unsubReferrals) unsubReferrals();
   if(unsubTasks) unsubTasks();
   if(unsubTutorials) unsubTutorials();
-  if(unsubHomepageVideo) unsubHomepageVideo();
+  if(unsubFeaturedVideo) unsubFeaturedVideo();
 }
 
 /* =====================================================================================
-   HOMEPAGE FEATURED YOUTUBE PLAYER & DIRECT ACTION TASK ENGINE
-   — Autoplay with sound enabled
-   — Only play & pause controls allowed (native controls disabled, keyboard disabled, etc.)
-   — Fully controlled & editable from Admin Panel
+   FEATURED YOUTUBE VIDEO & DIRECT ACTION LOGIC (NEW)
 ===================================================================================== */
 let ytFeaturedPlayer = null;
-let currentFeaturedVideoId = '';
-let currentFeaturedActionUrl = '';
-let isYTIframeAPIReady = false;
+let currentFeaturedVideoId = null;
+let currentFeaturedActionTarget = 'tasks';
+let isYtApiReady = false;
 
-window.onYouTubeIframeAPIReady = function(){
-  isYTIframeAPIReady = true;
-  if(currentFeaturedVideoId && !ytFeaturedPlayer){
-    initFeaturedYouTubePlayer(currentFeaturedVideoId);
+function onYouTubeIframeAPIReady(){
+  isYtApiReady = true;
+  if(currentFeaturedVideoId){
+    initOrUpdateFeaturedPlayer(currentFeaturedVideoId);
   }
-};
-
-function extractYouTubeId(url){
-  if(!url) return '';
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
-  return match ? match[1] : (url.length === 11 ? url : '');
 }
 
-function attachHomepageVideoListener(){
-  if(unsubHomepageVideo) unsubHomepageVideo();
+function parseYoutubeId(url){
+  if(!url) return '';
+  const clean = url.trim();
+  if(/^[a-zA-Z0-9_-]{11}$/.test(clean)) return clean;
+  const match = clean.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/|watch\?.+&v=))([\w-]{11})/);
+  return match ? match[1] : '';
+}
 
-  unsubHomepageVideo = db.collection('settings').doc('homepageVideo').onSnapshot((doc)=>{
-    const card = document.getElementById('featuredVideoSection');
+function attachFeaturedVideoListener(){
+  if(unsubFeaturedVideo) unsubFeaturedVideo();
+  unsubFeaturedVideo = db.collection('settings').doc('featuredVideo').onSnapshot((doc)=>{
+    const container = document.getElementById('homeFeaturedSection');
     if(!doc.exists){
-      if(card) card.classList.add('hidden');
+      container.classList.add('hidden');
       destroyFeaturedPlayer();
       return;
     }
-
     const data = doc.data();
-    if(data.enabled === false || !data.videoUrl){
-      if(card) card.classList.add('hidden');
+    if(data.enabled === false){
+      container.classList.add('hidden');
       destroyFeaturedPlayer();
       return;
     }
 
-    const videoId = extractYouTubeId(data.videoUrl);
+    const videoId = data.videoId || parseYoutubeId(data.youtubeUrl);
     if(!videoId){
-      if(card) card.classList.add('hidden');
+      container.classList.add('hidden');
       destroyFeaturedPlayer();
       return;
     }
 
-    // Configure Direct Action Task Section
-    currentFeaturedActionUrl = data.actionUrl || '';
-    const titleEl = document.getElementById('featuredActionTitleText');
-    const btnTextEl = document.getElementById('featuredActionBtnText');
-    const actionWrap = document.getElementById('featuredActionWrap');
+    // Set action texts
+    document.getElementById('featuredActionTitle').textContent = data.actionTitle || 'Start Earning Now';
+    document.getElementById('featuredActionSubtitle').textContent = data.actionSubtitle || 'Watch video & complete tasks';
+    currentFeaturedActionTarget = data.actionUrl || 'tasks';
 
-    if(titleEl) titleEl.textContent = data.actionTitle || 'Featured Action Task';
-    if(btnTextEl) btnTextEl.textContent = data.actionBtnText || 'Complete Task Now';
-    if(actionWrap) actionWrap.classList.toggle('hidden', !data.actionUrl);
-
-    if(card) card.classList.remove('hidden');
+    container.classList.remove('hidden');
 
     if(videoId !== currentFeaturedVideoId){
       currentFeaturedVideoId = videoId;
-      if(isYTIframeAPIReady || (window.YT && window.YT.Player)){
-        initFeaturedYouTubePlayer(videoId);
+      if(isYtApiReady){
+        initOrUpdateFeaturedPlayer(videoId);
       }
     }
-  }, err=>{
-    console.error('Homepage video listener error:', err);
-  });
+  }, (err)=> console.error('Featured video listener error:', err));
 }
 
-function initFeaturedYouTubePlayer(videoId){
-  destroyFeaturedPlayer();
-  try{
-    ytFeaturedPlayer = new YT.Player('ytFeaturedPlayerDiv', {
-      videoId: videoId,
-      playerVars: {
-        autoplay: 1,
-        controls: 0,        // Disable all standard YouTube controls (timeline, seekbar, settings, full screen)
-        disablekb: 1,       // Disable keyboard controls
-        fs: 0,              // Disable fullscreen button
-        modestbranding: 1,  // Minimal YouTube branding
-        rel: 0,             // Do not show related videos from other channels
-        playsinline: 1,     // Inline playback on mobile devices
-        enablejsapi: 1,
-        origin: window.location.origin
-      },
-      events: {
-        onReady: onFeaturedPlayerReady,
-        onStateChange: onFeaturedPlayerStateChange
-      }
-    });
-  }catch(e){
-    console.warn('YouTube Player init deferred:', e);
-  }
-}
+function initOrUpdateFeaturedPlayer(videoId){
+  if(!window.YT || !YT.Player) return;
 
-function onFeaturedPlayerReady(event){
-  // Auto-play with sound enabled
-  try{
-    event.target.unMute();
-    event.target.setVolume(100);
-    event.target.playVideo();
-  }catch(err){
-    console.log('Autoplay audio attempt:', err);
-  }
-  updateVideoStatusUI(true);
-}
-
-function onFeaturedPlayerStateChange(event){
-  if(event.data === YT.PlayerState.PLAYING){
-    updateVideoStatusUI(true);
-  } else if(event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED){
-    updateVideoStatusUI(false);
-  }
-}
-
-function updateVideoStatusUI(isPlaying){
-  const pulse = document.getElementById('videoPlayPulse');
-  const text = document.getElementById('videoStatusText');
-  if(pulse) pulse.style.background = isPlaying ? 'var(--ok)' : 'var(--warn)';
-  if(text) text.textContent = isPlaying ? 'Playing (Tap to Pause)' : 'Paused (Tap to Play)';
-}
-
-function toggleFeaturedVideoPlayback(){
-  if(!ytFeaturedPlayer || typeof ytFeaturedPlayer.getPlayerState !== 'function') return;
-  try{
-    const state = ytFeaturedPlayer.getPlayerState();
-    if(state === YT.PlayerState.PLAYING){
-      ytFeaturedPlayer.pauseVideo();
-      updateVideoStatusUI(false);
-    } else {
+  if(ytFeaturedPlayer && ytFeaturedPlayer.loadVideoById){
+    ytFeaturedPlayer.loadVideoById({ videoId: videoId });
+    try{
       ytFeaturedPlayer.unMute();
       ytFeaturedPlayer.setVolume(100);
       ytFeaturedPlayer.playVideo();
-      updateVideoStatusUI(true);
-    }
-  }catch(err){
-    console.error('Toggle video playback error:', err);
-  }
-}
-
-function handleDirectFeaturedAction(){
-  if(!currentFeaturedActionUrl){
-    showToast('No action URL configured.','info');
+    }catch(e){}
     return;
   }
-  window.open(currentFeaturedActionUrl, '_blank');
+
+  // Ensure mount node exists
+  const box = document.querySelector('.home-video-box');
+  let playerElem = document.getElementById('ytPlayerElement');
+  if(!playerElem){
+    playerElem = document.createElement('div');
+    playerElem.id = 'ytPlayerElement';
+    box.insertBefore(playerElem, box.firstChild);
+  }
+
+  ytFeaturedPlayer = new YT.Player('ytPlayerElement', {
+    videoId: videoId,
+    playerVars: {
+      autoplay: 1,
+      mute: 0,             // Sound enabled
+      controls: 0,         // Disables all default controls (timeline, full screen, etc.)
+      disablekb: 1,        // Disable keyboard shortcuts
+      fs: 0,               // Disable fullscreen button
+      modestbranding: 1,   // Hide YouTube logo
+      rel: 0,              // Do not show related videos from other channels
+      iv_load_policy: 3,   // Hide video annotations
+      playsinline: 1
+    },
+    events: {
+      onReady: (event)=>{
+        try{
+          event.target.unMute();
+          event.target.setVolume(100);
+          event.target.playVideo();
+        }catch(e){}
+      },
+      onError: (e)=> console.log('YouTube Player error:', e)
+    }
+  });
 }
 
 function destroyFeaturedPlayer(){
-  if(ytFeaturedPlayer && typeof ytFeaturedPlayer.destroy === 'function'){
+  if(ytFeaturedPlayer && ytFeaturedPlayer.destroy){
     try{ ytFeaturedPlayer.destroy(); }catch(e){}
   }
   ytFeaturedPlayer = null;
-  const wrap = document.querySelector('.video-player-wrap');
-  if(wrap && !document.getElementById('ytFeaturedPlayerDiv')){
-    const newDiv = document.createElement('div');
-    newDiv.id = 'ytFeaturedPlayerDiv';
-    wrap.insertBefore(newDiv, wrap.firstChild);
+  currentFeaturedVideoId = null;
+}
+
+// Tap anywhere on the video area toggles Play / Pause ONLY
+function toggleFeaturedVideoPlayback(){
+  if(!ytFeaturedPlayer || typeof ytFeaturedPlayer.getPlayerState !== 'function') return;
+  const state = ytFeaturedPlayer.getPlayerState();
+  const icon = document.getElementById('videoFeedbackIcon');
+
+  if(state === YT.PlayerState.PLAYING){
+    ytFeaturedPlayer.pauseVideo();
+    showVideoFeedback('❚❚');
+  } else {
+    try{
+      ytFeaturedPlayer.unMute();
+      ytFeaturedPlayer.setVolume(100);
+    }catch(e){}
+    ytFeaturedPlayer.playVideo();
+    showVideoFeedback('▶');
+  }
+}
+
+function showVideoFeedback(symbol){
+  const icon = document.getElementById('videoFeedbackIcon');
+  icon.textContent = symbol;
+  icon.classList.add('show');
+  setTimeout(()=>{ icon.classList.remove('show'); }, 500);
+}
+
+// Direct Action Card click trigger
+function triggerFeaturedAction(){
+  if(!currentFeaturedActionTarget) return;
+  const target = currentFeaturedActionTarget.trim();
+  if(target === 'tasks' || target === '#tasks'){
+    goPage('tasks');
+  } else if(target.startsWith('http://') || target.startsWith('https://')){
+    window.open(target, '_blank');
+  } else if(['dashboard','referral','withdraw','profile','history'].includes(target)){
+    goPage(target);
+  } else {
+    window.open('https://' + target, '_blank');
   }
 }
 
@@ -973,7 +1045,7 @@ function attachTutorialsListener(){
 }
 
 /* =====================================================================================
-   REALTIME USER DOC → DASHBOARD / PROFILE / WITHDRAW / REFERRAL RENDER
+   REALTIME USER DOC
 ===================================================================================== */
 function attachUserListener(uid){
   unsubUserDoc = db.collection('users').doc(uid).onSnapshot((doc)=>{
@@ -1022,6 +1094,7 @@ function renderUserData(d){
   document.getElementById('referralLinkDisplay').value = window.location.origin + window.location.pathname + '?ref=' + (d.referralCode||'');
   document.getElementById('refEarnings').textContent = CURRENCY_SYMBOL + (d.referralEarnings||0).toFixed(2);
 
+  // Daily check-in state
   const now = Date.now();
   const last = d.lastCheckin ? d.lastCheckin.toMillis() : 0;
   const diff = now - last;
@@ -1069,10 +1142,14 @@ function goPage(page){
   document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
   document.getElementById('page-'+page).classList.remove('hidden');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===page));
+  // If navigating away from home dashboard, pause the featured video to avoid background audio
+  if(page !== 'dashboard' && ytFeaturedPlayer && typeof ytFeaturedPlayer.pauseVideo === 'function'){
+    try{ ytFeaturedPlayer.pauseVideo(); }catch(e){}
+  }
 }
 
 /* =====================================================================================
-   TRANSACTIONS + NOTIFICATIONS (shared helpers)
+   TRANSACTIONS & NOTIFICATIONS
 ===================================================================================== */
 async function addTransaction(uid, label, amount, type){
   await db.collection('transactions').add({
@@ -1109,7 +1186,6 @@ function attachNotifListener(uid){
       if(unread>0){ badge.textContent = unread; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
     }, err=>{
       console.error('notifications listener error:', err);
-      document.getElementById('notifList').innerHTML = '<div class="hist-row"><span>Failed to load notifications.</span></div>';
     });
 }
 async function markNotifRead(id){ await db.collection('notifications').doc(id).update({read:true}); }
@@ -1140,8 +1216,6 @@ function attachHistoryListener(uid){
       fullEl.innerHTML = fullHtml;
     }, err=>{
       console.error('history listener error:', err);
-      document.getElementById('recentActivityList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
-      document.getElementById('fullHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load activity.</span></div>';
     });
 }
 
@@ -1159,7 +1233,6 @@ function attachWithdrawListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('withdraw listener error:', err);
-      document.getElementById('withdrawHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load withdrawals.</span></div>';
     });
 }
 
@@ -1177,7 +1250,6 @@ function attachReferralListener(uid){
       el.innerHTML = html;
     }, err=>{
       console.error('referral listener error:', err);
-      document.getElementById('referralHistoryList').innerHTML = '<div class="hist-row"><span>Failed to load referrals.</span></div>';
     });
 }
 
@@ -1242,7 +1314,7 @@ function attachTasksListener(){
   });
 }
 function showTaskLoadError(){
-  const msg = '<div class="empty-row">Failed to load tasks.</div>';
+  const msg = '<div class="empty-row">Failed to load tasks. Check your connection or Firestore rules.</div>';
   ['tasksGroup-video','tasksGroup-social','tasksGroup-appinstall'].forEach(id=>{
     const el = document.getElementById(id); if(el) el.innerHTML = msg;
   });
@@ -1345,10 +1417,10 @@ async function buildAppInstallCardHtml(id, t){
   } else if(state.status === 'in-progress'){
     if(state.checkedInToday){
       btnHtml = `<button class="task-btn pending" disabled>Day ${state.daysCompleted}/${state.checkinDays} ✓</button>`;
-      subText = `Checked in today — come back tomorrow to continue (Day ${state.daysCompleted}/${state.checkinDays})`;
+      subText = `Checked in today — come back tomorrow (Day ${state.daysCompleted}/${state.checkinDays})`;
     } else {
       btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Open</button>`;
-      subText = `Tap Open and stay in the app 30s to check in — Day ${state.daysCompleted+1}/${state.checkinDays} · ${rewardNote}`;
+      subText = `Tap Open and stay 30s to check in — Day ${state.daysCompleted+1}/${state.checkinDays} · ${rewardNote}`;
     }
   } else {
     btnHtml = `<button class="task-btn" onclick="handleTaskClick('${id}')">Install</button>`;
@@ -1446,7 +1518,6 @@ async function handleInstallClick(taskId, t){
       daysCompleted: 0, lastCheckinDate: null, status: 'in-progress',
       startedAt: firebase.firestore.FieldValue.serverTimestamp(), completedAt: null
     });
-    await addNotification(currentUser.uid, `You started "${t.title}" — once installed, tap Open daily and stay in the app for 30 seconds to earn your reward.`);
     showToast('Redirected to the Play Store. Once installed, come back and tap Open!','info');
   }catch(err){ showToast('Failed to start install task.','error'); }
   refreshSingleTaskCard(taskId);
@@ -1535,7 +1606,7 @@ async function recordAppInstallCheckin(taskId, t){
       showToast(`${newDays}-day check-in complete! +${CURRENCY_SYMBOL}${totalToday.toFixed(2)} credited!`,'success');
     } else {
       showToast(totalToday > 0
-        ? `Day ${newDays} checked in! +${CURRENCY_SYMBOL}${totalToday.toFixed(2)} credited. Come back tomorrow.`
+        ? `Day ${newDays} checked in! +${CURRENCY_SYMBOL}${totalToday.toFixed(2)} credited.`
         : `Day ${newDays} checked in! Come back tomorrow.`,'success');
     }
   }catch(err){
@@ -1588,7 +1659,7 @@ async function claimGenericTask(taskId, t){
 }
 
 /* =====================================================================================
-   REFERRAL — COPY / SHARE
+   REFERRAL
 ===================================================================================== */
 function copyReferralLink(){
   const val = document.getElementById('referralLinkDisplay').value;
@@ -1666,7 +1737,7 @@ async function submitWithdraw(e){
 }
 
 /* =====================================================================================
-   PROFILE — EDIT + PHOTO UPLOAD
+   PROFILE
 ===================================================================================== */
 async function saveProfile(e){
   e.preventDefault();
